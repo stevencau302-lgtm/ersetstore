@@ -109,7 +109,7 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section className="bg-white border-b border-gray-100 py-12">
+      <section className="bg-surface-muted border-b border-gray-100 py-12">
         <div className="container-x grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { Icon: Truck, title: 'Pengiriman Cepat', desc: 'Pesanan diproses cepat dan dikirim setiap hari.' },
@@ -117,7 +117,7 @@ export default function Home() {
             { Icon: ShieldCheck, title: 'Pembayaran Aman', desc: 'Pembayaran terenkripsi dengan metode terpercaya.' },
             { Icon: BadgeCheck, title: 'Garansi Kualitas', desc: 'Produk import original berkualitas terjamin.' },
           ].map(({ Icon, title, desc }) => (
-            <div key={title} className="flex items-start gap-4 p-5 rounded-2xl hover:bg-gray-50 transition-colors">
+            <div key={title} className="flex items-start gap-4 p-5 rounded-2xl hover:bg-white/80 transition-colors">
               <div className="size-12 grid place-items-center bg-brand-50 text-brand-500 rounded-xl shrink-0">
                 <Icon className="size-6" />
               </div>

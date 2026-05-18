@@ -20,6 +20,12 @@ export default {
           700: '#252932',
           500: '#6b7280',
         },
+        // Custom surface colors (nyaman di mata)
+        surface: {
+          DEFAULT: '#fafaf7',  // page background (warm, soft)
+          card: '#ffffff',     // card bg stays white
+          muted: '#f2f2ed',   // muted sections
+        },
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',

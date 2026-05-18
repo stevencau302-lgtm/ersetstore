@@ -38,7 +38,7 @@ export default function ProductCard({ product: p }: Props) {
       className="group card hover:shadow-xl hover:-translate-y-1 hover:border-gray-200 flex flex-col overflow-hidden"
     >
       {/* Image */}
-      <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 grid place-items-center overflow-hidden">
+      <div className="relative aspect-square bg-gradient-to-br from-[#f5f5f0] to-[#eeeee8] grid place-items-center overflow-hidden">
         {p.badge && (
           <span className={`absolute top-3 left-3 z-10 ${BADGE_STYLES[p.badge]} badge`}>
             {p.badge === 'sale' ? `-${discount}%` : p.badge === 'new' ? 'Baru' : 'Hot'}
