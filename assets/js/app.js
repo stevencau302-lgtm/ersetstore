@@ -74,7 +74,7 @@ function showToast(message, type = '') {
   if (existing) existing.remove();
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span> ${message}`;
+  toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : '⚡'}</span> ${message}`;
   document.body.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('show'));
   setTimeout(() => {
@@ -91,7 +91,7 @@ function renderProductCard(p) {
   return `
     <div class="product-card" data-id="${p.id}">
       <a href="product.html?id=${p.id}" class="product-image">
-        ${p.badge ? `<span class="product-badge ${badgeMap[p.badge] || ''}">${p.badge === 'sale' ? '-' + discount + '%' : p.badge.toUpperCase()}</span>` : ''}
+        ${p.badge ? `<span class="product-badge ${badgeMap[p.badge] || ''}">${p.badge === 'sale' ? '-' + discount + '%' : p.badge}</span>` : ''}
         <span>${p.emoji}</span>
       </a>
       <button class="product-wishlist ${inWishlist ? 'active' : ''}" data-wishlist="${p.id}" aria-label="Wishlist">
@@ -135,7 +135,7 @@ function initProductListeners() {
       wishBtn.classList.toggle('active', active);
       const svg = wishBtn.querySelector('svg');
       if (svg) svg.setAttribute('fill', active ? 'currentColor' : 'none');
-      showToast(active ? 'Ditambahkan ke wishlist' : 'Dihapus dari wishlist');
+      showToast(active ? 'Added to wishlist' : 'Removed from wishlist');
       return;
     }
   });

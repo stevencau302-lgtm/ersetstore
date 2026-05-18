@@ -1,52 +1,58 @@
-# 🛍️ ERSET STORE
+# ⚡ ERSET GEAR LAB
 
-> **Pusat Belanja Produk Import** — Toko online lengkap dengan demo produk, keranjang belanja, dan checkout.
+> **Premium Gear & Gadget Marketplace** — Modern dark-themed e-commerce inspired by Erset Gear Lab.
 
-Website e-commerce statis (HTML/CSS/JS) untuk **ERSET STORE**. Menjual aksesoris gadget, audio, homeware, otomotif, outdoor kit, tools, hobby, dan toys.
+A fully-functional static e-commerce website built with vanilla HTML, CSS, and JavaScript. Features premium dark mode design with neon accents, smooth animations, and a complete shopping flow.
 
-## 🚀 Fitur
+## 🎨 Design Highlights
 
-### Halaman
-- **Homepage** (`index.html`) — Hero, fitur, kategori, flash sale, produk terbaru, terlaris, newsletter
-- **Daftar Produk** (`products.html`) — Filter (kategori, harga, rating, promo), sorting, pencarian
-- **Detail Produk** (`product.html`) — Gambar, deskripsi, qty, add to cart / buy now, produk serupa
-- **Keranjang** (`cart.html`) — Update qty, hapus item, kupon promo, ringkasan
-- **Checkout** (`checkout.html`) — Form alamat, 6 metode pengiriman, 8 metode pembayaran
-- **Konfirmasi** (`success.html`) — Halaman terima kasih dengan detail pesanan
+- **Premium dark theme** with neon green accent (`#00ff9d`)
+- **Animated grid background** in hero section
+- **Floating glow orbs** & blurred gradients
+- **Smooth micro-interactions** on hover (scale, glow, shimmer)
+- **Glassmorphism** sticky header with backdrop blur
+- **Brand strip** featuring partner logos
+- **Card-based feature** layout with hover lift
+- **Toast notifications** with neon glow
 
-### Fungsi
-- 🛒 **Keranjang persisten** dengan localStorage
-- ❤️ **Wishlist** untuk menandai produk favorit
-- 🔍 **Pencarian** & filter produk advanced
-- 🎟️ **Kupon promo** (`ERSET10`, `NEWUSER`, `FLASH50K`)
-- 🚚 **Free ongkir** otomatis untuk belanja min. Rp 200.000
-- 💳 **8 metode pembayaran** (BCA, Mandiri, BNI, GoPay, OVO, DANA, QRIS, COD)
-- 📦 **6 jasa pengiriman** (JNE Reguler, YES, SiCepat, J&T, Ninja, GoSend Instant)
-- 📱 **Responsive design** — mobile, tablet, desktop
-- 🎨 **Modern UI** dengan animasi smooth & toast notifications
+## 🚀 Pages
 
-## 📂 Struktur Folder
+| Page | File | Description |
+|------|------|-------------|
+| 🏠 Home | `index.html` | Hero, brand strip, features, categories, flash deals, new arrivals, best sellers, newsletter |
+| 🛍️ Shop | `products.html` | Product list with sidebar filters (category, price, rating) & sorting |
+| 📱 Detail | `product.html` | Gallery, specs, qty selector, add-to-cart, related products |
+| 🛒 Cart | `cart.html` | Qty controls, coupons, free shipping logic |
+| 💳 Checkout | `checkout.html` | 4-step form: contact, address, shipping, payment |
+| ✅ Success | `success.html` | Order confirmation with details |
 
-```
-ersetstore/
-├── index.html          # Homepage
-├── products.html       # Daftar produk
-├── product.html        # Detail produk
-├── cart.html           # Keranjang belanja
-├── checkout.html       # Halaman checkout
-├── success.html        # Konfirmasi pesanan
-└── assets/
-    ├── css/
-    │   └── style.css   # Stylesheet utama
-    └── js/
-        ├── products.js # Database produk (32 item)
-        ├── layout.js   # Header & footer shared
-        └── app.js      # Logika cart, wishlist, toast
-```
+## ✨ Features
 
-## 🛠️ Cara Menjalankan
+- 🛒 **Persistent cart & wishlist** via localStorage
+- 🔍 **Live search** with URL params
+- 🎟️ **Promo codes**: `ERSET10` (10%), `NEWUSER` (15%), `FLASH50K` (Rp 50K flat)
+- 🚚 **Free shipping** auto-trigger over Rp 200K
+- 💳 **8 payment methods**: BCA / Mandiri / BNI VA, GoPay, OVO, DANA, QRIS, COD
+- 📦 **6 shipping options**: JNE Reguler / YES, SiCepat, J&T, Ninja, GoSend Instant
+- 📱 **Fully responsive** mobile-first design
+- 🎨 **32 demo products** across 8 categories
 
-Langsung buka `index.html` di browser, atau jalankan local server:
+## 🗂️ Categories
+
+| Icon | Category | Items |
+|------|----------|-------|
+| 📱 | Gadget | Phone & laptop accessories |
+| 🎧 | Audio | Headphones, speakers, mics |
+| 🏠 | Homeware | Smart home, lighting, cleaning |
+| 🚗 | Otomotif | Car gear & accessories |
+| 🏕️ | Outdoor | Camping, tactical, sport |
+| 🔧 | Tools | DIY, mechanical, measuring |
+| 🎨 | Hobby | Drone, camera, keyboard |
+| 🧸 | Toys | Cards, building blocks, fidget |
+
+## 🚀 Run Locally
+
+Open `index.html` directly in a browser, or serve via:
 
 ```bash
 # Python
@@ -56,34 +62,32 @@ python3 -m http.server 8000
 npx serve .
 ```
 
-Buka `http://localhost:8000` di browser.
+Visit `http://localhost:8000`.
 
-## 🎨 Tech Stack
+## 🛠️ Tech Stack
 
 - **HTML5** semantic markup
-- **CSS3** — Custom properties, Grid, Flexbox, animations
-- **Vanilla JavaScript** — No framework, no build step
-- **localStorage** untuk persistensi cart & wishlist
-- **Google Fonts** — Inter
+- **CSS3** — Custom properties, Grid, Flexbox, animations, backdrop-filter
+- **Vanilla JS** — No framework, no build step
+- **localStorage** for cart/wishlist persistence
+- **Google Fonts** — Inter (400-900)
 
-## 🎟️ Kode Promo Demo
+## 🎟️ Demo Promo Codes
 
-| Kode | Diskon |
-|------|--------|
+| Code | Discount |
+|------|----------|
 | `ERSET10` | 10% off |
 | `NEWUSER` | 15% off |
-| `FLASH50K` | Potongan flat Rp 50.000 |
+| `FLASH50K` | Rp 50.000 flat off |
 
-## 📸 Highlight
+## 🎯 Demo Flow
 
-- 32 produk demo dengan emoji visual
-- 8 kategori produk
-- Hero section dengan floating cards animasi
-- Filter sidebar dengan 4 grup
-- Cart summary realtime
-- Multi-step checkout (4 step)
-- Toast notification system
+1. Browse the homepage → click any product
+2. View detail page → adjust quantity → **Add to Cart** or **Buy Now**
+3. Go to cart → apply promo `ERSET10` → see discount applied
+4. Continue to checkout → fill address → pick shipping & payment
+5. Click **Pay Now** → see order confirmation page
 
 ---
 
-© 2026 ERSET STORE
+**© 2026 ERSET GEAR LAB** — Made with ⚡ for gear enthusiasts.

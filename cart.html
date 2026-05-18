@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Keranjang Belanja | ERSET STORE</title>
+  <title>Shopping Cart | ERSET GEAR LAB</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,11 +14,11 @@
 
   <div class="page-header">
     <div class="container">
-      <h1>🛒 Keranjang Belanja</h1>
+      <h1>🛒 Shopping Cart</h1>
       <div class="breadcrumb">
         <a href="index.html">Home</a>
-        <span>›</span>
-        <span>Keranjang</span>
+        <span class="sep">/</span>
+        <span>Cart</span>
       </div>
     </div>
   </div>
@@ -37,9 +37,9 @@
   <script>
     let appliedCoupon = null;
     const COUPONS = {
-      'ERSET10': { discount: 0.1, label: 'Diskon 10%' },
-      'NEWUSER': { discount: 0.15, label: 'Diskon 15% New User' },
-      'FLASH50K': { discount: 50000, type: 'flat', label: 'Potongan Rp 50.000' }
+      'ERSET10': { discount: 0.1, label: '10% OFF' },
+      'NEWUSER': { discount: 0.15, label: '15% OFF New User' },
+      'FLASH50K': { discount: 50000, type: 'flat', label: 'Rp 50.000 OFF' }
     };
 
     document.addEventListener('DOMContentLoaded', renderCart);
@@ -52,9 +52,9 @@
         container.innerHTML = `
           <div class="empty-state">
             <div class="icon">🛒</div>
-            <h3>Keranjang Anda Kosong</h3>
-            <p>Belum ada produk di keranjang. Yuk mulai belanja sekarang!</p>
-            <a href="products.html" class="btn btn-primary">Mulai Belanja</a>
+            <h3>Your Cart Is Empty</h3>
+            <p>Start adding gear to your cart to see them here.</p>
+            <a href="products.html" class="btn btn-primary">Start Shopping</a>
           </div>
         `;
         return;
@@ -97,42 +97,42 @@
               }).join('')}
             </div>
             <div style="display:flex; gap:12px; margin-top:16px; flex-wrap:wrap">
-              <a href="products.html" class="btn btn-secondary">← Lanjut Belanja</a>
-              <button class="btn btn-outline" style="color:var(--danger); border-color:var(--danger)" onclick="clearAllCart()">Kosongkan Keranjang</button>
+              <a href="products.html" class="btn btn-secondary">← Continue Shopping</a>
+              <button class="btn btn-outline" style="color:var(--danger); border-color:var(--danger)" onclick="clearAllCart()">Clear Cart</button>
             </div>
           </div>
 
           <div class="cart-summary">
-            <h3>Ringkasan Pesanan</h3>
+            <h3>Order Summary</h3>
             <div class="summary-row">
-              <span>Subtotal (${Cart.count()} item)</span>
+              <span>Subtotal (${Cart.count()} items)</span>
               <span>${formatPrice(subtotal)}</span>
             </div>
             <div class="summary-row">
-              <span>Ongkos Kirim</span>
-              <span>${shipping === 0 ? '<span style="color:var(--success); font-weight:600">GRATIS</span>' : formatPrice(shipping)}</span>
+              <span>Shipping</span>
+              <span>${shipping === 0 ? '<span style="color:var(--success); font-weight:700">FREE</span>' : formatPrice(shipping)}</span>
             </div>
             ${discount > 0 ? `
               <div class="summary-row" style="color:var(--success)">
-                <span>Diskon (${appliedCoupon})</span>
-                <span>-${formatPrice(discount)}</span>
+                <span>Discount (${appliedCoupon})</span>
+                <span style="color:var(--success) !important">-${formatPrice(discount)}</span>
               </div>
             ` : ''}
 
             <div class="coupon-row">
-              <input type="text" id="couponInput" placeholder="Kode promo (ERSET10, NEWUSER, FLASH50K)" value="${appliedCoupon || ''}" />
-              <button class="btn btn-secondary btn-sm" onclick="applyCoupon()">Pakai</button>
+              <input type="text" id="couponInput" placeholder="Promo code (ERSET10, NEWUSER, FLASH50K)" value="${appliedCoupon || ''}" />
+              <button class="btn btn-secondary btn-sm" onclick="applyCoupon()">Apply</button>
             </div>
 
-            ${shipping > 0 ? `<div style="background:var(--bg-soft); padding:10px 14px; border-radius:8px; font-size:12px; color:var(--text-muted); margin-bottom:12px">💡 Belanja ${formatPrice(200000 - subtotal)} lagi untuk gratis ongkir!</div>` : ''}
+            ${shipping > 0 ? `<div style="background:rgba(0,255,157,0.05); border:1px solid rgba(0,255,157,0.2); padding:12px 14px; border-radius:10px; font-size:12px; color:var(--accent); margin-bottom:14px">⚡ Add ${formatPrice(200000 - subtotal)} more for FREE shipping!</div>` : ''}
 
             <div class="summary-row total">
               <span>Total</span>
-              <span class="price">${formatPrice(total)}</span>
+              <span>${formatPrice(total)}</span>
             </div>
-            <a href="checkout.html" class="btn btn-primary btn-block btn-lg" style="margin-top:16px">Lanjut ke Checkout →</a>
-            <div style="text-align:center; margin-top:14px; font-size:12px; color:var(--text-muted)">
-              🔒 Pembayaran 100% Aman & Terenkripsi
+            <a href="checkout.html" class="btn btn-primary btn-block btn-lg" style="margin-top:18px">Proceed to Checkout →</a>
+            <div style="text-align:center; margin-top:16px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px">
+              🔒 100% Secure Encrypted Checkout
             </div>
           </div>
         </div>
@@ -149,31 +149,31 @@
     }
 
     function removeItem(id) {
-      if (confirm('Hapus produk dari keranjang?')) {
+      if (confirm('Remove this item from cart?')) {
         Cart.remove(id);
         renderCart();
-        showToast('Produk dihapus dari keranjang');
+        showToast('Item removed from cart');
       }
     }
 
     function clearAllCart() {
-      if (confirm('Yakin ingin mengosongkan keranjang?')) {
+      if (confirm('Clear all items from cart?')) {
         Cart.clear();
         appliedCoupon = null;
         renderCart();
-        showToast('Keranjang dikosongkan');
+        showToast('Cart cleared');
       }
     }
 
     function applyCoupon() {
       const code = document.getElementById('couponInput').value.trim().toUpperCase();
-      if (!code) { showToast('Masukkan kode promo', 'error'); return; }
+      if (!code) { showToast('Enter a promo code', 'error'); return; }
       if (COUPONS[code]) {
         appliedCoupon = code;
-        showToast(`Kupon diterapkan: ${COUPONS[code].label}`, 'success');
+        showToast(`Coupon applied: ${COUPONS[code].label}`, 'success');
         renderCart();
       } else {
-        showToast('Kode promo tidak valid', 'error');
+        showToast('Invalid promo code', 'error');
       }
     }
   </script>

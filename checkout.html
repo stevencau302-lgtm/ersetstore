@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout | ERSET STORE</title>
+  <title>Checkout | ERSET GEAR LAB</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="site-header"></div>
@@ -17,9 +17,9 @@
       <h1>💳 Checkout</h1>
       <div class="breadcrumb">
         <a href="index.html">Home</a>
-        <span>›</span>
-        <a href="cart.html">Keranjang</a>
-        <span>›</span>
+        <span class="sep">/</span>
+        <a href="cart.html">Cart</a>
+        <span class="sep">/</span>
         <span>Checkout</span>
       </div>
     </div>
@@ -37,27 +37,27 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/layout.js"></script>
   <script>
-    let selectedShipping = { id: 'reguler', name: 'JNE Reguler', eta: '2-3 hari', price: 15000 };
+    let selectedShipping = { id: 'reguler', name: 'JNE Reguler', eta: '2-3 days', price: 15000 };
     let selectedPayment = 'bca';
 
     const SHIPPINGS = [
-      { id: 'reguler', name: 'JNE Reguler', eta: '2-3 hari kerja', price: 15000 },
-      { id: 'yes', name: 'JNE YES (Yakin Esok Sampai)', eta: '1 hari kerja', price: 28000 },
-      { id: 'sicepat', name: 'SiCepat REG', eta: '2-3 hari kerja', price: 14000 },
-      { id: 'jnt', name: 'J&T Express', eta: '2-4 hari kerja', price: 13000 },
-      { id: 'ninja', name: 'Ninja Xpress', eta: '2-3 hari kerja', price: 12000 },
-      { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Hari ini, area Jabodetabek', price: 35000 },
+      { id: 'reguler', name: 'JNE Reguler', eta: '2-3 business days', price: 15000 },
+      { id: 'yes', name: 'JNE YES (Next Day)', eta: '1 business day', price: 28000 },
+      { id: 'sicepat', name: 'SiCepat REG', eta: '2-3 business days', price: 14000 },
+      { id: 'jnt', name: 'J&T Express', eta: '2-4 business days', price: 13000 },
+      { id: 'ninja', name: 'Ninja Xpress', eta: '2-3 business days', price: 12000 },
+      { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Today, Jabodetabek only', price: 35000 },
     ];
 
     const PAYMENTS = [
-      { id: 'bca', icon: '🏦', name: 'BCA Virtual Account', desc: 'Transfer via BCA m-Banking / KlikBCA' },
-      { id: 'mandiri', icon: '🏛️', name: 'Mandiri Virtual Account', desc: 'Transfer via Mandiri Online / Livin' },
-      { id: 'bni', icon: '🏦', name: 'BNI Virtual Account', desc: 'Transfer via BNI Mobile' },
-      { id: 'gopay', icon: '💚', name: 'GoPay', desc: 'Bayar via aplikasi Gojek' },
-      { id: 'ovo', icon: '💜', name: 'OVO', desc: 'Bayar via aplikasi OVO' },
-      { id: 'dana', icon: '💙', name: 'DANA', desc: 'Bayar via aplikasi DANA' },
-      { id: 'qris', icon: '📱', name: 'QRIS', desc: 'Scan QR dari semua e-wallet' },
-      { id: 'cod', icon: '💵', name: 'Cash on Delivery (COD)', desc: 'Bayar di tempat saat barang tiba' },
+      { id: 'bca', icon: '🏦', name: 'BCA Virtual Account', desc: 'Pay via BCA m-Banking / KlikBCA' },
+      { id: 'mandiri', icon: '🏛️', name: 'Mandiri Virtual Account', desc: 'Pay via Mandiri Online / Livin' },
+      { id: 'bni', icon: '🏦', name: 'BNI Virtual Account', desc: 'Pay via BNI Mobile' },
+      { id: 'gopay', icon: '💚', name: 'GoPay', desc: 'Pay via Gojek app' },
+      { id: 'ovo', icon: '💜', name: 'OVO', desc: 'Pay via OVO app' },
+      { id: 'dana', icon: '💙', name: 'DANA', desc: 'Pay via DANA app' },
+      { id: 'qris', icon: '📱', name: 'QRIS', desc: 'Scan QR with any e-wallet' },
+      { id: 'cod', icon: '💵', name: 'Cash on Delivery (COD)', desc: 'Pay when your order arrives' },
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -66,9 +66,9 @@
         document.getElementById('checkoutContent').innerHTML = `
           <div class="empty-state">
             <div class="icon">🛒</div>
-            <h3>Keranjang Anda Kosong</h3>
-            <p>Anda belum memiliki produk untuk di-checkout</p>
-            <a href="products.html" class="btn btn-primary">Mulai Belanja</a>
+            <h3>Your Cart Is Empty</h3>
+            <p>Add some gear to checkout</p>
+            <a href="products.html" class="btn btn-primary">Start Shopping</a>
           </div>
         `;
         return;
@@ -85,37 +85,37 @@
       document.getElementById('checkoutContent').innerHTML = `
         <div class="checkout-layout">
           <form id="checkoutForm" onsubmit="placeOrder(event)">
-            <!-- Step 1: Contact -->
+            <!-- Step 1 -->
             <div class="checkout-section">
-              <h3><span class="step-num">1</span> Informasi Kontak</h3>
+              <h3><span class="step-num">1</span> Contact Information</h3>
               <div class="form-grid">
                 <div class="form-group full">
-                  <label>Nama Lengkap *</label>
+                  <label>Full Name *</label>
                   <input type="text" required placeholder="John Doe" />
                 </div>
                 <div class="form-group">
                   <label>Email *</label>
-                  <input type="email" required placeholder="email@contoh.com" />
+                  <input type="email" required placeholder="email@example.com" />
                 </div>
                 <div class="form-group">
-                  <label>Nomor HP / WhatsApp *</label>
+                  <label>Phone / WhatsApp *</label>
                   <input type="tel" required placeholder="08xxxxxxxxxx" />
                 </div>
               </div>
             </div>
 
-            <!-- Step 2: Address -->
+            <!-- Step 2 -->
             <div class="checkout-section">
-              <h3><span class="step-num">2</span> Alamat Pengiriman</h3>
+              <h3><span class="step-num">2</span> Shipping Address</h3>
               <div class="form-grid">
                 <div class="form-group full">
-                  <label>Alamat Lengkap *</label>
-                  <textarea required placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..."></textarea>
+                  <label>Full Address *</label>
+                  <textarea required placeholder="Street name, house number, RT/RW..."></textarea>
                 </div>
                 <div class="form-group">
-                  <label>Provinsi *</label>
+                  <label>Province *</label>
                   <select required>
-                    <option value="">Pilih Provinsi</option>
+                    <option value="">Select Province</option>
                     <option>DKI Jakarta</option>
                     <option>Jawa Barat</option>
                     <option>Jawa Tengah</option>
@@ -125,31 +125,31 @@
                     <option>Bali</option>
                     <option>Sumatera Utara</option>
                     <option>Sumatera Selatan</option>
-                    <option>Lainnya</option>
+                    <option>Other</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>Kota / Kabupaten *</label>
+                  <label>City *</label>
                   <input type="text" required placeholder="Jakarta Selatan" />
                 </div>
                 <div class="form-group">
-                  <label>Kecamatan *</label>
+                  <label>District *</label>
                   <input type="text" required placeholder="Kebayoran Baru" />
                 </div>
                 <div class="form-group">
-                  <label>Kode Pos *</label>
+                  <label>Postal Code *</label>
                   <input type="text" required placeholder="12345" pattern="[0-9]{5}" />
                 </div>
                 <div class="form-group full">
-                  <label>Catatan untuk Kurir (opsional)</label>
-                  <input type="text" placeholder="Patokan, warna pagar, dll." />
+                  <label>Courier Notes (Optional)</label>
+                  <input type="text" placeholder="Landmark, gate color, etc." />
                 </div>
               </div>
             </div>
 
-            <!-- Step 3: Shipping -->
+            <!-- Step 3 -->
             <div class="checkout-section">
-              <h3><span class="step-num">3</span> Metode Pengiriman</h3>
+              <h3><span class="step-num">3</span> Shipping Method</h3>
               <div class="shipping-methods">
                 ${SHIPPINGS.map(s => `
                   <label class="shipping-method ${selectedShipping.id === s.id ? 'active' : ''}">
@@ -157,7 +157,7 @@
                       <input type="radio" name="shipping" value="${s.id}" ${selectedShipping.id === s.id ? 'checked' : ''} onchange="selectShipping('${s.id}')" />
                       <div>
                         <strong>${s.name}</strong>
-                        <span>Estimasi: ${s.eta}</span>
+                        <span>ETA: ${s.eta}</span>
                       </div>
                     </div>
                     <div class="price">${formatPrice(s.price)}</div>
@@ -166,9 +166,9 @@
               </div>
             </div>
 
-            <!-- Step 4: Payment -->
+            <!-- Step 4 -->
             <div class="checkout-section">
-              <h3><span class="step-num">4</span> Metode Pembayaran</h3>
+              <h3><span class="step-num">4</span> Payment Method</h3>
               <div class="payment-methods">
                 ${PAYMENTS.map(pm => `
                   <label class="payment-method ${selectedPayment === pm.id ? 'active' : ''}">
@@ -181,15 +181,15 @@
                   </label>
                 `).join('')}
               </div>
-              <div style="background:var(--bg-soft); padding:14px; border-radius:10px; margin-top:16px; font-size:13px; color:var(--text-muted); display:flex; gap:10px;">
-                🔒 <span>Pembayaran Anda 100% aman dengan enkripsi SSL 256-bit. Kami tidak menyimpan data kartu kredit Anda.</span>
+              <div style="background:rgba(0,255,157,0.05); border:1px solid rgba(0,255,157,0.2); padding:14px; border-radius:10px; margin-top:18px; font-size:13px; color:var(--text-muted); display:flex; gap:10px;">
+                🔒 <span>Your payment is 100% secure with 256-bit SSL encryption. We never store your card details.</span>
               </div>
             </div>
           </form>
 
           <!-- Summary -->
           <div class="order-summary">
-            <h3 style="margin-bottom:18px">Ringkasan Pesanan</h3>
+            <h3 style="font-size:16px; font-weight:700; margin-bottom:20px; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px">Order Summary</h3>
             <div class="order-items">
               ${items.map(item => {
                 const p = PRODUCTS.find(x => x.id === item.id);
@@ -215,13 +215,13 @@
             </div>
             <div class="summary-row total">
               <span>Total</span>
-              <span class="price">${formatPrice(total)}</span>
+              <span>${formatPrice(total)}</span>
             </div>
-            <button type="submit" form="checkoutForm" class="btn btn-primary btn-block btn-lg" style="margin-top:16px">
-              🔒 Bayar Sekarang
+            <button type="submit" form="checkoutForm" class="btn btn-primary btn-block btn-lg" style="margin-top:18px">
+              🔒 Pay Now
             </button>
-            <div style="text-align:center; margin-top:14px; font-size:12px; color:var(--text-muted)">
-              Dengan klik Bayar, Anda menyetujui <a href="#" style="color:var(--primary)">S&K</a>
+            <div style="text-align:center; margin-top:14px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px">
+              By clicking Pay, you agree to our <a href="#" style="color:var(--accent)">Terms</a>
             </div>
           </div>
         </div>
@@ -240,7 +240,6 @@
 
     function placeOrder(e) {
       e.preventDefault();
-      // Simulate order
       const orderId = 'ERS-' + Date.now().toString().slice(-8);
       const total = Cart.total() + selectedShipping.price;
       const orderData = {

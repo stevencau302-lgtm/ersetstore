@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Semua Produk | ERSET STORE</title>
+  <title>Shop All Gear | ERSET GEAR LAB</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,11 +14,11 @@
 
   <div class="page-header">
     <div class="container">
-      <h1 id="pageTitle">Semua Produk</h1>
+      <h1 id="pageTitle">All Gear</h1>
       <div class="breadcrumb">
         <a href="index.html">Home</a>
-        <span>›</span>
-        <span id="pageBreadcrumb">Semua Produk</span>
+        <span class="sep">/</span>
+        <span id="pageBreadcrumb">All Gear</span>
       </div>
     </div>
   </div>
@@ -28,29 +28,29 @@
       <div class="shop-layout">
         <aside class="shop-sidebar">
           <div class="filter-group">
-            <h5>Kategori</h5>
-            <label><input type="radio" name="category" value="all" checked /> Semua Kategori</label>
+            <h5>Category</h5>
+            <label><input type="radio" name="category" value="all" checked /> All Categories</label>
             <div id="categoryFilters"></div>
           </div>
           <div class="filter-group">
-            <h5>Rentang Harga</h5>
-            <label><input type="radio" name="price" value="all" checked /> Semua Harga</label>
-            <label><input type="radio" name="price" value="0-100000" /> Di bawah Rp 100rb</label>
-            <label><input type="radio" name="price" value="100000-300000" /> Rp 100rb - 300rb</label>
-            <label><input type="radio" name="price" value="300000-500000" /> Rp 300rb - 500rb</label>
-            <label><input type="radio" name="price" value="500000-1000000" /> Rp 500rb - 1jt</label>
-            <label><input type="radio" name="price" value="1000000-99999999" /> Di atas Rp 1jt</label>
+            <h5>Price Range</h5>
+            <label><input type="radio" name="price" value="all" checked /> All Prices</label>
+            <label><input type="radio" name="price" value="0-100000" /> Under Rp 100K</label>
+            <label><input type="radio" name="price" value="100000-300000" /> Rp 100K - 300K</label>
+            <label><input type="radio" name="price" value="300000-500000" /> Rp 300K - 500K</label>
+            <label><input type="radio" name="price" value="500000-1000000" /> Rp 500K - 1M</label>
+            <label><input type="radio" name="price" value="1000000-99999999" /> Above Rp 1M</label>
           </div>
           <div class="filter-group">
             <h5>Rating</h5>
-            <label><input type="radio" name="rating" value="all" checked /> Semua Rating</label>
+            <label><input type="radio" name="rating" value="all" checked /> All Ratings</label>
             <label><input type="radio" name="rating" value="4.5" /> ⭐ 4.5+</label>
             <label><input type="radio" name="rating" value="4.0" /> ⭐ 4.0+</label>
           </div>
           <div class="filter-group">
             <h5>Promo</h5>
-            <label><input type="checkbox" id="filterSale" /> Sedang Diskon</label>
-            <label><input type="checkbox" id="filterNew" /> Produk Baru</label>
+            <label><input type="checkbox" id="filterSale" /> On Sale</label>
+            <label><input type="checkbox" id="filterNew" /> New Arrivals</label>
           </div>
           <button class="btn btn-secondary btn-block btn-sm" onclick="resetFilters()">Reset Filter</button>
         </aside>
@@ -58,17 +58,17 @@
         <div>
           <div class="shop-toolbar">
             <div>
-              Menampilkan <strong id="resultCount">0</strong> produk
+              Showing <strong style="color:var(--text)" id="resultCount">0</strong> products
             </div>
             <div style="display:flex; align-items:center; gap:10px;">
-              <span style="font-size:14px; color:var(--text-muted)">Urutkan:</span>
+              <span>Sort by:</span>
               <select id="sortBy">
-                <option value="default">Paling Sesuai</option>
-                <option value="newest">Terbaru</option>
-                <option value="popular">Terlaris</option>
-                <option value="price-asc">Harga Terendah</option>
-                <option value="price-desc">Harga Tertinggi</option>
-                <option value="rating">Rating Tertinggi</option>
+                <option value="default">Most Relevant</option>
+                <option value="newest">Newest</option>
+                <option value="popular">Best Selling</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
               </select>
             </div>
           </div>
@@ -77,9 +77,9 @@
 
           <div id="emptyState" class="empty-state" style="display:none">
             <div class="icon">🔍</div>
-            <h3>Produk Tidak Ditemukan</h3>
-            <p>Coba ubah filter atau kata kunci pencarian Anda</p>
-            <button class="btn btn-primary" onclick="resetFilters()">Reset Filter</button>
+            <h3>No Products Found</h3>
+            <p>Try adjusting your filters or search keywords</p>
+            <button class="btn btn-primary" onclick="resetFilters()">Reset Filters</button>
           </div>
         </div>
       </div>
@@ -117,8 +117,8 @@
       }
       if (search) {
         currentFilter.search = search;
-        document.getElementById('pageTitle').textContent = 'Hasil: "' + search + '"';
-        document.getElementById('pageBreadcrumb').textContent = 'Pencarian';
+        document.getElementById('pageTitle').textContent = 'Search: "' + search + '"';
+        document.getElementById('pageBreadcrumb').textContent = 'Search';
       }
 
       // Listen filter changes
@@ -181,8 +181,8 @@
       document.getElementById('filterSale').checked = false;
       document.getElementById('filterNew').checked = false;
       document.getElementById('sortBy').value = 'default';
-      document.getElementById('pageTitle').textContent = 'Semua Produk';
-      document.getElementById('pageBreadcrumb').textContent = 'Semua Produk';
+      document.getElementById('pageTitle').textContent = 'All Gear';
+      document.getElementById('pageBreadcrumb').textContent = 'All Gear';
       render();
     }
   </script>
