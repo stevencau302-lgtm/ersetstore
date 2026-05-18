@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Produk | ERSET STORE</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="site-header" data-page="products"></div>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 id="prodTitle">Detail Produk</h1>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>›</span>
+        <a href="products.html">Produk</a>
+        <span>›</span>
+        <span id="prodBreadcrumb">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding-top: 0">
+    <div class="container">
+      <div id="productDetail"></div>
+
+      <!-- Related Products -->
+      <div style="margin-top: 64px">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Produk Serupa</h2>
+            <p class="section-subtitle">Mungkin Anda juga suka produk ini</p>
+          </div>
+        </div>
+        <div class="products-grid" id="relatedGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const id = parseInt(new URLSearchParams(window.location.search).get('id'));
+      const p = PRODUCTS.find(x => x.id === id);
+      const container = document.getElementById('productDetail');
+
+      if (!p) {
+        container.innerHTML = `<div class="empty-state"><div class="icon">😕</div><h3>Produk Tidak Ditemukan</h3><p>Produk yang Anda cari tidak tersedia.</p><a href="products.html" class="btn btn-primary">Kembali ke Produk</a></div>`;
+        return;
+      }
+
+      document.title = p.name + ' | ERSET STORE';
+      document.getElementById('prodTitle').textContent = p.name;
+      document.getElementById('prodBreadcrumb').textContent = p.name;
+
+      const discount = p.original ? Math.round((1 - p.price / p.original) * 100) : 0;
+      const inWishlist = Wishlist.has(p.id);
+
+      container.innerHTML = `
+        <div class="product-detail">
+          <div class="product-gallery">
+            <div class="main-image" id="mainImg">${p.emoji}</div>
+            <div class="thumbs">
+              <div class="thumb active">${p.emoji}</div>
+              <div class="thumb">📦</div>
+              <div class="thumb">🎁</div>
+              <div class="thumb">✨</div>
+            </div>
+          </div>
+          <div>
+            <div class="product-category">${p.category.toUpperCase()}</div>
+            <h1>${p.name}</h1>
+            <div class="detail-rating">
+              <span class="stars">★★★★★</span>
+              <strong>${p.rating}</strong>
+              <span>(${p.sold} terjual)</span>
+              <span>•</span>
+              <span style="color: var(--success)">✓ Stok ${p.stock} tersedia</span>
+            </div>
+            <div class="detail-price-row">
+              <span class="current">${formatPrice(p.price)}</span>
+              ${p.original ? `<span class="original">${formatPrice(p.original)}</span>` : ''}
+              ${discount > 0 ? `<span class="discount">-${discount}%</span>` : ''}
+            </div>
+            <p class="detail-desc">${p.desc}</p>
+            <div class="detail-meta">
+              <div class="row"><span>SKU:</span> <span>ERS-${p.id.toString().padStart(4,'0')}</span></div>
+              <div class="row"><span>Kategori:</span> <span>${p.category}</span></div>
+              <div class="row"><span>Pengiriman:</span> <span>1-3 hari kerja</span></div>
+              <div class="row"><span>Garansi:</span> <span>30 hari tukar barang</span></div>
+            </div>
+            <div class="qty-row">
+              <span style="font-weight:600; font-size:14px">Jumlah:</span>
+              <div class="qty-input">
+                <button onclick="changeQty(-1)">−</button>
+                <input type="number" id="qty" value="1" min="1" max="${p.stock}" />
+                <button onclick="changeQty(1)">+</button>
+              </div>
+              <span style="color:var(--text-muted); font-size:13px">${p.stock} tersedia</span>
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-primary btn-lg" onclick="addToCartDetail(${p.id})">
+                🛒 Tambah ke Keranjang
+              </button>
+              <button class="btn btn-secondary btn-lg" onclick="buyNow(${p.id})">
+                ⚡ Beli Sekarang
+              </button>
+              <button class="icon-btn ${inWishlist ? 'active' : ''}" id="wishBtn" data-wishlist="${p.id}" style="border:1.5px solid var(--border); width:48px; height:48px;" aria-label="Wishlist">
+                <svg width="22" height="22" fill="${inWishlist ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="${inWishlist ? 'color:var(--danger)' : ''}"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Thumb selector
+      document.querySelectorAll('.thumb').forEach(t => {
+        t.addEventListener('click', () => {
+          document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          document.getElementById('mainImg').textContent = t.textContent;
+        });
+      });
+
+      // Related products
+      const related = PRODUCTS.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
+      const fillerNeeded = 4 - related.length;
+      const filler = fillerNeeded > 0 ? PRODUCTS.filter(x => x.id !== p.id && !related.includes(x)).slice(0, fillerNeeded) : [];
+      document.getElementById('relatedGrid').innerHTML = [...related, ...filler].map(renderProductCard).join('');
+    });
+
+    function changeQty(delta) {
+      const input = document.getElementById('qty');
+      const max = parseInt(input.max);
+      let v = parseInt(input.value) + delta;
+      if (v < 1) v = 1;
+      if (v > max) v = max;
+      input.value = v;
+    }
+
+    function addToCartDetail(id) {
+      const qty = parseInt(document.getElementById('qty').value) || 1;
+      Cart.add(id, qty);
+    }
+
+    function buyNow(id) {
+      const qty = parseInt(document.getElementById('qty').value) || 1;
+      Cart.add(id, qty);
+      setTimeout(() => window.location.href = 'checkout.html', 600);
+    }
+  </script>
+</body>
+</html>

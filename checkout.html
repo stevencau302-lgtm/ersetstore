@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | ERSET STORE</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <div class="page-header">
+    <div class="container">
+      <h1>💳 Checkout</h1>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>›</span>
+        <a href="cart.html">Keranjang</a>
+        <span>›</span>
+        <span>Checkout</span>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding-top: 0">
+    <div class="container">
+      <div id="checkoutContent"></div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    let selectedShipping = { id: 'reguler', name: 'JNE Reguler', eta: '2-3 hari', price: 15000 };
+    let selectedPayment = 'bca';
+
+    const SHIPPINGS = [
+      { id: 'reguler', name: 'JNE Reguler', eta: '2-3 hari kerja', price: 15000 },
+      { id: 'yes', name: 'JNE YES (Yakin Esok Sampai)', eta: '1 hari kerja', price: 28000 },
+      { id: 'sicepat', name: 'SiCepat REG', eta: '2-3 hari kerja', price: 14000 },
+      { id: 'jnt', name: 'J&T Express', eta: '2-4 hari kerja', price: 13000 },
+      { id: 'ninja', name: 'Ninja Xpress', eta: '2-3 hari kerja', price: 12000 },
+      { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Hari ini, area Jabodetabek', price: 35000 },
+    ];
+
+    const PAYMENTS = [
+      { id: 'bca', icon: '🏦', name: 'BCA Virtual Account', desc: 'Transfer via BCA m-Banking / KlikBCA' },
+      { id: 'mandiri', icon: '🏛️', name: 'Mandiri Virtual Account', desc: 'Transfer via Mandiri Online / Livin' },
+      { id: 'bni', icon: '🏦', name: 'BNI Virtual Account', desc: 'Transfer via BNI Mobile' },
+      { id: 'gopay', icon: '💚', name: 'GoPay', desc: 'Bayar via aplikasi Gojek' },
+      { id: 'ovo', icon: '💜', name: 'OVO', desc: 'Bayar via aplikasi OVO' },
+      { id: 'dana', icon: '💙', name: 'DANA', desc: 'Bayar via aplikasi DANA' },
+      { id: 'qris', icon: '📱', name: 'QRIS', desc: 'Scan QR dari semua e-wallet' },
+      { id: 'cod', icon: '💵', name: 'Cash on Delivery (COD)', desc: 'Bayar di tempat saat barang tiba' },
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const items = Cart.get();
+      if (items.length === 0) {
+        document.getElementById('checkoutContent').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🛒</div>
+            <h3>Keranjang Anda Kosong</h3>
+            <p>Anda belum memiliki produk untuk di-checkout</p>
+            <a href="products.html" class="btn btn-primary">Mulai Belanja</a>
+          </div>
+        `;
+        return;
+      }
+      render();
+    });
+
+    function render() {
+      const items = Cart.get();
+      const subtotal = Cart.total();
+      const shipping = selectedShipping.price;
+      const total = subtotal + shipping;
+
+      document.getElementById('checkoutContent').innerHTML = `
+        <div class="checkout-layout">
+          <form id="checkoutForm" onsubmit="placeOrder(event)">
+            <!-- Step 1: Contact -->
+            <div class="checkout-section">
+              <h3><span class="step-num">1</span> Informasi Kontak</h3>
+              <div class="form-grid">
+                <div class="form-group full">
+                  <label>Nama Lengkap *</label>
+                  <input type="text" required placeholder="John Doe" />
+                </div>
+                <div class="form-group">
+                  <label>Email *</label>
+                  <input type="email" required placeholder="email@contoh.com" />
+                </div>
+                <div class="form-group">
+                  <label>Nomor HP / WhatsApp *</label>
+                  <input type="tel" required placeholder="08xxxxxxxxxx" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Address -->
+            <div class="checkout-section">
+              <h3><span class="step-num">2</span> Alamat Pengiriman</h3>
+              <div class="form-grid">
+                <div class="form-group full">
+                  <label>Alamat Lengkap *</label>
+                  <textarea required placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Provinsi *</label>
+                  <select required>
+                    <option value="">Pilih Provinsi</option>
+                    <option>DKI Jakarta</option>
+                    <option>Jawa Barat</option>
+                    <option>Jawa Tengah</option>
+                    <option>Jawa Timur</option>
+                    <option>DI Yogyakarta</option>
+                    <option>Banten</option>
+                    <option>Bali</option>
+                    <option>Sumatera Utara</option>
+                    <option>Sumatera Selatan</option>
+                    <option>Lainnya</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Kota / Kabupaten *</label>
+                  <input type="text" required placeholder="Jakarta Selatan" />
+                </div>
+                <div class="form-group">
+                  <label>Kecamatan *</label>
+                  <input type="text" required placeholder="Kebayoran Baru" />
+                </div>
+                <div class="form-group">
+                  <label>Kode Pos *</label>
+                  <input type="text" required placeholder="12345" pattern="[0-9]{5}" />
+                </div>
+                <div class="form-group full">
+                  <label>Catatan untuk Kurir (opsional)</label>
+                  <input type="text" placeholder="Patokan, warna pagar, dll." />
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Shipping -->
+            <div class="checkout-section">
+              <h3><span class="step-num">3</span> Metode Pengiriman</h3>
+              <div class="shipping-methods">
+                ${SHIPPINGS.map(s => `
+                  <label class="shipping-method ${selectedShipping.id === s.id ? 'active' : ''}">
+                    <div class="shipping-method-left">
+                      <input type="radio" name="shipping" value="${s.id}" ${selectedShipping.id === s.id ? 'checked' : ''} onchange="selectShipping('${s.id}')" />
+                      <div>
+                        <strong>${s.name}</strong>
+                        <span>Estimasi: ${s.eta}</span>
+                      </div>
+                    </div>
+                    <div class="price">${formatPrice(s.price)}</div>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Step 4: Payment -->
+            <div class="checkout-section">
+              <h3><span class="step-num">4</span> Metode Pembayaran</h3>
+              <div class="payment-methods">
+                ${PAYMENTS.map(pm => `
+                  <label class="payment-method ${selectedPayment === pm.id ? 'active' : ''}">
+                    <input type="radio" name="payment" value="${pm.id}" ${selectedPayment === pm.id ? 'checked' : ''} onchange="selectPayment('${pm.id}')" />
+                    <div class="pm-icon">${pm.icon}</div>
+                    <div class="pm-info">
+                      <strong>${pm.name}</strong>
+                      <span>${pm.desc}</span>
+                    </div>
+                  </label>
+                `).join('')}
+              </div>
+              <div style="background:var(--bg-soft); padding:14px; border-radius:10px; margin-top:16px; font-size:13px; color:var(--text-muted); display:flex; gap:10px;">
+                🔒 <span>Pembayaran Anda 100% aman dengan enkripsi SSL 256-bit. Kami tidak menyimpan data kartu kredit Anda.</span>
+              </div>
+            </div>
+          </form>
+
+          <!-- Summary -->
+          <div class="order-summary">
+            <h3 style="margin-bottom:18px">Ringkasan Pesanan</h3>
+            <div class="order-items">
+              ${items.map(item => {
+                const p = PRODUCTS.find(x => x.id === item.id);
+                return `
+                  <div class="order-item">
+                    <div class="order-item-img">${p.emoji}<span class="qty">${item.qty}</span></div>
+                    <div class="order-item-info">
+                      <h5>${p.name}</h5>
+                      <span>${formatPrice(p.price)} × ${item.qty}</span>
+                    </div>
+                    <div class="order-item-price">${formatPrice(p.price * item.qty)}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span>${formatPrice(subtotal)}</span>
+            </div>
+            <div class="summary-row">
+              <span>${selectedShipping.name}</span>
+              <span>${formatPrice(shipping)}</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total</span>
+              <span class="price">${formatPrice(total)}</span>
+            </div>
+            <button type="submit" form="checkoutForm" class="btn btn-primary btn-block btn-lg" style="margin-top:16px">
+              🔒 Bayar Sekarang
+            </button>
+            <div style="text-align:center; margin-top:14px; font-size:12px; color:var(--text-muted)">
+              Dengan klik Bayar, Anda menyetujui <a href="#" style="color:var(--primary)">S&K</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectShipping(id) {
+      selectedShipping = SHIPPINGS.find(s => s.id === id);
+      render();
+    }
+
+    function selectPayment(id) {
+      selectedPayment = id;
+      render();
+    }
+
+    function placeOrder(e) {
+      e.preventDefault();
+      // Simulate order
+      const orderId = 'ERS-' + Date.now().toString().slice(-8);
+      const total = Cart.total() + selectedShipping.price;
+      const orderData = {
+        id: orderId,
+        total: total,
+        shipping: selectedShipping,
+        payment: PAYMENTS.find(p => p.id === selectedPayment),
+        items: Cart.get().length,
+        date: new Date().toISOString()
+      };
+      localStorage.setItem('erset_last_order', JSON.stringify(orderData));
+      Cart.clear();
+      window.location.href = 'success.html?order=' + orderId;
+    }
+  </script>
+</body>
+</html>
