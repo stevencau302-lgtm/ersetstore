@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock, ShoppingCart, ShieldCheck, User, MapPin, Truck, CreditCard, ChevronRight,
+  Landmark, Zap, Banknote,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { cartActions, orderActions, useCart } from '../lib/cart';
@@ -22,22 +23,22 @@ const SHIPPINGS: ShippingMethod[] = [
 interface PaymentGroup {
   id: string;
   label: string;
-  icon: string;
+  iconName: string;
   desc: string;
   methods: string[];
 }
 
 const PAYMENT_GROUPS: PaymentGroup[] = [
-  { id: 'bank', label: 'Transfer Bank', icon: '🏦', desc: 'BCA, BNI, Mandiri, BRI', methods: ['BCA', 'BNI', 'Mandiri', 'BRI'] },
-  { id: 'ewallet', label: 'E-Wallet', icon: '⚡', desc: 'GoPay, OVO, DANA, ShopeePay', methods: ['GoPay', 'OVO', 'DANA', 'ShopeePay'] },
-  { id: 'cod', label: 'COD', icon: '💵', desc: 'Bayar di tempat', methods: ['Cash on Delivery'] },
+  { id: 'bank', label: 'Transfer Bank', iconName: 'landmark', desc: 'BCA, BNI, Mandiri, BRI', methods: ['BCA', 'BNI', 'Mandiri', 'BRI'] },
+  { id: 'ewallet', label: 'E-Wallet', iconName: 'zap', desc: 'GoPay, OVO, DANA, ShopeePay', methods: ['GoPay', 'OVO', 'DANA', 'ShopeePay'] },
+  { id: 'cod', label: 'COD', iconName: 'banknote', desc: 'Bayar di tempat', methods: ['Cash on Delivery'] },
 ];
 
 // Keep for order data
 const PAYMENTS: PaymentMethod[] = [
-  { id: 'bank', icon: '🏦', name: 'Transfer Bank', desc: 'BCA, BNI, Mandiri, BRI' },
-  { id: 'ewallet', icon: '⚡', name: 'E-Wallet', desc: 'GoPay, OVO, DANA, ShopeePay' },
-  { id: 'cod', icon: '💵', name: 'COD', desc: 'Bayar di tempat' },
+  { id: 'bank', icon: 'landmark', name: 'Transfer Bank', desc: 'BCA, BNI, Mandiri, BRI' },
+  { id: 'ewallet', icon: 'zap', name: 'E-Wallet', desc: 'GoPay, OVO, DANA, ShopeePay' },
+  { id: 'cod', icon: 'banknote', name: 'COD', desc: 'Bayar di tempat' },
 ];
 
 export default function Checkout() {
@@ -181,30 +182,33 @@ export default function Checkout() {
             {/* Step 4: Payment - Style sesuai web asli */}
             <Section step={4} title="Metode Pembayaran" icon={CreditCard}>
               <div className="grid gap-3">
-                {PAYMENT_GROUPS.map((group) => (
-                  <label
-                    key={group.id}
-                    className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                      paymentId === group.id
-                        ? 'border-brand-500 bg-brand-50/50 shadow-sm'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      value={group.id}
-                      checked={paymentId === group.id}
-                      onChange={() => setPaymentId(group.id)}
-                      className="size-5 accent-brand-500"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <strong className="block text-base text-gray-900">{group.label}</strong>
-                      <span className="text-sm text-gray-500">{group.desc}</span>
-                    </div>
-                    <span className="text-2xl">{group.icon}</span>
-                  </label>
-                ))}
+                {PAYMENT_GROUPS.map((group) => {
+                  const IconComp = group.iconName === 'landmark' ? Landmark : group.iconName === 'zap' ? Zap : Banknote;
+                  return (
+                    <label
+                      key={group.id}
+                      className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                        paymentId === group.id
+                          ? 'border-brand-500 bg-brand-50/50 shadow-sm'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="payment"
+                        value={group.id}
+                        checked={paymentId === group.id}
+                        onChange={() => setPaymentId(group.id)}
+                        className="size-5 accent-brand-500"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <strong className="block text-base text-gray-900">{group.label}</strong>
+                        <span className="text-sm text-gray-500">{group.desc}</span>
+                      </div>
+                      <IconComp className="size-5 text-brand-500" />
+                    </label>
+                  );
+                })}
               </div>
 
               {/* Catatan pesanan */}
