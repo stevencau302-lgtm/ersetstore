@@ -23,9 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - run: npm ci
+      - run: npm install
       - run: npm run build
 
       # SPA fallback for GitHub Pages: copy index.html as 404.html
