@@ -51,7 +51,7 @@ export default function Header() {
             </div>
             <div className="leading-tight">
               <div className="text-lg font-extrabold text-gray-900 tracking-tight">Erset Store</div>
-              <div className="text-[10px] font-semibold text-brand-500 tracking-[2px] uppercase">Produk Import</div>
+              <div className="text-[10px] font-semibold text-brand-500 tracking-[2px] uppercase">Produk Lengkap & Unik</div>
             </div>
           </Link>
 

@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import {
-  Truck, Headphones, ShieldCheck, BadgeCheck, ArrowRight, Flame, Sparkles,
+  Truck, Headphones, ShieldCheck, BadgeCheck, ArrowRight, Sparkles,
   Package, Zap, CheckCircle2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { CATEGORIES } from '../data/categories';
-import { PRODUCTS, getCategoryCount } from '../data/products';
+import { PRODUCTS } from '../data/products';
 import ProductCard from '../components/ProductCard';
 import SectionHead from '../components/SectionHead';
 import { toast } from '../lib/toast';
@@ -27,30 +26,24 @@ export default function Home() {
 
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-24 relative">
           <div className="animate-slide-up">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 text-sm font-medium mb-6">
-              <span className="size-2 bg-amber-400 rounded-full animate-pulse-soft" />
-              <Flame className="size-4 text-amber-400" />
-              <span>Flash Sale Hari Ini - Diskon hingga 70%</span>
-            </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6 text-gray-100">
-              Pusat Belanja{' '}
+              Semua yang Kamu{' '}
               <span className="bg-gradient-to-r from-brand-500 to-amber-400 bg-clip-text text-transparent">
-                Produk Import
-              </span>{' '}
-              Terlengkap
+                Butuhkan
+              </span>
+              , Ada di Sini
             </h1>
             <p className="text-lg text-gray-300/90 max-w-xl mb-8 leading-relaxed">
-              Aksesoris gadget, audio, homeware, otomotif, outdoor kit, tools, hobby, dan toys.
-              Ratusan produk unik pilihan dengan harga hemat. Update setiap hari!
+              Gadget, audio, homeware, tools, hobby & masih banyak lagi — produk pilihan dengan harga terbaik, update setiap hari!
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to="/produk" className="btn btn-primary btn-lg">
-                Belanja Sekarang
+                Mulai Belanja
                 <ArrowRight className="size-4" />
               </Link>
-              <a href="#kategori" className="btn btn-lg border-2 border-white/20 text-white hover:bg-white hover:text-gray-900 transition-colors">
-                Lihat Kategori
-              </a>
+              <Link to="/produk" className="btn btn-lg border-2 border-white/20 text-white hover:bg-white hover:text-gray-900 transition-colors">
+                Lihat Produk
+              </Link>
             </div>
 
             {/* Stats */}
@@ -127,35 +120,6 @@ export default function Home() {
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* CATEGORIES */}
-      <section id="kategori" className="py-16">
-        <div className="container-x">
-          <SectionHead
-            tag="Kategori"
-            title="Belanja per Kategori"
-            subtitle="Temukan produk favoritmu dari berbagai kategori pilihan"
-            linkTo="/produk"
-          />
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {CATEGORIES.map((c) => (
-              <Link
-                key={c.id}
-                to={`/produk?kategori=${c.id}`}
-                className="card p-5 text-center hover:border-brand-500 hover:-translate-y-1"
-              >
-                <div className="size-14 mx-auto mb-3 grid place-items-center bg-gradient-to-br from-brand-50 to-white border border-gray-100 rounded-2xl text-3xl group-hover:scale-110 transition-transform">
-                  {c.emoji}
-                </div>
-                <h4 className="text-sm font-bold text-gray-900 mb-0.5">{c.name}</h4>
-                <span className="text-[11px] text-gray-500 uppercase tracking-wider">
-                  {getCategoryCount(c.id)} produk
-                </span>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
