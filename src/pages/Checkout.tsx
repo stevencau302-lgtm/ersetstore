@@ -18,21 +18,32 @@ const SHIPPINGS: ShippingMethod[] = [
   { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Hari ini, area Jabodetabek', price: 35000 },
 ];
 
+// Grouped payment methods (sesuai web asli)
+interface PaymentGroup {
+  id: string;
+  label: string;
+  icon: string;
+  desc: string;
+  methods: string[];
+}
+
+const PAYMENT_GROUPS: PaymentGroup[] = [
+  { id: 'bank', label: 'Transfer Bank', icon: '🏦', desc: 'BCA, BNI, Mandiri, BRI', methods: ['BCA', 'BNI', 'Mandiri', 'BRI'] },
+  { id: 'ewallet', label: 'E-Wallet', icon: '⚡', desc: 'GoPay, OVO, DANA, ShopeePay', methods: ['GoPay', 'OVO', 'DANA', 'ShopeePay'] },
+  { id: 'cod', label: 'COD', icon: '💵', desc: 'Bayar di tempat', methods: ['Cash on Delivery'] },
+];
+
+// Keep for order data
 const PAYMENTS: PaymentMethod[] = [
-  { id: 'bca', icon: '🏦', name: 'BCA Virtual Account', desc: 'Transfer via BCA m-Banking / KlikBCA' },
-  { id: 'mandiri', icon: '🏛️', name: 'Mandiri Virtual Account', desc: 'Transfer via Mandiri Online / Livin' },
-  { id: 'bni', icon: '🏦', name: 'BNI Virtual Account', desc: 'Transfer via BNI Mobile' },
-  { id: 'gopay', icon: '💚', name: 'GoPay', desc: 'Bayar via aplikasi Gojek' },
-  { id: 'ovo', icon: '💜', name: 'OVO', desc: 'Bayar via aplikasi OVO' },
-  { id: 'dana', icon: '💙', name: 'DANA', desc: 'Bayar via aplikasi DANA' },
-  { id: 'qris', icon: '📱', name: 'QRIS', desc: 'Scan QR dari semua e-wallet' },
-  { id: 'cod', icon: '💵', name: 'Cash on Delivery (COD)', desc: 'Bayar di tempat saat barang tiba' },
+  { id: 'bank', icon: '🏦', name: 'Transfer Bank', desc: 'BCA, BNI, Mandiri, BRI' },
+  { id: 'ewallet', icon: '⚡', name: 'E-Wallet', desc: 'GoPay, OVO, DANA, ShopeePay' },
+  { id: 'cod', icon: '💵', name: 'COD', desc: 'Bayar di tempat' },
 ];
 
 export default function Checkout() {
   const { items, count, subtotal } = useCart();
   const [shippingId, setShippingId] = useState('reguler');
-  const [paymentId, setPaymentId] = useState('bca');
+  const [paymentId, setPaymentId] = useState('bank');
   const navigate = useNavigate();
 
   const breadcrumb = [
@@ -167,34 +178,47 @@ export default function Checkout() {
               </div>
             </Section>
 
-            {/* Step 4: Payment */}
+            {/* Step 4: Payment - Style sesuai web asli */}
             <Section step={4} title="Metode Pembayaran" icon={CreditCard}>
-              <div className="grid gap-2.5">
-                {PAYMENTS.map((pm) => (
+              <div className="grid gap-3">
+                {PAYMENT_GROUPS.map((group) => (
                   <label
-                    key={pm.id}
-                    className={`flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                      paymentId === pm.id
-                        ? 'border-brand-500 bg-brand-50/50'
+                    key={group.id}
+                    className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      paymentId === group.id
+                        ? 'border-brand-500 bg-brand-50/50 shadow-sm'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <input
                       type="radio"
                       name="payment"
-                      value={pm.id}
-                      checked={paymentId === pm.id}
-                      onChange={() => setPaymentId(pm.id)}
-                      className="size-4 accent-brand-500"
+                      value={group.id}
+                      checked={paymentId === group.id}
+                      onChange={() => setPaymentId(group.id)}
+                      className="size-5 accent-brand-500"
                     />
-                    <span className="text-2xl">{pm.icon}</span>
-                    <div className="min-w-0">
-                      <strong className="block text-sm text-gray-900">{pm.name}</strong>
-                      <span className="text-xs text-gray-500">{pm.desc}</span>
+                    <div className="flex-1 min-w-0">
+                      <strong className="block text-base text-gray-900">{group.label}</strong>
+                      <span className="text-sm text-gray-500">{group.desc}</span>
                     </div>
+                    <span className="text-2xl">{group.icon}</span>
                   </label>
                 ))}
               </div>
+
+              {/* Catatan pesanan */}
+              <div className="mt-5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                  Catatan untuk pesanan (opsional)
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Catatan untuk pesanan (opsional)"
+                  className="input resize-y"
+                />
+              </div>
+
               <div className="mt-4 flex items-start gap-3 bg-emerald-50 text-emerald-800 rounded-xl p-4 text-xs">
                 <ShieldCheck className="size-5 shrink-0" />
                 <span>
