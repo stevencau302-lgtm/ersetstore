@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import ProductCard from '../components/ProductCard';
+import CountdownTimer, { getEndOfDay } from '../components/CountdownTimer';
 import { findProduct, PRODUCTS } from '../data/products';
 import { formatPrice, calcDiscount } from '../lib/format';
 import { cartActions, useWishlist, wishlistActions } from '../lib/cart';
@@ -136,6 +137,33 @@ export default function ProductDetail() {
                 </>
               )}
             </div>
+
+            {/* Flash Sale Box - muncul kalau produk lagi flash sale */}
+            {product.badge === 'sale' && (
+              <div className="border-2 border-brand-500 rounded-xl p-4 mb-5 bg-brand-50/30">
+                <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <Zap className="size-4 text-brand-500 fill-brand-500" />
+                    <span className="text-sm font-bold text-brand-500 uppercase tracking-wide">Flash Sale</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                    <span>Berakhir dalam</span>
+                    <CountdownTimer targetTime={getEndOfDay()} size="sm" />
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-2xl font-extrabold text-brand-500">{formatPrice(product.price)}</span>
+                  {product.original && (
+                    <>
+                      <span className="text-sm text-gray-400 line-through">{formatPrice(product.original)}</span>
+                      <span className="bg-red-500 text-white px-2 py-0.5 rounded text-xs font-bold">
+                        Hemat {formatPrice(product.original - product.price)}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
 
             <p className="text-gray-600 leading-relaxed mb-6">{product.desc}</p>
 

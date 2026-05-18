@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Zap, ArrowRight, Star } from 'lucide-react';
+import { Zap, ArrowRight } from 'lucide-react';
 import CountdownTimer, { getEndOfDay } from './CountdownTimer';
 import { PRODUCTS } from '../data/products';
 import { formatPrice, calcDiscount } from '../lib/format';
-import { cartActions } from '../lib/cart';
-import { toast } from '../lib/toast';
 
 export default function FlashSaleSection() {
   const flashProducts = PRODUCTS.filter((p) => p.badge === 'sale').slice(0, 8);
@@ -13,30 +11,30 @@ export default function FlashSaleSection() {
   return (
     <section className="py-8">
       <div className="container-x">
-        {/* Header - Shopee/Tokopedia style */}
-        <div className="bg-gradient-to-r from-brand-500 via-orange-500 to-red-500 rounded-2xl p-4 sm:p-5 mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        {/* Header - Clean & Modern */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="size-10 bg-white/20 backdrop-blur-md rounded-xl grid place-items-center">
+            <div className="size-10 bg-brand-500 rounded-xl grid place-items-center">
               <Zap className="size-5 text-white fill-white" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">
                 Flash Sale
               </h2>
-              <p className="text-white/80 text-xs sm:text-sm">Berakhir dalam</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-xs text-gray-500">Berakhir dalam</span>
+                <CountdownTimer targetTime={endTime} size="sm" />
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <CountdownTimer targetTime={endTime} size="md" />
-            <Link
-              to="/produk?promo=sale"
-              className="hidden sm:inline-flex items-center gap-1.5 bg-white text-brand-500 font-bold text-sm px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"
-            >
-              Lihat Semua
-              <ArrowRight className="size-4" />
-            </Link>
-          </div>
+          <Link
+            to="/produk?promo=sale"
+            className="hidden sm:inline-flex items-center gap-1.5 text-brand-500 font-bold text-sm hover:gap-2.5 transition-all"
+          >
+            Lihat Semua
+            <ArrowRight className="size-4" />
+          </Link>
         </div>
 
         {/* Product Grid */}
