@@ -7,10 +7,10 @@ import { useState } from 'react';
 import { PRODUCTS } from '../data/products';
 import ProductCard from '../components/ProductCard';
 import SectionHead from '../components/SectionHead';
+import FlashSaleSection from '../components/FlashSaleSection';
 import { toast } from '../lib/toast';
 
 export default function Home() {
-  const flashSale = PRODUCTS.filter((p) => p.badge === 'sale').slice(0, 8);
   const newest = [
     ...PRODUCTS.filter((p) => p.badge === 'new'),
     ...PRODUCTS.filter((p) => p.badge !== 'new'),
@@ -124,21 +124,7 @@ export default function Home() {
       </section>
 
       {/* FLASH SALE */}
-      <section id="flash-sale" className="pb-16">
-        <div className="container-x">
-          <SectionHead
-            tag="⚡ Waktu Terbatas"
-            title="Flash Sale Hari Ini"
-            subtitle="Diskon spesial untuk produk pilihan terbatas"
-            linkTo="/produk?promo=sale"
-          />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {flashSale.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <FlashSaleSection />
 
       {/* BANNER CTA */}
       <section className="pb-16">
