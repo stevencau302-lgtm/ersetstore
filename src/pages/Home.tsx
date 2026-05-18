@@ -32,14 +32,14 @@ export default function Home() {
               <Flame className="size-4 text-amber-400" />
               <span>Flash Sale Hari Ini - Diskon hingga 70%</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6 text-gray-100">
               Pusat Belanja{' '}
               <span className="bg-gradient-to-r from-brand-500 to-amber-400 bg-clip-text text-transparent">
                 Produk Import
               </span>{' '}
               Terlengkap
             </h1>
-            <p className="text-lg text-gray-200/90 max-w-xl mb-8 leading-relaxed">
+            <p className="text-lg text-gray-300/90 max-w-xl mb-8 leading-relaxed">
               Aksesoris gadget, audio, homeware, otomotif, outdoor kit, tools, hobby, dan toys.
               Ratusan produk unik pilihan dengan harga hemat. Update setiap hari!
             </p>
