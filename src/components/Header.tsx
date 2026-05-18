@@ -1,15 +1,15 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
-  Search, Heart, User, ShoppingCart, Menu, X, Flame, Truck,
+  Search, Heart, User, ShoppingCart, Menu, X, Truck,
 } from 'lucide-react';
 import { useCart } from '../lib/cart';
-import { CATEGORIES } from '../data/categories';
 
 const NAV_LINKS = [
   { to: '/', label: 'Beranda', exact: true },
   { to: '/produk', label: 'Semua Produk' },
-  ...CATEGORIES.map((c) => ({ to: `/produk?kategori=${c.id}`, label: c.name })),
+  { to: '/produk?promo=sale', label: 'Flash Sale' },
+  { to: '/produk?promo=new', label: 'Produk Baru' },
 ];
 
 export default function Header() {
@@ -112,13 +112,6 @@ export default function Header() {
                 {link.label}
               </NavLink>
             ))}
-            <a
-              href="#flash-sale"
-              className="ml-auto whitespace-nowrap px-3 py-2.5 text-sm font-bold text-amber-600 hover:bg-amber-50 rounded-lg flex items-center gap-1.5"
-            >
-              <Flame className="size-4" />
-              Flash Sale
-            </a>
           </div>
         </nav>
 

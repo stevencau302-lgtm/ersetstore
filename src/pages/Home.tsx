@@ -21,9 +21,9 @@ export default function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-brand-700 text-white">
-        <div className="absolute -top-32 -right-20 size-[600px] bg-brand-500/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-20 size-[500px] bg-amber-500/15 rounded-full blur-3xl" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#1e2a3a] via-[#1a2332] to-[#2d1f1f] text-white">
+        <div className="absolute -top-32 -right-20 size-[600px] bg-brand-500/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-20 size-[500px] bg-amber-500/10 rounded-full blur-3xl" />
 
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-24 relative">
           <div className="animate-slide-up">
