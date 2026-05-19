@@ -43,8 +43,8 @@ export default function Success() {
         </div>
 
         {/* Order Summary Card */}
-        <div className="bg-gray-900 text-white rounded-2xl p-5 sm:p-6">
-          <div className="text-xs font-bold uppercase tracking-[2px] text-gray-400 mb-2">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div className="text-xs font-bold uppercase tracking-[2px] text-gray-500 mb-2">
             Nomor Pesanan
           </div>
           <div className="flex items-center gap-3 mb-3">
@@ -54,13 +54,13 @@ export default function Success() {
             <CopyButton text={orderId} />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-sm text-gray-400">Total Tagihan:</span>
-            <span className="text-xl font-extrabold text-white">
+            <span className="text-sm text-gray-500">Total Tagihan:</span>
+            <span className="text-xl font-extrabold text-gray-900">
               {formatPrice(order?.total || 0)}
             </span>
           </div>
           {order?.date && (
-            <div className="text-xs text-gray-500 mt-2">{formatDate(order.date)}</div>
+            <div className="text-xs text-gray-400 mt-2">{formatDate(order.date)}</div>
           )}
         </div>
 
