@@ -20,7 +20,7 @@ export default function Footer() {
             </div>
           </Link>
           <p className="text-sm leading-relaxed mb-5">
-            Pusat belanja produk import berkualitas dengan harga hemat. Update produk unik setiap hari, dikirim cepat ke seluruh Indonesia.
+            Toko online terpercaya untuk gadget, audio, homeware, otomotif, tools, dan hobby. Produk berkualitas dengan harga terbaik, pengiriman cepat ke seluruh Indonesia.
           </p>
           <div className="flex gap-2">
             {[
