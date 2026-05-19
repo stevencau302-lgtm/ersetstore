@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// GitHub Pages base path. Repo: stevencau302-lgtm/ersetstore
+// Use '/ersetstore/' for GitHub Pages, '/' for Vercel/custom domain
+const base = process.env.GITHUB_ACTIONS ? '/ersetstore/' : '/';
+
 export default defineConfig({
   plugins: [react()],
-  base: '/ersetstore/',
+  base,
 });
