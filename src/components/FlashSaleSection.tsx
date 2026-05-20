@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Zap, ArrowRight } from 'lucide-react';
 import CountdownTimer, { getEndOfDay } from './CountdownTimer';
-import { PRODUCTS } from '../data/products';
+import { useProducts } from '../lib/useProducts';
 import { formatPrice, calcDiscount } from '../lib/format';
 
 export default function FlashSaleSection() {
+  const { products: PRODUCTS } = useProducts();
   const flashProducts = PRODUCTS.filter((p) => p.badge === 'sale').slice(0, 8);
   const endTime = getEndOfDay();
 

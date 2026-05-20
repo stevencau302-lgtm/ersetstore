@@ -1,9 +1,10 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
-  Search, Heart, User, ShoppingCart, Menu, X, Truck,
+  Search, Heart, ShoppingCart, Menu, X, Truck, LogOut, LogIn,
 } from 'lucide-react';
 import { useCart } from '../lib/cart';
+import { useAuth } from '../contexts/AuthContext';
 
 const NAV_LINKS = [
   { to: '/', label: 'Beranda', exact: true },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 
 export default function Header() {
   const { count } = useCart();
+  const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
@@ -22,6 +24,11 @@ export default function Header() {
     e.preventDefault();
     const q = query.trim();
     if (q) navigate(`/produk?cari=${encodeURIComponent(q)}`);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   return (
@@ -72,9 +79,15 @@ export default function Header() {
             <Link to="/produk" aria-label="Wishlist" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
               <Heart className="size-5" />
             </Link>
-            <button aria-label="Akun" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
-              <User className="size-5" />
-            </button>
+            {user ? (
+              <button onClick={handleSignOut} aria-label="Keluar" title="Keluar" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-red-500 hover:bg-gray-50 transition-colors">
+                <LogOut className="size-5" />
+              </button>
+            ) : (
+              <Link to="/masuk" aria-label="Masuk" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+                <LogIn className="size-5" />
+              </Link>
+            )}
             <Link to="/keranjang" aria-label="Keranjang" className="relative size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
               <ShoppingCart className="size-5" />
               {count > 0 && (
@@ -139,6 +152,27 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <div className="border-t border-gray-100 mt-2 pt-2">
+                {user ? (
+                  <>
+                    <div className="px-3 py-2 text-xs text-gray-500">{user.email}</div>
+                    <button
+                      onClick={() => { handleSignOut(); setMenuOpen(false); }}
+                      className="px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-gray-50 rounded-lg w-full text-left flex items-center gap-2"
+                    >
+                      <LogOut className="size-4" /> Keluar
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/masuk"
+                    onClick={() => setMenuOpen(false)}
+                    className="px-3 py-2.5 text-sm font-medium text-brand-500 hover:bg-gray-50 rounded-lg flex items-center gap-2"
+                  >
+                    <LogIn className="size-4" /> Masuk / Daftar
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         )}

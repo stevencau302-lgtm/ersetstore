@@ -4,13 +4,14 @@ import {
   Package, Zap, CheckCircle2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { PRODUCTS } from '../data/products';
+import { useProducts } from '../lib/useProducts';
 import ProductCard from '../components/ProductCard';
 import SectionHead from '../components/SectionHead';
 import FlashSaleSection from '../components/FlashSaleSection';
 import { toast } from '../lib/toast';
 
 export default function Home() {
+  const { products: PRODUCTS } = useProducts();
   const newest = [
     ...PRODUCTS.filter((p) => p.badge === 'new'),
     ...PRODUCTS.filter((p) => p.badge !== 'new'),

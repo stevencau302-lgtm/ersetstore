@@ -8,7 +8,8 @@ import {
 import PageHeader from '../components/PageHeader';
 import ProductCard from '../components/ProductCard';
 import CountdownTimer, { getEndOfDay } from '../components/CountdownTimer';
-import { findProduct, PRODUCTS } from '../data/products';
+import { findProduct } from '../data/products';
+import { useProducts } from '../lib/useProducts';
 import { formatPrice, calcDiscount } from '../lib/format';
 import { cartActions, useWishlist, wishlistActions } from '../lib/cart';
 import { toast } from '../lib/toast';
@@ -17,7 +18,8 @@ import SectionHead from '../components/SectionHead';
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = findProduct(Number(id));
+  const { products: allProducts } = useProducts();
+  const product = allProducts.find(p => p.id === Number(id)) || findProduct(Number(id));
 
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
@@ -43,10 +45,10 @@ export default function ProductDetail() {
   const discount = calcDiscount(product.price, product.original);
   const thumbs = [product.emoji, '📦', '🎁', '✨'];
 
-  const related = PRODUCTS.filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
+  const related = allProducts.filter((x) => x.category === product.category && x.id !== product.id).slice(0, 4);
   const fillerNeeded = 4 - related.length;
   const filler = fillerNeeded > 0
-    ? PRODUCTS.filter((x) => x.id !== product.id && !related.includes(x)).slice(0, fillerNeeded)
+    ? allProducts.filter((x) => x.id !== product.id && !related.includes(x)).slice(0, fillerNeeded)
     : [];
   const relatedList = [...related, ...filler];
 

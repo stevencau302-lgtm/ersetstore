@@ -9,7 +9,10 @@ import Success from './pages/Success';
 import Info from './pages/Info';
 import About from './pages/About';
 import Legal from './pages/Legal';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
@@ -19,8 +22,14 @@ export default function App() {
         <Route path="/produk" element={<Products />} />
         <Route path="/produk/:id" element={<ProductDetail />} />
         <Route path="/keranjang" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        } />
         <Route path="/sukses" element={<Success />} />
+        <Route path="/masuk" element={<Login />} />
+        <Route path="/daftar" element={<Register />} />
         <Route path="/bantuan" element={<Info />} />
         <Route path="/tentang" element={<About />} />
         <Route path="/halaman/:slug" element={<Legal />} />

@@ -4,7 +4,8 @@ import { Filter, X, RotateCcw, SearchX } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import ProductCard from '../components/ProductCard';
 import { CATEGORIES } from '../data/categories';
-import { PRODUCTS, getCategoryCount } from '../data/products';
+import { useProducts } from '../lib/useProducts';
+import { getCategoryCount } from '../data/products';
 
 const PRICE_RANGES: { id: string; label: string; min: number; max: number }[] = [
   { id: 'all', label: 'Semua Harga', min: 0, max: Infinity },
@@ -27,6 +28,7 @@ const SORT_OPTIONS = [
 export default function Products() {
   const [params, setParams] = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { products: PRODUCTS } = useProducts();
 
   const category = params.get('kategori') || 'all';
   const priceRange = params.get('harga') || 'all';

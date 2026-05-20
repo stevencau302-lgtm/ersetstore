@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock, ShoppingCart, ShieldCheck, User, MapPin, Truck, CreditCard, ChevronRight,
-  Landmark, Zap, Banknote,
+  Landmark, Zap, Banknote, Loader2,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { cartActions, orderActions, useCart } from '../lib/cart';
 import { findProduct } from '../data/products';
 import { formatPrice } from '../lib/format';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { OrderData, PaymentMethod, ShippingMethod } from '../types';
 
 const SHIPPINGS: ShippingMethod[] = [
@@ -43,8 +45,11 @@ const PAYMENTS: PaymentMethod[] = [
 
 export default function Checkout() {
   const { items, count, subtotal } = useCart();
+  const { user } = useAuth();
   const [shippingId, setShippingId] = useState('reguler');
   const [paymentId, setPaymentId] = useState('bank');
+  const [submitting, setSubmitting] = useState(false);
+  const [orderError, setOrderError] = useState('');
   const navigate = useNavigate();
 
   const breadcrumb = [
@@ -73,9 +78,49 @@ export default function Checkout() {
   const payment = PAYMENTS.find((p) => p.id === paymentId)!;
   const total = subtotal + shipping.price;
 
-  const placeOrder = (e: React.FormEvent) => {
+  const placeOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setOrderError('');
+
     const orderId = 'ERS-' + Date.now().toString().slice(-8);
+
+    // Build items array for Supabase
+    const orderItems = items.map((item) => {
+      const p = findProduct(item.id);
+      return {
+        product_id: item.id,
+        product_name: p?.name || 'Unknown',
+        qty: item.qty,
+        price: p?.price || 0,
+      };
+    });
+
+    // Get form data
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const shippingName = (formData.get('fullname') as string) || '';
+    const shippingPhone = (formData.get('phone') as string) || '';
+    const shippingAddress = (formData.get('address') as string) || '';
+
+    // Insert order to Supabase
+    const { error: insertError } = await supabase.from('orders').insert({
+      user_id: user!.id,
+      items: orderItems,
+      total,
+      status: 'pending',
+      shipping_name: shippingName,
+      shipping_address: shippingAddress,
+      shipping_phone: shippingPhone,
+    });
+
+    if (insertError) {
+      setOrderError('Gagal membuat pesanan: ' + insertError.message);
+      setSubmitting(false);
+      return;
+    }
+
+    // Also save locally for success page display
     const order: OrderData = {
       id: orderId,
       total,
@@ -100,13 +145,13 @@ export default function Checkout() {
             <Section step={1} title="Informasi Kontak" icon={User}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Nama Lengkap *" className="sm:col-span-2">
-                  <input type="text" required placeholder="John Doe" className="input" />
+                  <input type="text" name="fullname" required placeholder="John Doe" className="input" />
                 </Field>
                 <Field label="Email *">
-                  <input type="email" required placeholder="email@contoh.com" className="input" />
+                  <input type="email" required placeholder="email@contoh.com" className="input" defaultValue={user?.email || ''} />
                 </Field>
                 <Field label="Nomor HP / WhatsApp *">
-                  <input type="tel" required placeholder="08xxxxxxxxxx" className="input" />
+                  <input type="tel" name="phone" required placeholder="08xxxxxxxxxx" className="input" />
                 </Field>
               </div>
             </Section>
@@ -115,7 +160,7 @@ export default function Checkout() {
             <Section step={2} title="Alamat Pengiriman" icon={MapPin}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Alamat Lengkap *" className="sm:col-span-2">
-                  <textarea required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..." className="input resize-y" />
+                  <textarea name="address" required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..." className="input resize-y" />
                 </Field>
                 <Field label="Provinsi *">
                   <select required className="input" defaultValue="">
@@ -278,10 +323,16 @@ export default function Checkout() {
               <span className="text-2xl font-extrabold text-brand-500">{formatPrice(total)}</span>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-lg w-full mt-5">
-              <Lock className="size-4" />
-              Bayar Sekarang
+            <button type="submit" disabled={submitting} className="btn btn-primary btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed">
+              {submitting ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
+              {submitting ? 'Memproses...' : 'Bayar Sekarang'}
             </button>
+
+            {orderError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-600 mt-3">
+                {orderError}
+              </div>
+            )}
 
             <p className="text-center text-[11px] text-gray-500 mt-3 px-2">
               Dengan klik Bayar, kamu menyetujui{' '}
