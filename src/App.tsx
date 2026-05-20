@@ -11,6 +11,7 @@ import About from './pages/About';
 import Legal from './pages/Legal';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Akun from './pages/Akun';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -30,6 +31,11 @@ export default function App() {
         <Route path="/sukses" element={<Success />} />
         <Route path="/masuk" element={<Login />} />
         <Route path="/daftar" element={<Register />} />
+        <Route path="/akun" element={
+          <ProtectedRoute>
+            <Akun />
+          </ProtectedRoute>
+        } />
         <Route path="/bantuan" element={<Info />} />
         <Route path="/tentang" element={<About />} />
         <Route path="/halaman/:slug" element={<Legal />} />

@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
-  Search, Heart, ShoppingCart, Menu, X, Truck, LogOut, LogIn,
+  Search, Heart, User, ShoppingCart, Menu, X, Truck, LogOut, LogIn,
 } from 'lucide-react';
 import { useCart } from '../lib/cart';
 import { useAuth } from '../contexts/AuthContext';
@@ -80,9 +80,9 @@ export default function Header() {
               <Heart className="size-5" />
             </Link>
             {user ? (
-              <button onClick={handleSignOut} aria-label="Keluar" title="Keluar" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-red-500 hover:bg-gray-50 transition-colors">
-                <LogOut className="size-5" />
-              </button>
+              <Link to="/akun" aria-label="Akun Saya" title="Akun Saya" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+                <User className="size-5" />
+              </Link>
             ) : (
               <Link to="/masuk" aria-label="Masuk" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
                 <LogIn className="size-5" />
@@ -155,7 +155,13 @@ export default function Header() {
               <div className="border-t border-gray-100 mt-2 pt-2">
                 {user ? (
                   <>
-                    <div className="px-3 py-2 text-xs text-gray-500">{user.email}</div>
+                    <Link
+                      to="/akun"
+                      onClick={() => setMenuOpen(false)}
+                      className="px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2"
+                    >
+                      <User className="size-4" /> Akun Saya
+                    </Link>
                     <button
                       onClick={() => { handleSignOut(); setMenuOpen(false); }}
                       className="px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-gray-50 rounded-lg w-full text-left flex items-center gap-2"
