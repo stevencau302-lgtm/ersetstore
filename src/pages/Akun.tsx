@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   User, Package, ShoppingBag, LogOut, Clock, CheckCircle2, Truck, Loader2,
+  MapPin, Save, Pencil, X,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,6 +20,12 @@ interface Order {
   created_at: string;
 }
 
+interface SavedAddress {
+  name: string;
+  phone: string;
+  address: string;
+}
+
 const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   pending: { label: 'Menunggu Pembayaran', color: 'text-amber-600 bg-amber-50', icon: Clock },
   processing: { label: 'Sedang Diproses', color: 'text-blue-600 bg-blue-50', icon: Package },
@@ -26,10 +33,28 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof Cl
   done: { label: 'Selesai', color: 'text-emerald-600 bg-emerald-50', icon: CheckCircle2 },
 };
 
+const ADDRESS_KEY = 'erset_saved_address';
+
+function getSavedAddress(): SavedAddress | null {
+  try {
+    const raw = localStorage.getItem(ADDRESS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function saveAddress(addr: SavedAddress) {
+  localStorage.setItem(ADDRESS_KEY, JSON.stringify(addr));
+}
+
+export { getSavedAddress };
+
 export default function Akun() {
   const { user, signOut } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingAddress, setEditingAddress] = useState(false);
+  const [address, setAddress] = useState<SavedAddress>({ name: '', phone: '', address: '' });
+  const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
 
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
@@ -45,11 +70,42 @@ export default function Akun() {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (data) setOrders(data);
+      if (data) {
+        setOrders(data);
+        // Auto-save alamat dari order terakhir kalau belum ada
+        const existing = getSavedAddress();
+        if (!existing && data.length > 0) {
+          const lastOrder = data[0];
+          const autoAddr = {
+            name: lastOrder.shipping_name,
+            phone: lastOrder.shipping_phone,
+            address: lastOrder.shipping_address,
+          };
+          saveAddress(autoAddr);
+          setSavedAddr(autoAddr);
+        } else {
+          setSavedAddr(existing);
+        }
+      }
       setLoading(false);
     }
     fetchOrders();
   }, [user]);
+
+  useEffect(() => {
+    const existing = getSavedAddress();
+    if (existing) {
+      setSavedAddr(existing);
+      setAddress(existing);
+    }
+  }, []);
+
+  const handleSaveAddress = () => {
+    if (!address.name || !address.phone || !address.address) return;
+    saveAddress(address);
+    setSavedAddr(address);
+    setEditingAddress(false);
+  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('id-ID', {
@@ -95,6 +151,83 @@ export default function Akun() {
                   <span className="font-medium text-gray-900">{orders.length}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Alamat Tersimpan */}
+            <div className="card p-6">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <MapPin className="size-4 text-brand-500" />
+                  Alamat Tersimpan
+                </h4>
+                {savedAddr && !editingAddress && (
+                  <button
+                    onClick={() => { setEditingAddress(true); setAddress(savedAddr); }}
+                    className="text-brand-500 hover:text-brand-600 transition"
+                  >
+                    <Pencil className="size-4" />
+                  </button>
+                )}
+              </div>
+
+              {editingAddress || !savedAddr ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-600 mb-1">Nama Penerima</label>
+                    <input
+                      type="text"
+                      value={address.name}
+                      onChange={e => setAddress({ ...address, name: e.target.value })}
+                      placeholder="Nama lengkap"
+                      className="input"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-600 mb-1">No. Telepon</label>
+                    <input
+                      type="tel"
+                      value={address.phone}
+                      onChange={e => setAddress({ ...address, phone: e.target.value })}
+                      placeholder="08xxxxxxxxxx"
+                      className="input"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-600 mb-1">Alamat Lengkap</label>
+                    <textarea
+                      value={address.address}
+                      onChange={e => setAddress({ ...address, address: e.target.value })}
+                      rows={3}
+                      placeholder="Jalan, RT/RW, Kelurahan, Kecamatan, Kota, Kode Pos"
+                      className="input resize-y"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSaveAddress}
+                      className="btn btn-primary btn-sm flex-1"
+                    >
+                      <Save className="size-3.5" />
+                      Simpan
+                    </button>
+                    {savedAddr && (
+                      <button
+                        onClick={() => setEditingAddress(false)}
+                        className="btn btn-outline btn-sm"
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p className="font-semibold text-gray-900">{savedAddr.name}</p>
+                  <p>{savedAddr.phone}</p>
+                  <p className="text-gray-500">{savedAddr.address}</p>
+                  <p className="text-[11px] text-brand-500 mt-2">✓ Akan otomatis terisi saat checkout</p>
+                </div>
+              )}
             </div>
 
             <button

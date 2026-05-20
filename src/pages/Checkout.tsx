@@ -10,6 +10,7 @@ import { findProduct } from '../data/products';
 import { formatPrice } from '../lib/format';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { getSavedAddress } from './Akun';
 import type { OrderData, PaymentMethod, ShippingMethod } from '../types';
 
 const SHIPPINGS: ShippingMethod[] = [
@@ -51,6 +52,9 @@ export default function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [orderError, setOrderError] = useState('');
   const navigate = useNavigate();
+
+  // Auto-fill dari alamat tersimpan
+  const savedAddr = getSavedAddress();
 
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
@@ -130,6 +134,14 @@ export default function Checkout() {
       date: new Date().toISOString(),
     };
     orderActions.save(order);
+
+    // Simpan alamat untuk checkout berikutnya
+    localStorage.setItem('erset_saved_address', JSON.stringify({
+      name: shippingName,
+      phone: shippingPhone,
+      address: shippingAddress,
+    }));
+
     cartActions.clear();
     navigate(`/sukses?order=${orderId}`);
   };
@@ -145,13 +157,13 @@ export default function Checkout() {
             <Section step={1} title="Informasi Kontak" icon={User}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Nama Lengkap *" className="sm:col-span-2">
-                  <input type="text" name="fullname" required placeholder="John Doe" className="input" />
+                  <input type="text" name="fullname" required placeholder="John Doe" className="input" defaultValue={savedAddr?.name || ''} />
                 </Field>
                 <Field label="Email *">
                   <input type="email" required placeholder="email@contoh.com" className="input" defaultValue={user?.email || ''} />
                 </Field>
                 <Field label="Nomor HP / WhatsApp *">
-                  <input type="tel" name="phone" required placeholder="08xxxxxxxxxx" className="input" />
+                  <input type="tel" name="phone" required placeholder="08xxxxxxxxxx" className="input" defaultValue={savedAddr?.phone || ''} />
                 </Field>
               </div>
             </Section>
@@ -160,7 +172,7 @@ export default function Checkout() {
             <Section step={2} title="Alamat Pengiriman" icon={MapPin}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Alamat Lengkap *" className="sm:col-span-2">
-                  <textarea name="address" required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..." className="input resize-y" />
+                  <textarea name="address" required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..." className="input resize-y" defaultValue={savedAddr?.address || ''} />
                 </Field>
                 <Field label="Provinsi *">
                   <select required className="input" defaultValue="">
