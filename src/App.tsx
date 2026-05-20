@@ -6,6 +6,7 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Success from './pages/Success';
+import Info from './pages/Info';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/keranjang" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/sukses" element={<Success />} />
+        <Route path="/bantuan" element={<Info />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

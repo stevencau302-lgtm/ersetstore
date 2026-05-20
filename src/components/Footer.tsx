@@ -62,12 +62,12 @@ export default function Footer() {
         <div>
           <h5 className="text-xs font-bold text-brand-500 tracking-[2px] uppercase mb-5">Bantuan</h5>
           <ul className="flex flex-col gap-3 text-sm">
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Cara Belanja</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Cara Pembayaran</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Pengiriman</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Pengembalian</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">FAQ</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Hubungi Kami</a></li>
+            <li><Link to="/bantuan#cara-belanja" className="hover:text-brand-500 transition-colors">Cara Belanja</Link></li>
+            <li><Link to="/bantuan#cara-pembayaran" className="hover:text-brand-500 transition-colors">Cara Pembayaran</Link></li>
+            <li><Link to="/bantuan#pengiriman" className="hover:text-brand-500 transition-colors">Pengiriman</Link></li>
+            <li><Link to="/bantuan#pengembalian" className="hover:text-brand-500 transition-colors">Pengembalian</Link></li>
+            <li><Link to="/bantuan#faq" className="hover:text-brand-500 transition-colors">FAQ</Link></li>
+            <li><Link to="/bantuan#hubungi-kami" className="hover:text-brand-500 transition-colors">Hubungi Kami</Link></li>
           </ul>
         </div>
 
