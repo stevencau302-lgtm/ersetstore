@@ -75,11 +75,11 @@ export default function Footer() {
         <div>
           <h5 className="text-xs font-bold text-brand-500 tracking-[2px] uppercase mb-5">Tentang Kami</h5>
           <ul className="flex flex-col gap-3 text-sm">
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Tentang Erset Store</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Karir</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Blog</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Syarat &amp; Ketentuan</a></li>
-            <li><a href="#" className="hover:text-brand-500 transition-colors">Kebijakan Privasi</a></li>
+            <li><Link to="/tentang" className="hover:text-brand-500 transition-colors">Tentang Erset Store</Link></li>
+            <li><Link to="/halaman/karir" className="hover:text-brand-500 transition-colors">Karir</Link></li>
+            <li><Link to="/halaman/blog" className="hover:text-brand-500 transition-colors">Blog</Link></li>
+            <li><Link to="/halaman/syarat-ketentuan" className="hover:text-brand-500 transition-colors">Syarat &amp; Ketentuan</Link></li>
+            <li><Link to="/halaman/kebijakan-privasi" className="hover:text-brand-500 transition-colors">Kebijakan Privasi</Link></li>
           </ul>
           <h5 className="text-xs font-bold text-brand-500 tracking-[2px] uppercase mt-6 mb-3">Pembayaran</h5>
           <div className="flex flex-wrap gap-1.5">

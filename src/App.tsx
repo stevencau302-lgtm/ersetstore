@@ -7,6 +7,8 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Success from './pages/Success';
 import Info from './pages/Info';
+import About from './pages/About';
+import Legal from './pages/Legal';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -20,6 +22,8 @@ export default function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/sukses" element={<Success />} />
         <Route path="/bantuan" element={<Info />} />
+        <Route path="/tentang" element={<About />} />
+        <Route path="/halaman/:slug" element={<Legal />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
