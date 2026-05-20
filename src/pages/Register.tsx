@@ -39,9 +39,8 @@ export default function Register() {
       setError(error);
       setLoading(false);
     } else {
-      setSuccess(true);
-      setLoading(false);
-      setTimeout(() => navigate('/masuk'), 3000);
+      // Tanpa email confirm, langsung login & redirect
+      navigate('/');
     }
   };
 
