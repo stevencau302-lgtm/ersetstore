@@ -20,7 +20,7 @@ interface Order {
   created_at: string;
 }
 
-interface SavedAddress {
+export interface SavedAddress {
   name: string;
   phone: string;
   address: string;
@@ -33,20 +33,35 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof Cl
   done: { label: 'Selesai', color: 'text-emerald-600 bg-emerald-50', icon: CheckCircle2 },
 };
 
-const ADDRESS_KEY = 'erset_saved_address';
+// Fetch alamat tersimpan dari Supabase profiles
+export async function fetchSavedAddress(userId: string): Promise<SavedAddress | null> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('shipping_name, shipping_phone, shipping_address')
+    .eq('id', userId)
+    .single();
 
-function getSavedAddress(): SavedAddress | null {
-  try {
-    const raw = localStorage.getItem(ADDRESS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
+  if (data && data.shipping_name) {
+    return {
+      name: data.shipping_name || '',
+      phone: data.shipping_phone || '',
+      address: data.shipping_address || '',
+    };
+  }
+  return null;
 }
 
-function saveAddress(addr: SavedAddress) {
-  localStorage.setItem(ADDRESS_KEY, JSON.stringify(addr));
+// Simpan alamat ke Supabase profiles
+export async function saveAddressToSupabase(userId: string, addr: SavedAddress) {
+  await supabase
+    .from('profiles')
+    .update({
+      shipping_name: addr.name,
+      shipping_phone: addr.phone,
+      shipping_address: addr.address,
+    })
+    .eq('id', userId);
 }
-
-export { getSavedAddress };
 
 export default function Akun() {
   const { user, signOut } = useAuth();
@@ -55,6 +70,7 @@ export default function Akun() {
   const [editingAddress, setEditingAddress] = useState(false);
   const [address, setAddress] = useState<SavedAddress>({ name: '', phone: '', address: '' });
   const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
+  const [savingAddr, setSavingAddr] = useState(false);
 
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
@@ -62,49 +78,48 @@ export default function Akun() {
   ];
 
   useEffect(() => {
-    async function fetchOrders() {
+    async function fetchData() {
       if (!user) return;
-      const { data } = await supabase
+
+      // Fetch orders
+      const { data: ordersData } = await supabase
         .from('orders')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (data) {
-        setOrders(data);
-        // Auto-save alamat dari order terakhir kalau belum ada
-        const existing = getSavedAddress();
-        if (!existing && data.length > 0) {
-          const lastOrder = data[0];
-          const autoAddr = {
-            name: lastOrder.shipping_name,
-            phone: lastOrder.shipping_phone,
-            address: lastOrder.shipping_address,
-          };
-          saveAddress(autoAddr);
-          setSavedAddr(autoAddr);
-        } else {
-          setSavedAddr(existing);
-        }
+      if (ordersData) setOrders(ordersData);
+
+      // Fetch saved address from profiles
+      const addr = await fetchSavedAddress(user.id);
+      if (addr) {
+        setSavedAddr(addr);
+        setAddress(addr);
+      } else if (ordersData && ordersData.length > 0) {
+        // Auto-save dari order terakhir
+        const lastOrder = ordersData[0];
+        const autoAddr: SavedAddress = {
+          name: lastOrder.shipping_name,
+          phone: lastOrder.shipping_phone,
+          address: lastOrder.shipping_address,
+        };
+        await saveAddressToSupabase(user.id, autoAddr);
+        setSavedAddr(autoAddr);
+        setAddress(autoAddr);
       }
+
       setLoading(false);
     }
-    fetchOrders();
+    fetchData();
   }, [user]);
 
-  useEffect(() => {
-    const existing = getSavedAddress();
-    if (existing) {
-      setSavedAddr(existing);
-      setAddress(existing);
-    }
-  }, []);
-
-  const handleSaveAddress = () => {
-    if (!address.name || !address.phone || !address.address) return;
-    saveAddress(address);
+  const handleSaveAddress = async () => {
+    if (!address.name || !address.phone || !address.address || !user) return;
+    setSavingAddr(true);
+    await saveAddressToSupabase(user.id, address);
     setSavedAddr(address);
     setEditingAddress(false);
+    setSavingAddr(false);
   };
 
   const formatDate = (dateStr: string) => {
@@ -205,9 +220,10 @@ export default function Akun() {
                   <div className="flex gap-2">
                     <button
                       onClick={handleSaveAddress}
-                      className="btn btn-primary btn-sm flex-1"
+                      disabled={savingAddr}
+                      className="btn btn-primary btn-sm flex-1 disabled:opacity-50"
                     >
-                      <Save className="size-3.5" />
+                      {savingAddr ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
                       Simpan
                     </button>
                     {savedAddr && (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock, ShoppingCart, ShieldCheck, User, MapPin, Truck, CreditCard, ChevronRight,
@@ -10,7 +10,7 @@ import { findProduct } from '../data/products';
 import { formatPrice } from '../lib/format';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { getSavedAddress } from './Akun';
+import { fetchSavedAddress, saveAddressToSupabase, type SavedAddress } from './Akun';
 import type { OrderData, PaymentMethod, ShippingMethod } from '../types';
 
 const SHIPPINGS: ShippingMethod[] = [
@@ -51,10 +51,17 @@ export default function Checkout() {
   const [paymentId, setPaymentId] = useState('bank');
   const [submitting, setSubmitting] = useState(false);
   const [orderError, setOrderError] = useState('');
+  const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
   const navigate = useNavigate();
 
-  // Auto-fill dari alamat tersimpan
-  const savedAddr = getSavedAddress();
+  // Fetch alamat tersimpan dari Supabase
+  useEffect(() => {
+    if (user) {
+      fetchSavedAddress(user.id).then(addr => {
+        if (addr) setSavedAddr(addr);
+      });
+    }
+  }, [user]);
 
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
@@ -135,12 +142,12 @@ export default function Checkout() {
     };
     orderActions.save(order);
 
-    // Simpan alamat untuk checkout berikutnya
-    localStorage.setItem('erset_saved_address', JSON.stringify({
+    // Simpan alamat ke Supabase untuk checkout berikutnya
+    saveAddressToSupabase(user!.id, {
       name: shippingName,
       phone: shippingPhone,
       address: shippingAddress,
-    }));
+    });
 
     cartActions.clear();
     navigate(`/sukses?order=${orderId}`);
