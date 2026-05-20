@@ -117,8 +117,13 @@ export default function Checkout() {
     // Insert order to Supabase
     const { error: insertError } = await supabase.from('orders').insert({
       user_id: user!.id,
+      order_number: orderId,
       items: orderItems,
+      subtotal,
+      shipping_cost: shipping.price,
       total,
+      shipping_method: shipping.name,
+      payment_method: payment.name,
       status: 'pending',
       shipping_name: shippingName,
       shipping_address: shippingAddress,
