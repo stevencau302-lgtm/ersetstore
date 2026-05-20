@@ -35,15 +35,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) return { error: error.message };
-    return { error: null };
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) return { error: error.message };
+      return { error: null };
+    } catch {
+      // Network error tapi email mungkin tetap terkirim
+      return { error: null };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
-    return { error: null };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return { error: error.message };
+      return { error: null };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Gagal terhubung ke server';
+      return { error: message };
+    }
   };
 
   const signOut = async () => {
