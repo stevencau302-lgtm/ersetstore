@@ -59,7 +59,12 @@ export default function AdminOrders() {
 
   async function updateStatus(orderId: string, newStatus: string) {
     setUpdating(orderId);
-    await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+    const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+    if (error) {
+      alert('Gagal update status: ' + error.message + '\n\nPastikan kamu sudah jalankan supabase/admin_policies.sql di Supabase SQL Editor.');
+      setUpdating(null);
+      return;
+    }
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
     );
