@@ -3,8 +3,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const API_BASE = 'https://api.binderbyte.com/v1';
 const API_KEY = process.env.BINDERBYTE_API_KEY || '';
 
-// Semua kurir yang didukung BinderByte
-const ALL_COURIERS = 'jne,pos,tiki,sicepat,anteraja,lion,ninja,sap,ide,jnt,wahana,spx';
+// Semua kurir yang didukung BinderByte (dipanggil satu per satu)
+const ALL_COURIER_LIST = ['jne', 'sicepat', 'jnt', 'ninja', 'anteraja', 'pos', 'tiki', 'lion', 'sap', 'ide', 'wahana', 'spx'];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,37 +41,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Minimum 1 kg
   const weightKg = Math.max(1, Math.ceil(Number(weight) / 1000));
 
-  // Default: semua kurir
-  if (!courier) courier = ALL_COURIERS;
+  // Default: semua kurir populer
+  const courierList = courier ? courier.split(',').map(c => c.trim()).filter(Boolean) : ALL_COURIER_LIST;
 
   if (!API_KEY) {
     return res.status(500).json({ error: 'BINDERBYTE_API_KEY belum di-configure di environment variables' });
   }
 
   try {
-    const url = `${API_BASE}/cost?api_key=${API_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&weight=${weightKg}&courier=${encodeURIComponent(courier)}`;
-    const response = await fetch(url);
+    // Fetch setiap kurir satu per satu secara parallel (BinderByte nggak reliable kalo semua sekaligus)
+    const fetchCourier = async (c: string) => {
+      try {
+        const url = `${API_BASE}/cost?api_key=${API_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&weight=${weightKg}&courier=${c}`;
+        const resp = await fetch(url);
+        const text = await resp.text();
+        if (!text || text.trim().length === 0) return [];
+        const json = JSON.parse(text);
+        if (json.code !== '200' && json.code !== 200) return [];
+        return json.data?.results || [];
+      } catch {
+        return [];
+      }
+    };
 
-    // Read as text first to avoid JSON parse crash on empty/invalid response
-    const rawText = await response.text();
-
-    if (!rawText || rawText.trim().length === 0) {
-      return res.status(502).json({ error: 'BinderByte returned empty response. Cek API key valid atau belum.' });
-    }
-
-    let data: any;
-    try {
-      data = JSON.parse(rawText);
-    } catch {
-      return res.status(502).json({ error: 'BinderByte response bukan JSON: ' + rawText.slice(0, 200) });
-    }
-
-    if (data.code !== '200' && data.code !== 200) {
-      return res.status(Number(data.code) || 400).json({ error: data.message || 'Gagal menghitung ongkir' });
-    }
-
-    // Normalize response untuk frontend
-    const results = data.data?.results || [];
+    const allResults = await Promise.all(courierList.map(fetchCourier));
+    const results = allResults.flat();
     const normalized: any[] = [];
 
     for (const courierResult of results) {
@@ -96,9 +90,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json({
       status: 'success',
-      origin: data.data?.origin || null,
-      destination: data.data?.destination || null,
-      weight: data.data?.weight || weight,
+      origin: null,
+      destination: null,
+      weight: weightKg,
       result: normalized,
     });
   } catch (err: any) {
