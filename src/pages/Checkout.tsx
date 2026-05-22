@@ -59,7 +59,6 @@ export default function Checkout() {
   // Handler ketika user pilih/hapus lokasi — LANGSUNG fetch ongkir
   const handleDestinationChange = async (loc: Location | null) => {
     console.log('[Checkout] handleDestinationChange CALLED! loc:', loc);
-    alert('[DEBUG] handleDestinationChange dipanggil! loc.id: ' + (loc?.id || 'null'));
     setDestination(loc);
     setSelectedRate(null);
     setRates([]);

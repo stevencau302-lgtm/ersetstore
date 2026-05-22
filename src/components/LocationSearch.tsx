@@ -75,6 +75,13 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
         </div>
       )}
 
+      {/* Error shown below input when not in dropdown */}
+      {!value && error && !open && query.length >= 3 && (
+        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+          <span>⚠️</span> {error}
+        </p>
+      )}
+
       {/* Dropdown */}
       {open && !value && query.length >= 3 && (
         <div className="absolute z-50 mt-1.5 left-0 right-0 bg-white rounded-xl border border-gray-200 shadow-xl max-h-60 overflow-y-auto">
@@ -86,7 +93,12 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
           )}
 
           {error && (
-            <div className="px-4 py-3 text-sm text-red-500">{error}</div>
+            <div className="px-4 py-3 text-sm text-red-500">
+              <p className="font-medium">⚠️ {error}</p>
+              {error.includes('API key') && (
+                <p className="text-xs mt-1 text-red-400">Buka Admin Panel → Pengaturan → masukkan API Key dari binderbyte.com</p>
+              )}
+            </div>
           )}
 
           {!loading && !error && results.length === 0 && query.length >= 3 && (

@@ -41,7 +41,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const API_KEY = await getApiKey();
 
   if (!API_KEY) {
-    return res.status(500).json({ error: 'API key belum di-setting. Buka Admin Panel → Pengaturan untuk input BinderByte API Key.' });
+    console.error('[locations] No BinderByte API key found in DB or ENV');
+    return res.status(500).json({ 
+      error: 'API key belum di-setting. Buka Admin Panel → Pengaturan untuk input BinderByte API Key.',
+      fix: 'Daftar di https://binderbyte.com lalu copy API Key ke Admin → Pengaturan → BinderByte API Key'
+    });
   }
 
   try {
