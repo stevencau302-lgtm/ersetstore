@@ -54,11 +54,29 @@ export default function Checkout() {
   const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
   const navigate = useNavigate();
 
-  // Fetch alamat tersimpan dari Supabase
+  // Fetch alamat tersimpan dari Supabase (profiles atau order terakhir)
   useEffect(() => {
     if (user) {
-      fetchSavedAddress(user.id).then(addr => {
-        if (addr) setSavedAddr(addr);
+      fetchSavedAddress(user.id).then(async (addr) => {
+        if (addr) {
+          setSavedAddr(addr);
+        } else {
+          // Fallback: ambil dari order terakhir kalau profiles kosong
+          const { data } = await supabase
+            .from('orders')
+            .select('shipping_name, shipping_phone, shipping_address')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+          if (data && data.shipping_name) {
+            setSavedAddr({
+              name: data.shipping_name,
+              phone: data.shipping_phone || '',
+              address: data.shipping_address || '',
+            });
+          }
+        }
       });
     }
   }, [user]);
@@ -114,6 +132,14 @@ export default function Checkout() {
     const shippingPhone = (formData.get('phone') as string) || '';
     const shippingAddress = (formData.get('address') as string) || '';
 
+    // Simpan alamat ke Supabase DULUAN sebelum insert order
+    // Biar next checkout tetap auto-fill walaupun order gagal
+    await saveAddressToSupabase(user!.id, {
+      name: shippingName,
+      phone: shippingPhone,
+      address: shippingAddress,
+    });
+
     // Insert order to Supabase
     const { error: insertError } = await supabase.from('orders').insert({
       user_id: user!.id,
@@ -146,13 +172,6 @@ export default function Checkout() {
       date: new Date().toISOString(),
     };
     orderActions.save(order);
-
-    // Simpan alamat ke Supabase untuk checkout berikutnya
-    saveAddressToSupabase(user!.id, {
-      name: shippingName,
-      phone: shippingPhone,
-      address: shippingAddress,
-    });
 
     cartActions.clear();
     navigate(`/sukses?order=${orderId}`);
