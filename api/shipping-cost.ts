@@ -53,24 +53,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       headers: { 'x-api-co-id': API_KEY },
     });
 
+    const rawBody = await response.text();
+    let data: any;
+    try {
+      data = JSON.parse(rawBody);
+    } catch {
+      return res.status(502).json({ error: 'API response bukan JSON: ' + rawBody.slice(0, 200) });
+    }
+
     if (response.status === 401) {
-      return res.status(401).json({ error: 'API key tidak valid' });
+      return res.status(401).json({ error: 'API key tidak valid. Response: ' + (data?.message || rawBody.slice(0, 100)) });
     }
     if (response.status === 404) {
-      return res.status(404).json({ error: 'Kode desa tidak ditemukan' });
+      return res.status(404).json({ error: 'Kode desa tidak ditemukan: ' + (data?.message || '') });
     }
     if (response.status === 429) {
       return res.status(429).json({ error: 'Rate limit tercapai, coba lagi nanti' });
     }
     if (!response.ok) {
-      const errBody = await response.text();
-      return res.status(response.status).json({ error: 'Gagal mengambil ongkir: ' + errBody });
+      return res.status(response.status).json({ error: 'API error: ' + (data?.message || rawBody.slice(0, 200)) });
     }
 
-    const data = await response.json();
+    // Handle if API returns error in body
+    if (data.is_success === false || data.status === 'error') {
+      return res.status(400).json({ error: data.message || 'API mengembalikan error' });
+    }
 
     // Filter out zero-price couriers
-    const rates: ShippingRate[] = (data.result || [])
+    const rawResults = data.result || data.data || [];
+    const rates: ShippingRate[] = rawResults
       .filter((r: any) => r.price > 0)
       .map((r: any) => ({
         courier_code: r.courier_code || '',
@@ -86,6 +97,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       destination_village_code,
       weight: weightNum,
       result: rates,
+      _debug: {
+        api_status: response.status,
+        raw_count: rawResults.length,
+        filtered_count: rates.length,
+      },
     });
   } catch (err: any) {
     console.error('Shipping cost error:', err);

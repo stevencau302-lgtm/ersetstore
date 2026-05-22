@@ -63,11 +63,12 @@ export async function fetchShippingCost(
   });
 
   const res = await fetch(`/api/shipping-cost?${params}`);
+  const data = await res.json().catch(() => ({ error: 'Gagal parse response' }));
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Gagal mengambil ongkir' }));
-    throw new Error(err.error || 'Gagal mengambil ongkir');
+    throw new Error(data.error || `HTTP ${res.status}: Gagal mengambil ongkir`);
   }
-  const data: ShippingCostResponse = await res.json();
+
   return data.result || [];
 }
 
