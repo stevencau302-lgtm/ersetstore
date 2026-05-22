@@ -100,6 +100,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       destination: data.data?.destination || null,
       weight: data.data?.weight || weight,
       result: normalized,
+      _debug: {
+        url_sent: url.replace(API_KEY, 'HIDDEN'),
+        raw_results_count: results.length,
+        raw_data_keys: Object.keys(data.data || {}),
+        binderbyte_code: data.code,
+        binderbyte_message: data.message,
+      },
     });
   } catch (err: any) {
     console.error('Shipping cost error:', err);
