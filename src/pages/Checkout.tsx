@@ -58,6 +58,8 @@ export default function Checkout() {
 
   // Handler ketika user pilih/hapus lokasi — LANGSUNG fetch ongkir
   const handleDestinationChange = async (loc: Location | null) => {
+    console.log('[Checkout] handleDestinationChange CALLED! loc:', loc);
+    alert('[DEBUG] handleDestinationChange dipanggil! loc.id: ' + (loc?.id || 'null'));
     setDestination(loc);
     setSelectedRate(null);
     setRates([]);
@@ -70,8 +72,11 @@ export default function Checkout() {
 
     try {
       const params = new URLSearchParams({ destination: loc.id, weight: totalWeightGram.toString() });
-      const res = await fetch(`/api/shipping-cost?${params}`);
+      const url = `/api/shipping-cost?${params}`;
+      console.log('[Checkout] Fetch URL:', url);
+      const res = await fetch(url);
       const data = await res.json();
+      console.log('[Checkout] Response status:', res.status, 'data:', data);
 
       if (!res.ok) {
         setRatesError(data.error || 'Gagal mengambil ongkir');

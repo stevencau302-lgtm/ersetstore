@@ -26,12 +26,14 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
   }, []);
 
   const handleSelect = (loc: Location) => {
+    console.log('[LocationSearch] handleSelect called with:', loc.id, loc.label);
     onChange(loc);
     setQuery('');
     setOpen(false);
   };
 
   const handleClear = () => {
+    console.log('[LocationSearch] handleClear called');
     onChange(null);
     setQuery('');
   };
