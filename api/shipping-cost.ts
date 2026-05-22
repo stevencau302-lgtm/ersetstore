@@ -47,7 +47,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const url = `${API_BASE}/cost?api_key=${API_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&weight=${weight}&courier=${encodeURIComponent(courier)}`;
     const response = await fetch(url);
-    const data = await response.json();
+
+    // Read as text first to avoid JSON parse crash on empty/invalid response
+    const rawText = await response.text();
+
+    if (!rawText || rawText.trim().length === 0) {
+      return res.status(502).json({ error: 'BinderByte returned empty response. Cek API key valid atau belum.' });
+    }
+
+    let data: any;
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      return res.status(502).json({ error: 'BinderByte response bukan JSON: ' + rawText.slice(0, 200) });
+    }
 
     if (data.code !== '200' && data.code !== 200) {
       return res.status(Number(data.code) || 400).json({ error: data.message || 'Gagal menghitung ongkir' });
