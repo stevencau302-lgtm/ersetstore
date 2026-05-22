@@ -2,23 +2,26 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock, ShoppingCart, ShieldCheck, User, MapPin, Truck, CreditCard,
-  Landmark, Zap, Banknote, Loader2, AlertCircle, RefreshCw,
+  Landmark, Zap, Banknote, Loader2,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
-import VillageSearch from '../components/VillageSearch';
 import { cartActions, orderActions, useCart } from '../lib/cart';
 import { findProduct } from '../data/products';
 import { formatPrice } from '../lib/format';
-import { useShippingRates, type Village, type ShippingRate } from '../lib/shipping';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchSavedAddress, saveAddressToSupabase, type SavedAddress } from './Akun';
 import type { OrderData, PaymentMethod, ShippingMethod } from '../types';
 
-// Origin village code for our store (set as constant — Pademangan, Jakarta)
-const STORE_ORIGIN_CODE = '3172051003';
+const SHIPPINGS: ShippingMethod[] = [
+  { id: 'reguler', name: 'JNE Reguler', eta: '2-3 hari kerja', price: 15000 },
+  { id: 'yes', name: 'JNE YES (Yakin Esok Sampai)', eta: '1 hari kerja', price: 28000 },
+  { id: 'sicepat', name: 'SiCepat REG', eta: '2-3 hari kerja', price: 14000 },
+  { id: 'jnt', name: 'J&T Express', eta: '2-4 hari kerja', price: 13000 },
+  { id: 'ninja', name: 'Ninja Xpress', eta: '2-3 hari kerja', price: 12000 },
+  { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Hari ini, area Jabodetabek', price: 35000 },
+];
 
-// Grouped payment methods
 interface PaymentGroup {
   id: string;
   label: string;
@@ -41,21 +44,14 @@ const PAYMENTS: PaymentMethod[] = [
 export default function Checkout() {
   const { items, count, subtotal } = useCart();
   const { user } = useAuth();
+  const [shippingId, setShippingId] = useState('reguler');
   const [paymentId, setPaymentId] = useState('bank');
   const [submitting, setSubmitting] = useState(false);
   const [orderError, setOrderError] = useState('');
   const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
   const navigate = useNavigate();
 
-  // Village & Shipping
-  const [destinationVillage, setDestinationVillage] = useState<Village | null>(null);
-  const [selectedRate, setSelectedRate] = useState<ShippingRate | null>(null);
-  const { rates, loading: ratesLoading, error: ratesError, fetchRates, clearRates } = useShippingRates();
-
-  // Calculate total weight from cart (assume 0.5kg per item as default)
-  const totalWeight = Math.max(1, Math.ceil(items.reduce((sum, item) => sum + item.qty * 0.5, 0)));
-
-  // Fetch saved address from Supabase
+  // Fetch alamat tersimpan dari Supabase (profiles atau order terakhir)
   useEffect(() => {
     if (user) {
       fetchSavedAddress(user.id).then(async (addr) => {
@@ -81,25 +77,6 @@ export default function Checkout() {
     }
   }, [user]);
 
-  // Fetch shipping rates when destination village is selected
-  useEffect(() => {
-    if (destinationVillage) {
-      setSelectedRate(null);
-      fetchRates(STORE_ORIGIN_CODE, destinationVillage.village_code, totalWeight);
-    } else {
-      clearRates();
-      setSelectedRate(null);
-    }
-  }, [destinationVillage, totalWeight]);
-
-  // Auto-select cheapest rate when rates load
-  useEffect(() => {
-    if (rates.length > 0 && !selectedRate) {
-      const cheapest = [...rates].sort((a, b) => a.price - b.price)[0];
-      setSelectedRate(cheapest);
-    }
-  }, [rates]);
-
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
     { label: 'Keranjang', to: '/keranjang' },
@@ -122,21 +99,12 @@ export default function Checkout() {
     );
   }
 
-  const shippingCost = selectedRate?.price || 0;
+  const shipping = SHIPPINGS.find((s) => s.id === shippingId)!;
   const payment = PAYMENTS.find((p) => p.id === paymentId)!;
-  const total = subtotal + shippingCost;
+  const total = subtotal + shipping.price;
 
   const placeOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRate) {
-      setOrderError('Pilih metode pengiriman dulu');
-      return;
-    }
-    if (!destinationVillage) {
-      setOrderError('Pilih kelurahan tujuan dulu');
-      return;
-    }
-
     setSubmitting(true);
     setOrderError('');
 
@@ -158,24 +126,21 @@ export default function Checkout() {
     const shippingPhone = (formData.get('phone') as string) || '';
     const shippingAddress = (formData.get('address') as string) || '';
 
-    // Save address first
+    // Simpan alamat ke Supabase duluan
     await saveAddressToSupabase(user!.id, {
       name: shippingName,
       phone: shippingPhone,
       address: shippingAddress,
     });
 
-    // Build shipping method name
-    const shippingMethodName = `${selectedRate.courier_name} (${selectedRate.estimation || 'Estimasi tidak tersedia'})`;
-
     const { error: insertError } = await supabase.from('orders').insert({
       user_id: user!.id,
       order_number: orderId,
       items: orderItems,
       subtotal,
-      shipping_cost: shippingCost,
+      shipping_cost: shipping.price,
       total,
-      shipping_method: shippingMethodName,
+      shipping_method: shipping.name,
       payment_method: payment.name,
       status: 'pending',
       shipping_name: shippingName,
@@ -192,7 +157,7 @@ export default function Checkout() {
     const order: OrderData = {
       id: orderId,
       total,
-      shipping: { id: selectedRate.courier_code, name: shippingMethodName, eta: selectedRate.estimation || '-', price: shippingCost },
+      shipping,
       payment,
       itemCount: count,
       date: new Date().toISOString(),
@@ -225,98 +190,72 @@ export default function Checkout() {
               </div>
             </Section>
 
-            {/* Step 2: Address + Village Search */}
+            {/* Step 2: Address */}
             <Section step={2} title="Alamat Pengiriman" icon={MapPin}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Alamat Lengkap *" className="sm:col-span-2">
-                  <textarea name="address" required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW..." className="input resize-y" defaultValue={savedAddr?.address || ''} />
+                  <textarea name="address" required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan..." className="input resize-y" defaultValue={savedAddr?.address || ''} />
                 </Field>
-                <div className="sm:col-span-2">
-                  <VillageSearch
-                    label="Kelurahan / Desa Tujuan *"
-                    placeholder="Ketik nama kelurahan tujuan (min 3 huruf)..."
-                    value={destinationVillage}
-                    onChange={setDestinationVillage}
-                  />
-                  <p className="text-[11px] text-gray-400 mt-1.5">
-                    Cari berdasarkan nama kelurahan/desa. Ini dipakai untuk menghitung ongkir secara real-time.
-                  </p>
-                </div>
+                <Field label="Provinsi *">
+                  <select required className="input" defaultValue="">
+                    <option value="" disabled>Pilih Provinsi</option>
+                    <option>DKI Jakarta</option>
+                    <option>Jawa Barat</option>
+                    <option>Jawa Tengah</option>
+                    <option>Jawa Timur</option>
+                    <option>DI Yogyakarta</option>
+                    <option>Banten</option>
+                    <option>Bali</option>
+                    <option>Sumatera Utara</option>
+                    <option>Sumatera Selatan</option>
+                    <option>Lainnya</option>
+                  </select>
+                </Field>
+                <Field label="Kota / Kabupaten *">
+                  <input type="text" required placeholder="Jakarta Selatan" className="input" />
+                </Field>
+                <Field label="Kecamatan *">
+                  <input type="text" required placeholder="Kebayoran Baru" className="input" />
+                </Field>
+                <Field label="Kode Pos *">
+                  <input type="text" required pattern="[0-9]{5}" placeholder="12345" className="input" />
+                </Field>
                 <Field label="Catatan untuk Kurir (opsional)" className="sm:col-span-2">
                   <input type="text" placeholder="Patokan, warna pagar, dll." className="input" />
                 </Field>
               </div>
             </Section>
 
-            {/* Step 3: Shipping - Real rates from API */}
+            {/* Step 3: Shipping */}
             <Section step={3} title="Metode Pengiriman" icon={Truck}>
-              {!destinationVillage ? (
-                <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-                  <AlertCircle className="size-5 shrink-0" />
-                  <span>Pilih kelurahan tujuan di Step 2 untuk melihat opsi pengiriman.</span>
-                </div>
-              ) : ratesLoading ? (
-                <div className="flex items-center justify-center gap-3 py-8 text-gray-500">
-                  <Loader2 className="size-5 animate-spin" />
-                  <span className="text-sm">Menghitung ongkir ke {destinationVillage.village_name}...</span>
-                </div>
-              ) : ratesError ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                    <AlertCircle className="size-5 shrink-0" />
-                    <span>{ratesError}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => fetchRates(STORE_ORIGIN_CODE, destinationVillage.village_code, totalWeight)}
-                    className="btn btn-outline btn-sm"
+              <div className="grid gap-2.5">
+                {SHIPPINGS.map((s) => (
+                  <label
+                    key={s.id}
+                    className={`flex items-center justify-between gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      shippingId === s.id
+                        ? 'border-brand-500 bg-brand-50/50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
                   >
-                    <RefreshCw className="size-4" /> Coba Lagi
-                  </button>
-                </div>
-              ) : rates.length === 0 ? (
-                <div className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600">
-                  <AlertCircle className="size-5 shrink-0" />
-                  <span>Tidak ada kurir tersedia untuk tujuan ini.</span>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-xs text-gray-500">
-                    Berat paket: <strong>{totalWeight} kg</strong> • Tujuan: <strong>{destinationVillage.village_name}, {destinationVillage.district_name}</strong>
-                  </p>
-                  <div className="grid gap-2.5">
-                    {rates.map((rate) => (
-                      <label
-                        key={rate.courier_code}
-                        className={`flex items-center justify-between gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                          selectedRate?.courier_code === rate.courier_code
-                            ? 'border-brand-500 bg-brand-50/50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="shipping_rate"
-                            value={rate.courier_code}
-                            checked={selectedRate?.courier_code === rate.courier_code}
-                            onChange={() => setSelectedRate(rate)}
-                            className="size-4 accent-brand-500"
-                          />
-                          <div>
-                            <strong className="block text-sm text-gray-900">{rate.courier_name}</strong>
-                            <span className="text-xs text-gray-500">
-                              {rate.estimation ? `Estimasi: ${rate.estimation}` : 'Estimasi tidak tersedia'}
-                              {' • '}{rate.weight} kg
-                            </span>
-                          </div>
-                        </div>
-                        <span className="font-bold text-brand-500 text-sm whitespace-nowrap">{formatPrice(rate.price)}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="shipping"
+                        value={s.id}
+                        checked={shippingId === s.id}
+                        onChange={() => setShippingId(s.id)}
+                        className="size-4 accent-brand-500"
+                      />
+                      <div>
+                        <strong className="block text-sm text-gray-900">{s.name}</strong>
+                        <span className="text-xs text-gray-500">Estimasi: {s.eta}</span>
+                      </div>
+                    </div>
+                    <span className="font-bold text-brand-500 text-sm">{formatPrice(s.price)}</span>
+                  </label>
+                ))}
+              </div>
             </Section>
 
             {/* Step 4: Payment */}
@@ -360,7 +299,7 @@ export default function Checkout() {
 
               <div className="mt-4 flex items-start gap-3 bg-emerald-50 text-emerald-800 rounded-xl p-4 text-xs">
                 <ShieldCheck className="size-5 shrink-0" />
-                <span>Pembayaran kamu 100% aman dengan enkripsi SSL 256-bit.</span>
+                <span>Pembayaran kamu 100% aman dengan enkripsi SSL 256-bit. Kami tidak menyimpan data kartu kredit kamu.</span>
               </div>
             </Section>
           </div>
@@ -401,12 +340,8 @@ export default function Checkout() {
                 <span className="font-semibold text-gray-900">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span className="truncate pr-2">
-                  {selectedRate ? selectedRate.courier_name : 'Ongkir'}
-                </span>
-                <span className="font-semibold text-gray-900 whitespace-nowrap">
-                  {selectedRate ? formatPrice(shippingCost) : '—'}
-                </span>
+                <span className="truncate pr-2">{shipping.name}</span>
+                <span className="font-semibold text-gray-900 whitespace-nowrap">{formatPrice(shipping.price)}</span>
               </div>
             </div>
 
@@ -415,18 +350,10 @@ export default function Checkout() {
               <span className="text-2xl font-extrabold text-brand-500">{formatPrice(total)}</span>
             </div>
 
-            <button
-              type="submit"
-              disabled={submitting || !selectedRate}
-              className="btn btn-primary btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+            <button type="submit" disabled={submitting} className="btn btn-primary btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed">
               {submitting ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
               {submitting ? 'Memproses...' : 'Bayar Sekarang'}
             </button>
-
-            {!selectedRate && destinationVillage && !ratesLoading && (
-              <p className="text-center text-xs text-amber-600 mt-2">Pilih kurir di Step 3</p>
-            )}
 
             {orderError && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-600 mt-3">
