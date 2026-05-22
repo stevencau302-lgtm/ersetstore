@@ -167,7 +167,7 @@ export default function Home() {
             subtitle="Update koleksi produk import terbaru di toko kami"
             linkTo="/produk?promo=new"
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
             {newest.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -184,7 +184,7 @@ export default function Home() {
             subtitle="Pilihan terbaik dari ribuan pelanggan kami"
             linkTo="/produk"
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
             {bestSeller.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

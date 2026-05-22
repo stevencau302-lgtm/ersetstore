@@ -7,7 +7,7 @@ const PAYMENTS = ['BCA', 'BNI', 'MANDIRI', 'OVO', 'DANA', 'GOPAY', 'QRIS'];
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-16">
-      <div className="container-x py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="container-x py-8 sm:py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
         {/* Brand */}
         <div className="lg:col-span-1">
           <Link to="/" className="flex items-center gap-2.5 mb-5">
