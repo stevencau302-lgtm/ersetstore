@@ -262,34 +262,33 @@ export default function Checkout() {
                   <span>Tidak ada kurir tersedia untuk tujuan ini. Coba pilih lokasi lain.</span>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <p className="text-xs text-gray-500">
-                    Berat: <strong>{(totalWeightGram / 1000).toFixed(1)} kg</strong> • Tujuan: <strong>{destination.label}</strong>
-                  </p>
+                <div className="space-y-3 w-full overflow-hidden">
+                  <div className="text-xs text-gray-500 space-y-0.5">
+                    <span className="block">Berat: <strong>{(totalWeightGram / 1000).toFixed(1)} kg</strong></span>
+                    <span className="block break-words">Tujuan: <strong>{destination.label}</strong></span>
+                  </div>
                   <div className="grid gap-2 sm:gap-2.5 max-h-80 overflow-y-auto pr-1 scrollbar-thin">
                     {rates.map((rate, idx) => (
                       <label
                         key={`${rate.courier_code}-${rate.service}-${idx}`}
-                        className={`flex items-center justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                        className={`flex items-start gap-2 sm:gap-3 p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all w-full overflow-hidden ${
                           selectedRate?.courier_code === rate.courier_code && selectedRate?.service === rate.service
                             ? 'border-brand-500 bg-brand-50/50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
-                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                          <input
-                            type="radio"
-                            name="shipping_rate"
-                            checked={selectedRate?.courier_code === rate.courier_code && selectedRate?.service === rate.service}
-                            onChange={() => setSelectedRate(rate)}
-                            className="size-4 accent-brand-500 shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <strong className="block text-xs sm:text-sm text-gray-900 truncate">{rate.courier_name} — {rate.service}</strong>
-                            <span className="text-[10px] sm:text-xs text-gray-500">
-                              {rate.type}{rate.estimated ? ` • ${rate.estimated}` : ''}
-                            </span>
-                          </div>
+                        <input
+                          type="radio"
+                          name="shipping_rate"
+                          checked={selectedRate?.courier_code === rate.courier_code && selectedRate?.service === rate.service}
+                          onChange={() => setSelectedRate(rate)}
+                          className="size-4 accent-brand-500 shrink-0 mt-0.5"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <strong className="block text-xs sm:text-sm text-gray-900 break-words whitespace-normal">{rate.courier_name} — {rate.service}</strong>
+                          <span className="block text-[10px] sm:text-xs text-gray-500 break-words">
+                            {rate.type}{rate.estimated ? ` • ${rate.estimated}` : ''}
+                          </span>
                         </div>
                         <span className="font-bold text-brand-500 text-xs sm:text-sm whitespace-nowrap shrink-0">{formatPrice(rate.price)}</span>
                       </label>
