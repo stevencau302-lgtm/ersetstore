@@ -35,18 +35,24 @@ const STATUS_MAP: Record<string, { label: string; color: string; icon: typeof Cl
 
 // Fetch alamat tersimpan dari Supabase profiles
 export async function fetchSavedAddress(userId: string): Promise<SavedAddress | null> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('shipping_name, shipping_phone, shipping_address')
-    .eq('id', userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('shipping_name, shipping_phone, shipping_address')
+      .eq('id', userId)
+      .maybeSingle();
 
-  if (data && data.shipping_name) {
-    return {
-      name: data.shipping_name || '',
-      phone: data.shipping_phone || '',
-      address: data.shipping_address || '',
-    };
+    if (error || !data) return null;
+
+    if (data.shipping_name) {
+      return {
+        name: data.shipping_name || '',
+        phone: data.shipping_phone || '',
+        address: data.shipping_address || '',
+      };
+    }
+  } catch {
+    // Kolom mungkin belum ada di tabel — skip aja
   }
   return null;
 }
