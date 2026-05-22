@@ -1,7 +1,26 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
 
 const API_BASE = 'https://api.binderbyte.com/v1';
-const API_KEY = process.env.BINDERBYTE_API_KEY || '';
+
+// Supabase client for reading settings
+const supabaseUrl = 'https://qjklcbicacbfqeitfzau.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2xjYmljYWNiZnFlaXRmemF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDE4MjYsImV4cCI6MjA5NDgxNzgyNn0.uIpmrfLh6hdntkADcBINNZ3xQV9gjzs0BACXPpw8aJk';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+async function getApiKey(): Promise<string> {
+  // Try from Supabase store_settings first
+  const { data } = await supabase
+    .from('store_settings')
+    .select('value')
+    .eq('key', 'binderbyte_api_key')
+    .single();
+
+  if (data?.value) return data.value;
+
+  // Fallback to env var
+  return process.env.BINDERBYTE_API_KEY || '';
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,19 +38,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Parameter "search" minimal 3 karakter' });
   }
 
+  const API_KEY = await getApiKey();
+
   if (!API_KEY) {
-    return res.status(500).json({ error: 'BINDERBYTE_API_KEY belum di-configure di environment variables' });
+    return res.status(500).json({ error: 'API key belum di-setting. Buka Admin Panel → Pengaturan untuk input BinderByte API Key.' });
   }
 
   try {
     const url = `${API_BASE}/locations?search=${encodeURIComponent(search.trim())}&api_key=${API_KEY}`;
     const response = await fetch(url);
 
-    // Read as text first to avoid JSON parse crash on empty/invalid response
     const rawText = await response.text();
 
     if (!rawText || rawText.trim().length === 0) {
-      return res.status(502).json({ error: 'BinderByte returned empty response. Cek API key valid atau belum.' });
+      return res.status(502).json({ error: 'BinderByte returned empty response. Cek API key di Admin → Pengaturan.' });
     }
 
     let data: any;

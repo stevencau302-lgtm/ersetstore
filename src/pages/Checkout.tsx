@@ -15,9 +15,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { fetchSavedAddress, saveAddressToSupabase, type SavedAddress } from './Akun';
 import type { OrderData, PaymentMethod } from '../types';
 
-// Origin toko — set ID lokasi toko kamu di sini
-// Contoh: Pademangan, Jakarta Utara
-const STORE_ORIGIN_ID = 'dist_31.72.05';
+// Origin toko — dibaca dari settings di backend, jadi frontend cukup kirim tanpa origin
+// Backend akan pakai store_origin_id dari Supabase settings
 
 interface PaymentGroup {
   id: string;
@@ -81,7 +80,7 @@ export default function Checkout() {
   useEffect(() => {
     if (destination) {
       setSelectedRate(null);
-      fetchRates(STORE_ORIGIN_ID, destination.id, totalWeightGram);
+      fetchRates('', destination.id, totalWeightGram);
     } else {
       clearRates();
       setSelectedRate(null);
@@ -251,7 +250,7 @@ export default function Checkout() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => fetchRates(STORE_ORIGIN_ID, destination.id, totalWeightGram)}
+                    onClick={() => fetchRates('', destination.id, totalWeightGram)}
                     className="btn btn-outline btn-sm"
                   >
                     <RefreshCw className="size-4" /> Coba Lagi

@@ -22,6 +22,7 @@ import AdminDashboard from './admin/AdminDashboard';
 import AdminOrders from './admin/AdminOrders';
 import AdminProducts from './admin/AdminProducts';
 import AdminCustomers from './admin/AdminCustomers';
+import AdminSettings from './admin/AdminSettings';
 
 export default function App() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="products" element={<AdminProducts />} />
         <Route path="customers" element={<AdminCustomers />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
     </Routes>
   );

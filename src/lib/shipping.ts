@@ -45,13 +45,13 @@ export async function fetchShippingCost(
   weight: number,
   courier?: string
 ): Promise<ShippingRate[]> {
-  if (!origin || !destination || weight <= 0) return [];
+  if (!destination || weight <= 0) return [];
 
   const params = new URLSearchParams({
-    origin,
     destination,
     weight: weight.toString(),
   });
+  if (origin) params.set('origin', origin);
   if (courier) params.set('courier', courier);
 
   const res = await fetch(`/api/shipping-cost?${params}`);
@@ -125,7 +125,7 @@ export function useShippingRates() {
     weight: number,
     courier?: string
   ) => {
-    if (!origin || !destination || weight <= 0) {
+    if (!destination || weight <= 0) {
       setRates([]);
       return;
     }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, ShoppingCart, Package, Users, LogOut, Menu, X,
-  ChevronRight, Store,
+  ChevronRight, Store, Settings,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/admin/orders', icon: ShoppingCart, label: 'Pesanan', end: false },
   { to: '/admin/products', icon: Package, label: 'Produk', end: false },
   { to: '/admin/customers', icon: Users, label: 'Pelanggan', end: false },
+  { to: '/admin/settings', icon: Settings, label: 'Pengaturan', end: false },
 ];
 
 export default function AdminLayout() {

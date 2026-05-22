@@ -1,10 +1,30 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
 
 const API_BASE = 'https://api.binderbyte.com/v1';
-const API_KEY = process.env.BINDERBYTE_API_KEY || '';
+
+// Supabase client for reading settings
+const supabaseUrl = 'https://qjklcbicacbfqeitfzau.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2xjYmljYWNiZnFlaXRmemF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDE4MjYsImV4cCI6MjA5NDgxNzgyNn0.uIpmrfLh6hdntkADcBINNZ3xQV9gjzs0BACXPpw8aJk';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Semua kurir yang didukung BinderByte (dipanggil satu per satu)
 const ALL_COURIER_LIST = ['jne', 'sicepat', 'jnt', 'ninja', 'anteraja', 'pos', 'tiki', 'lion', 'sap', 'ide', 'wahana', 'spx'];
+
+async function getSettings(): Promise<{ apiKey: string; originId: string }> {
+  const { data } = await supabase
+    .from('store_settings')
+    .select('key, value')
+    .in('key', ['binderbyte_api_key', 'store_origin_id']);
+
+  const map: Record<string, string> = {};
+  (data || []).forEach((s: any) => { map[s.key] = s.value; });
+
+  return {
+    apiKey: map['binderbyte_api_key'] || process.env.BINDERBYTE_API_KEY || '',
+    originId: map['store_origin_id'] || 'dist_31.72.05',
+  };
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,26 +53,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Validasi
-  if (!origin) return res.status(400).json({ error: 'Parameter "origin" wajib diisi' });
   if (!destination) return res.status(400).json({ error: 'Parameter "destination" wajib diisi' });
   if (!weight || Number(weight) <= 0) return res.status(400).json({ error: 'Parameter "weight" harus > 0 (gram)' });
 
-  // Frontend kirim dalam gram, BinderByte mau kilogram
-  // Minimum 1 kg
+  // Get settings from Supabase
+  const settings = await getSettings();
+
+  if (!settings.apiKey) {
+    return res.status(500).json({ error: 'API key belum di-setting. Buka Admin Panel → Pengaturan untuk input BinderByte API Key.' });
+  }
+
+  // Use origin from request, or fallback to store setting
+  if (!origin) origin = settings.originId;
+
+  // Frontend kirim dalam gram, BinderByte mau kilogram. Minimum 1 kg
   const weightKg = Math.max(1, Math.ceil(Number(weight) / 1000));
 
   // Default: semua kurir populer
   const courierList = courier ? courier.split(',').map(c => c.trim()).filter(Boolean) : ALL_COURIER_LIST;
 
-  if (!API_KEY) {
-    return res.status(500).json({ error: 'BINDERBYTE_API_KEY belum di-configure di environment variables' });
-  }
-
   try {
-    // Fetch setiap kurir satu per satu secara parallel (BinderByte nggak reliable kalo semua sekaligus)
+    // Fetch setiap kurir satu per satu secara parallel
     const fetchCourier = async (c: string) => {
       try {
-        const url = `${API_BASE}/cost?api_key=${API_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&weight=${weightKg}&courier=${c}`;
+        const url = `${API_BASE}/cost?api_key=${settings.apiKey}&origin=${encodeURIComponent(origin!)}&destination=${encodeURIComponent(destination!)}&weight=${weightKg}&courier=${c}`;
         const resp = await fetch(url);
         const text = await resp.text();
         if (!text || text.trim().length === 0) return [];
