@@ -51,16 +51,17 @@ export default function Header() {
 
       {/* Main header */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="container-x flex items-center gap-4 sm:gap-6 py-4">
+        <div className="container-x flex items-center gap-2 sm:gap-4 py-3 sm:py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="relative size-10 grid place-items-center bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl text-white font-black text-lg shadow-lg shadow-brand-500/30">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <div className="relative size-9 sm:size-10 grid place-items-center bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl text-white font-black text-base sm:text-lg shadow-lg shadow-brand-500/30">
               E
             </div>
-            <div className="leading-tight">
+            <div className="leading-tight hidden sm:block">
               <div className="text-lg font-extrabold text-gray-900 tracking-tight">Erset Store</div>
               <div className="text-[10px] font-semibold text-brand-500 tracking-[2px] uppercase">Produk Lengkap & Unik</div>
             </div>
+            <span className="sm:hidden text-base font-extrabold text-gray-900">Erset</span>
           </Link>
 
           {/* Search */}
@@ -76,30 +77,30 @@ export default function Header() {
           </form>
 
           {/* Actions */}
-          <div className="flex items-center gap-1 ml-auto">
-            <Link to="/produk" aria-label="Wishlist" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+          <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
+            <Link to="/produk" aria-label="Wishlist" className="hidden sm:grid size-10 place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
               <Heart className="size-5" />
             </Link>
             {user ? (
-              <Link to="/akun" aria-label="Akun Saya" title="Akun Saya" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+              <Link to="/akun" aria-label="Akun Saya" title="Akun Saya" className="size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
                 <User className="size-5" />
               </Link>
             ) : (
-              <Link to="/masuk" aria-label="Masuk" className="size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+              <Link to="/masuk" aria-label="Masuk" className="size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
                 <LogIn className="size-5" />
               </Link>
             )}
-            <Link to="/keranjang" aria-label="Keranjang" className="relative size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+            <Link to="/keranjang" aria-label="Keranjang" className="relative size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
               <ShoppingCart className="size-5" />
               {count > 0 && (
-                <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 bg-brand-500 text-white text-[10px] font-bold rounded-full grid place-items-center">
+                <span className="absolute top-0.5 right-0.5 min-w-[16px] h-[16px] px-0.5 bg-brand-500 text-white text-[9px] font-bold rounded-full grid place-items-center">
                   {count > 99 ? '99+' : count}
                 </span>
               )}
             </Link>
             <button
               aria-label="Menu"
-              className="lg:hidden size-10 grid place-items-center rounded-xl text-gray-700 hover:bg-gray-50"
+              className="lg:hidden size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:bg-gray-50"
               onClick={() => setMenuOpen((s) => !s)}
             >
               {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}

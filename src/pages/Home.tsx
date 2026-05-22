@@ -22,33 +22,33 @@ export default function Home() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#1e2a3a] via-[#1a2332] to-[#2d1f1f] text-white">
-        <div className="absolute -top-32 -right-20 size-[600px] bg-brand-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-20 size-[500px] bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-20 size-[400px] sm:size-[600px] bg-brand-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-20 size-[300px] sm:size-[500px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="container-x grid lg:grid-cols-2 gap-12 items-center py-16 lg:py-24 relative">
+        <div className="container-x grid lg:grid-cols-2 gap-12 items-center py-12 sm:py-16 lg:py-24 relative">
           <div className="animate-slide-up">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight mb-6 text-gray-100">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight mb-5 sm:mb-6 text-gray-100">
               Semua yang Kamu{' '}
               <span className="bg-gradient-to-r from-brand-500 to-amber-400 bg-clip-text text-transparent">
                 Butuhkan
               </span>
               , Ada di Sini
             </h1>
-            <p className="text-lg text-gray-300/90 max-w-xl mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-300/90 max-w-xl mb-6 sm:mb-8 leading-relaxed">
               Gadget, audio, homeware, tools, hobby & masih banyak lagi — produk pilihan dengan harga terbaik, update setiap hari!
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Link to="/produk" className="btn btn-primary btn-lg">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link to="/produk" className="btn btn-primary btn-lg w-full sm:w-auto">
                 Mulai Belanja
                 <ArrowRight className="size-4" />
               </Link>
-              <Link to="/produk" className="btn btn-lg border-2 border-white/20 text-white hover:bg-white hover:text-gray-900 transition-colors">
+              <Link to="/produk" className="btn btn-lg border-2 border-white/20 text-white hover:bg-white hover:text-gray-900 transition-colors w-full sm:w-auto">
                 Lihat Produk
               </Link>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-12 pt-8 border-t border-white/10">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/10">
               {[
                 { num: '10K+', label: 'Produk Import' },
                 { num: '50K+', label: 'Pelanggan' },
@@ -56,10 +56,10 @@ export default function Home() {
                 { num: '24 Jam', label: 'Pengiriman' },
               ].map((s) => (
                 <div key={s.label}>
-                  <div className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-brand-500 to-amber-400 bg-clip-text text-transparent">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-brand-500 to-amber-400 bg-clip-text text-transparent">
                     {s.num}
                   </div>
-                  <div className="text-xs text-gray-300 uppercase tracking-wider mt-1">{s.label}</div>
+                  <div className="text-[10px] sm:text-xs text-gray-300 uppercase tracking-wider mt-1">{s.label}</div>
                 </div>
               ))}
             </div>
