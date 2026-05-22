@@ -15,9 +15,18 @@ import Akun from './pages/Akun';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
+// Admin
+import AdminLayout from './admin/AdminLayout';
+import AdminProtectedRoute from './admin/AdminProtectedRoute';
+import AdminDashboard from './admin/AdminDashboard';
+import AdminOrders from './admin/AdminOrders';
+import AdminProducts from './admin/AdminProducts';
+import AdminCustomers from './admin/AdminCustomers';
+
 export default function App() {
   return (
     <Routes>
+      {/* Store routes */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/produk" element={<Products />} />
@@ -40,6 +49,18 @@ export default function App() {
         <Route path="/tentang" element={<About />} />
         <Route path="/halaman/:slug" element={<Legal />} />
         <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* Admin routes */}
+      <Route path="/admin" element={
+        <AdminProtectedRoute>
+          <AdminLayout />
+        </AdminProtectedRoute>
+      }>
+        <Route index element={<AdminDashboard />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="customers" element={<AdminCustomers />} />
       </Route>
     </Routes>
   );
