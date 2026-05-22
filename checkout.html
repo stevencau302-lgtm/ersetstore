@@ -83,6 +83,8 @@
       const total = subtotal + shipping;
 
       document.getElementById('checkoutContent').innerHTML = `
+        <!-- Auto-fill notice -->
+        ${localStorage.getItem('erset_customer') ? '<div style="background:rgba(253,200,0,0.08); border:2px solid var(--primary); padding:12px 16px; border-radius:10px; margin-bottom:20px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px;">✨ <span>Data alamat kamu sudah terisi otomatis dari order sebelumnya. Silakan cek kembali ya!</span></div>' : ''}` + `
         <div class="checkout-layout">
           <form id="checkoutForm" onsubmit="placeOrder(event)">
             <!-- Step 1 -->
@@ -226,6 +228,8 @@
           </div>
         </div>
       `;
+      // Auto-fill from previous order data
+      loadCustomerData();
     }
 
     function selectShipping(id) {
@@ -238,8 +242,41 @@
       render();
     }
 
+    function saveCustomerData() {
+      const form = document.getElementById('checkoutForm');
+      if (!form) return;
+      const inputs = form.querySelectorAll('input, textarea, select');
+      const fields = {};
+      inputs.forEach((el, idx) => {
+        if (el.type === 'radio') return;
+        fields['field_' + idx] = el.value || '';
+      });
+      localStorage.setItem('erset_customer', JSON.stringify(fields));
+    }
+
+    function loadCustomerData() {
+      const saved = localStorage.getItem('erset_customer');
+      if (!saved) return;
+      try {
+        const fields = JSON.parse(saved);
+        const form = document.getElementById('checkoutForm');
+        if (!form) return;
+        const inputs = form.querySelectorAll('input, textarea, select');
+        inputs.forEach((el, idx) => {
+          if (el.type === 'radio') return;
+          const key = 'field_' + idx;
+          if (fields[key]) {
+            el.value = fields[key];
+          }
+        });
+      } catch (e) {}
+    }
+
     function placeOrder(e) {
       e.preventDefault();
+      // Save customer data for auto-fill next time
+      saveCustomerData();
+
       const orderId = 'ERS-' + Date.now().toString().slice(-8);
       const total = Cart.total() + selectedShipping.price;
       const orderData = {
