@@ -37,6 +37,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!destination) return res.status(400).json({ error: 'Parameter "destination" wajib diisi' });
   if (!weight || Number(weight) <= 0) return res.status(400).json({ error: 'Parameter "weight" harus > 0 (gram)' });
 
+  // Frontend kirim dalam gram, BinderByte mau kilogram
+  // Minimum 1 kg
+  const weightKg = Math.max(1, Math.ceil(Number(weight) / 1000));
+
   // Default: semua kurir
   if (!courier) courier = ALL_COURIERS;
 
@@ -45,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const url = `${API_BASE}/cost?api_key=${API_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&weight=${weight}&courier=${encodeURIComponent(courier)}`;
+    const url = `${API_BASE}/cost?api_key=${API_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&weight=${weightKg}&courier=${encodeURIComponent(courier)}`;
     const response = await fetch(url);
 
     // Read as text first to avoid JSON parse crash on empty/invalid response
