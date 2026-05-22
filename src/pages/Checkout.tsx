@@ -189,9 +189,9 @@ export default function Checkout() {
     <>
       <PageHeader title="Checkout Pesanan" breadcrumb={breadcrumb} />
 
-      <section className="container-x pb-16">
-        <form onSubmit={placeOrder} className="grid lg:grid-cols-[1fr_380px] gap-6 items-start">
-          <div className="flex flex-col gap-4">
+      <section className="container-x pb-32 lg:pb-16">
+        <form id="checkoutForm" onSubmit={placeOrder} className="grid lg:grid-cols-[1fr_380px] gap-4 lg:gap-6 items-start">
+          <div className="flex flex-col gap-3 lg:gap-4">
             {/* Step 1: Contact */}
             <Section step={1} title="Informasi Kontak" icon={User}>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -266,32 +266,32 @@ export default function Checkout() {
                   <p className="text-xs text-gray-500">
                     Berat: <strong>{(totalWeightGram / 1000).toFixed(1)} kg</strong> • Tujuan: <strong>{destination.label}</strong>
                   </p>
-                  <div className="grid gap-2.5 max-h-80 overflow-y-auto pr-1 scrollbar-thin">
+                  <div className="grid gap-2 sm:gap-2.5 max-h-80 overflow-y-auto pr-1 scrollbar-thin">
                     {rates.map((rate, idx) => (
                       <label
                         key={`${rate.courier_code}-${rate.service}-${idx}`}
-                        className={`flex items-center justify-between gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                        className={`flex items-center justify-between gap-2 sm:gap-3 p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all ${
                           selectedRate?.courier_code === rate.courier_code && selectedRate?.service === rate.service
                             ? 'border-brand-500 bg-brand-50/50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                           <input
                             type="radio"
                             name="shipping_rate"
                             checked={selectedRate?.courier_code === rate.courier_code && selectedRate?.service === rate.service}
                             onChange={() => setSelectedRate(rate)}
-                            className="size-4 accent-brand-500"
+                            className="size-4 accent-brand-500 shrink-0"
                           />
-                          <div>
-                            <strong className="block text-sm text-gray-900">{rate.courier_name} — {rate.service}</strong>
-                            <span className="text-xs text-gray-500">
-                              {rate.type}{rate.estimated ? ` • Est: ${rate.estimated}` : ''}
+                          <div className="min-w-0">
+                            <strong className="block text-xs sm:text-sm text-gray-900 truncate">{rate.courier_name} — {rate.service}</strong>
+                            <span className="text-[10px] sm:text-xs text-gray-500">
+                              {rate.type}{rate.estimated ? ` • ${rate.estimated}` : ''}
                             </span>
                           </div>
                         </div>
-                        <span className="font-bold text-brand-500 text-sm whitespace-nowrap">{formatPrice(rate.price)}</span>
+                        <span className="font-bold text-brand-500 text-xs sm:text-sm whitespace-nowrap shrink-0">{formatPrice(rate.price)}</span>
                       </label>
                     ))}
                   </div>
@@ -301,13 +301,13 @@ export default function Checkout() {
 
             {/* Step 4: Payment */}
             <Section step={4} title="Metode Pembayaran" icon={CreditCard}>
-              <div className="grid gap-3">
+              <div className="grid gap-2 sm:gap-3">
                 {PAYMENT_GROUPS.map((group) => {
                   const IconComp = group.iconName === 'landmark' ? Landmark : group.iconName === 'zap' ? Zap : Banknote;
                   return (
                     <label
                       key={group.id}
-                      className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                      className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all ${
                         paymentId === group.id
                           ? 'border-brand-500 bg-brand-50/50 shadow-sm'
                           : 'border-gray-200 hover:border-gray-300'
@@ -319,13 +319,13 @@ export default function Checkout() {
                         value={group.id}
                         checked={paymentId === group.id}
                         onChange={() => setPaymentId(group.id)}
-                        className="size-5 accent-brand-500"
+                        className="size-4 sm:size-5 accent-brand-500"
                       />
                       <div className="flex-1 min-w-0">
-                        <strong className="block text-base text-gray-900">{group.label}</strong>
-                        <span className="text-sm text-gray-500">{group.desc}</span>
+                        <strong className="block text-sm sm:text-base text-gray-900">{group.label}</strong>
+                        <span className="text-xs sm:text-sm text-gray-500">{group.desc}</span>
                       </div>
-                      <IconComp className="size-5 text-brand-500" />
+                      <IconComp className="size-4 sm:size-5 text-brand-500 shrink-0" />
                     </label>
                   );
                 })}
@@ -345,8 +345,8 @@ export default function Checkout() {
             </Section>
           </div>
 
-          {/* Summary */}
-          <div className="card p-6 lg:sticky lg:top-32">
+          {/* Summary - Desktop: sticky sidebar, Mobile: sticky bottom bar */}
+          <div className="hidden lg:block card p-6 lg:sticky lg:top-32">
             <h3 className="text-xs font-bold uppercase tracking-[2px] text-gray-900 mb-5">Ringkasan Pesanan</h3>
 
             <div className="space-y-3 mb-5 max-h-72 overflow-y-auto scrollbar-thin pr-1">
@@ -408,6 +408,34 @@ export default function Checkout() {
             </p>
           </div>
         </form>
+
+        {/* Mobile sticky bottom bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 p-3 px-4 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total</p>
+              <p className="text-lg font-extrabold text-brand-500">{formatPrice(total)}</p>
+            </div>
+            <div className="text-right">
+              {selectedRate && (
+                <p className="text-[10px] text-gray-500">{selectedRate.courier_name} {selectedRate.service}</p>
+              )}
+              <p className="text-xs text-gray-500">{count} item • {(totalWeightGram / 1000).toFixed(1)} kg</p>
+            </div>
+          </div>
+          <button
+            type="submit"
+            form="checkoutForm"
+            disabled={submitting || !selectedRate}
+            className="btn btn-primary btn-md w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitting ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
+            {submitting ? 'Memproses...' : 'Bayar Sekarang'}
+          </button>
+          {orderError && (
+            <p className="text-xs text-red-500 text-center mt-1.5">{orderError}</p>
+          )}
+        </div>
       </section>
     </>
   );
@@ -419,11 +447,11 @@ function Section({
   step: number; title: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode;
 }) {
   return (
-    <div className="card p-6">
-      <h3 className="flex items-center gap-3 text-base font-bold text-gray-900 mb-5">
-        <span className="size-8 grid place-items-center bg-brand-500 text-white rounded-full text-xs font-extrabold shadow-md shadow-brand-500/30">{step}</span>
+    <div className="card p-4 sm:p-6">
+      <h3 className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base font-bold text-gray-900 mb-4 sm:mb-5">
+        <span className="size-7 sm:size-8 grid place-items-center bg-brand-500 text-white rounded-full text-[10px] sm:text-xs font-extrabold shadow-md shadow-brand-500/30">{step}</span>
         <Icon className="size-4 text-brand-500" />
-        <span className="uppercase tracking-wider text-sm">{title}</span>
+        <span className="uppercase tracking-wider text-xs sm:text-sm">{title}</span>
       </h3>
       {children}
     </div>
