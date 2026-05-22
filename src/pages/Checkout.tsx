@@ -54,6 +54,18 @@ export default function Checkout() {
   // Berat total (gram): asumsikan 500g per item, minimum 1000g
   const totalWeightGram = Math.max(1000, items.reduce((sum, item) => sum + item.qty * 500, 0));
 
+  // Handler ketika user pilih/hapus lokasi — langsung fetch ongkir
+  const handleDestinationChange = (loc: Location | null) => {
+    setDestination(loc);
+    setSelectedRate(null);
+    if (loc) {
+      console.log('[Checkout] handleDestinationChange → fetching rates for:', loc.id);
+      fetchRates('', loc.id, totalWeightGram);
+    } else {
+      clearRates();
+    }
+  };
+
   // Fetch saved address
   useEffect(() => {
     if (user) {
@@ -82,23 +94,11 @@ export default function Checkout() {
     }
   }, [user]);
 
-  // Fetch ongkir when destination changes
-  useEffect(() => {
-    if (destination) {
-      console.log('[Checkout] Fetching rates for:', destination.id, 'weight:', totalWeightGram);
-      setSelectedRate(null);
-      fetchRates('', destination.id, totalWeightGram);
-    } else {
-      clearRates();
-      setSelectedRate(null);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destination, totalWeightGram]);
-
   // Auto-select cheapest rate
   useEffect(() => {
     if (rates.length > 0 && !selectedRate) {
-      setSelectedRate(rates[0]); // already sorted by price asc from backend
+      console.log('[Checkout] Auto-selecting cheapest rate, total:', rates.length);
+      setSelectedRate(rates[0]);
     }
   }, [rates]);
 
@@ -226,7 +226,7 @@ export default function Checkout() {
                     label="Kelurahan / Kecamatan Tujuan *"
                     placeholder="Ketik nama kelurahan/kecamatan (min 3 huruf)..."
                     value={destination}
-                    onChange={setDestination}
+                    onChange={handleDestinationChange}
                   />
                   <p className="text-[11px] text-gray-400 mt-1.5">
                     Pilih lokasi tujuan untuk menghitung ongkir secara otomatis.
