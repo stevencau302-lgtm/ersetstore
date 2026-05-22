@@ -85,6 +85,7 @@ export default function Checkout() {
       clearRates();
       setSelectedRate(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destination, totalWeightGram]);
 
   // Auto-select cheapest rate
