@@ -43,11 +43,10 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
       </label>
 
       {value ? (
-        <div className="flex items-center gap-2 p-3 bg-emerald-50 border-2 border-emerald-200 rounded-xl">
+        <div className="flex items-center gap-2 p-3 bg-emerald-50 border-2 border-emerald-200 rounded-xl w-full overflow-hidden">
           <MapPin className="size-4 text-emerald-600 shrink-0" />
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 overflow-hidden">
             <p className="text-sm font-semibold text-gray-900 truncate">{value.label}</p>
-            <p className="text-xs text-gray-500">ID: {value.id}</p>
           </div>
           <button
             type="button"
@@ -101,8 +100,8 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
               onClick={() => handleSelect(loc)}
               className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
             >
-              <p className="text-sm font-medium text-gray-900">{loc.label}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{loc.type} • {loc.id}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{loc.label}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{loc.type}</p>
             </button>
           ))}
         </div>
