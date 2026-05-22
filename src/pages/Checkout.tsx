@@ -9,7 +9,7 @@ import LocationSearch from '../components/LocationSearch';
 import { cartActions, orderActions, useCart } from '../lib/cart';
 import { findProduct } from '../data/products';
 import { formatPrice } from '../lib/format';
-import { useShippingRates, type Location, type ShippingRate } from '../lib/shipping';
+import { type Location, type ShippingRate } from '../lib/shipping';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchSavedAddress, saveAddressToSupabase, type SavedAddress } from './Akun';
@@ -46,23 +46,49 @@ export default function Checkout() {
   const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
   const navigate = useNavigate();
 
-  // Location & Shipping
+  // Location & Shipping — NO HOOKS, langsung state + fetch
   const [destination, setDestination] = useState<Location | null>(null);
   const [selectedRate, setSelectedRate] = useState<ShippingRate | null>(null);
-  const { rates, loading: ratesLoading, error: ratesError, fetchRates, clearRates } = useShippingRates();
+  const [rates, setRates] = useState<ShippingRate[]>([]);
+  const [ratesLoading, setRatesLoading] = useState(false);
+  const [ratesError, setRatesError] = useState('');
 
   // Berat total (gram): asumsikan 500g per item, minimum 1000g
   const totalWeightGram = Math.max(1000, items.reduce((sum, item) => sum + item.qty * 500, 0));
 
-  // Handler ketika user pilih/hapus lokasi — langsung fetch ongkir
-  const handleDestinationChange = (loc: Location | null) => {
+  // Handler ketika user pilih/hapus lokasi — LANGSUNG fetch ongkir
+  const handleDestinationChange = async (loc: Location | null) => {
     setDestination(loc);
     setSelectedRate(null);
-    if (loc) {
-      console.log('[Checkout] handleDestinationChange → fetching rates for:', loc.id);
-      fetchRates('', loc.id, totalWeightGram);
-    } else {
-      clearRates();
+    setRates([]);
+    setRatesError('');
+
+    if (!loc) return;
+
+    setRatesLoading(true);
+    console.log('[Checkout] Fetching shipping cost for:', loc.id, 'weight:', totalWeightGram);
+
+    try {
+      const params = new URLSearchParams({ destination: loc.id, weight: totalWeightGram.toString() });
+      const res = await fetch(`/api/shipping-cost?${params}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setRatesError(data.error || 'Gagal mengambil ongkir');
+        console.error('[Checkout] shipping-cost error:', data);
+      } else {
+        const results = data.result || [];
+        console.log('[Checkout] Got', results.length, 'rates');
+        setRates(results);
+        if (results.length > 0) {
+          setSelectedRate(results[0]);
+        }
+      }
+    } catch (err: any) {
+      console.error('[Checkout] fetch error:', err);
+      setRatesError(err.message || 'Gagal mengambil ongkir');
+    } finally {
+      setRatesLoading(false);
     }
   };
 
@@ -94,13 +120,7 @@ export default function Checkout() {
     }
   }, [user]);
 
-  // Auto-select cheapest rate
-  useEffect(() => {
-    if (rates.length > 0 && !selectedRate) {
-      console.log('[Checkout] Auto-selecting cheapest rate, total:', rates.length);
-      setSelectedRate(rates[0]);
-    }
-  }, [rates]);
+  // (auto-select handled in handleDestinationChange)
 
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
@@ -258,7 +278,7 @@ export default function Checkout() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => fetchRates('', destination.id, totalWeightGram)}
+                    onClick={() => handleDestinationChange(destination)}
                     className="btn btn-outline btn-sm"
                   >
                     <RefreshCw className="size-4" /> Coba Lagi
