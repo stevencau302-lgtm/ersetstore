@@ -37,8 +37,9 @@ export default function Header() {
       <div className="bg-gray-900 text-gray-300 text-xs">
         <div className="container-x flex items-center justify-between py-2 gap-3 flex-wrap">
           <div className="flex items-center gap-2">
-            <Truck className="size-3.5" />
-            <span>Gratis ongkir min. belanja Rp 200.000 ke seluruh Indonesia</span>
+            <Truck className="size-3.5 shrink-0" />
+            <span className="hidden sm:inline">Gratis ongkir min. belanja Rp 200.000 ke seluruh Indonesia</span>
+            <span className="sm:hidden">Gratis ongkir min. Rp 200rb</span>
           </div>
           <div className="hidden sm:flex items-center gap-4">
             <a href="#" className="hover:text-brand-500 transition-colors">Bantuan</a>
