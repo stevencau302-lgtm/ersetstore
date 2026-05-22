@@ -37,17 +37,91 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/layout.js"></script>
   <script>
-    let selectedShipping = { id: 'reguler', name: 'JNE Reguler', eta: '2-3 days', price: 15000 };
+    let selectedShipping = null;
     let selectedPayment = 'bca';
+    let selectedProvince = '';
+    let availableShippings = [];
 
-    const SHIPPINGS = [
-      { id: 'reguler', name: 'JNE Reguler', eta: '2-3 business days', price: 15000 },
-      { id: 'yes', name: 'JNE YES (Next Day)', eta: '1 business day', price: 28000 },
-      { id: 'sicepat', name: 'SiCepat REG', eta: '2-3 business days', price: 14000 },
-      { id: 'jnt', name: 'J&T Express', eta: '2-4 business days', price: 13000 },
-      { id: 'ninja', name: 'Ninja Xpress', eta: '2-3 business days', price: 12000 },
-      { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Today, Jabodetabek only', price: 35000 },
+    // Ongkir rates per province (simulated, price multiplier based on distance from Jakarta)
+    const PROVINCE_RATES = {
+      'DKI Jakarta': 1.0,
+      'Jawa Barat': 1.1,
+      'Banten': 1.1,
+      'Jawa Tengah': 1.3,
+      'DI Yogyakarta': 1.3,
+      'Jawa Timur': 1.5,
+      'Bali': 1.8,
+      'Sumatera Utara': 2.2,
+      'Sumatera Selatan': 2.0,
+      'Other': 2.5,
+    };
+
+    // Base shipping options (prices will be multiplied by province rate)
+    const BASE_SHIPPINGS = [
+      { id: 'reguler', name: 'JNE Reguler', eta: '2-3 business days', basePrice: 12000 },
+      { id: 'yes', name: 'JNE YES (Next Day)', eta: '1 business day', basePrice: 25000 },
+      { id: 'sicepat', name: 'SiCepat REG', eta: '2-3 business days', basePrice: 11000 },
+      { id: 'jnt', name: 'J&T Express', eta: '2-4 business days', basePrice: 10000 },
+      { id: 'ninja', name: 'Ninja Xpress', eta: '2-3 business days', basePrice: 10500 },
+      { id: 'instant', name: 'GoSend Instant (Same Day)', eta: 'Today, Jabodetabek only', basePrice: 35000, jabodetabekOnly: true },
     ];
+
+    // Calculate shipping options based on destination province
+    function calculateShippingOptions(province) {
+      console.log('[ongkir] calculateShippingOptions called with province:', province);
+      const rate = PROVINCE_RATES[province] || 2.5;
+      console.log('[ongkir] Rate for province:', rate);
+
+      return BASE_SHIPPINGS
+        .filter(s => {
+          // GoSend only available for Jabodetabek
+          if (s.jabodetabekOnly) {
+            return ['DKI Jakarta', 'Banten', 'Jawa Barat'].includes(province);
+          }
+          return true;
+        })
+        .map(s => ({
+          id: s.id,
+          name: s.name,
+          eta: s.eta,
+          price: Math.round(s.basePrice * rate / 1000) * 1000, // Round to nearest 1000
+        }));
+    }
+
+    // Called when province/destination changes
+    function handleDestinationChange(province) {
+      console.log('[ongkir] handleDestinationChange called with:', province);
+      alert('[DEBUG] handleDestinationChange fired! Province: ' + province);
+
+      selectedProvince = province;
+      availableShippings = calculateShippingOptions(province);
+      console.log('[ongkir] Available shippings calculated:', availableShippings);
+
+      // Auto-select cheapest option
+      if (availableShippings.length > 0) {
+        selectedShipping = availableShippings.reduce((min, s) => s.price < min.price ? s : min, availableShippings[0]);
+        console.log('[ongkir] Auto-selected cheapest shipping:', selectedShipping);
+      } else {
+        selectedShipping = null;
+      }
+
+      render();
+    }
+
+    // Called when user selects a shipping method
+    function handleSelect(shippingId) {
+      console.log('[ongkir] handleSelect called with:', shippingId);
+      alert('[DEBUG] handleSelect fired! Shipping ID: ' + shippingId);
+
+      const found = availableShippings.find(s => s.id === shippingId);
+      if (found) {
+        selectedShipping = found;
+        console.log('[ongkir] Selected shipping updated to:', selectedShipping);
+      } else {
+        console.warn('[ongkir] Shipping not found for id:', shippingId);
+      }
+      render();
+    }
 
     const PAYMENTS = [
       { id: 'bca', icon: '🏦', name: 'BCA Virtual Account', desc: 'Pay via BCA m-Banking / KlikBCA' },
@@ -79,7 +153,7 @@
     function render() {
       const items = Cart.get();
       const subtotal = Cart.total();
-      const shipping = selectedShipping.price;
+      const shipping = selectedShipping ? selectedShipping.price : 0;
       const total = subtotal + shipping;
 
       document.getElementById('checkoutContent').innerHTML = `
@@ -113,19 +187,19 @@
                   <textarea required placeholder="Street name, house number, RT/RW..."></textarea>
                 </div>
                 <div class="form-group">
-                  <label>Province *</label>
-                  <select required>
+                  <label>Province * <small style="color:var(--accent)">(determines shipping cost)</small></label>
+                  <select id="provinceSelect" required onchange="handleDestinationChange(this.value)">
                     <option value="">Select Province</option>
-                    <option>DKI Jakarta</option>
-                    <option>Jawa Barat</option>
-                    <option>Jawa Tengah</option>
-                    <option>Jawa Timur</option>
-                    <option>DI Yogyakarta</option>
-                    <option>Banten</option>
-                    <option>Bali</option>
-                    <option>Sumatera Utara</option>
-                    <option>Sumatera Selatan</option>
-                    <option>Other</option>
+                    <option ${selectedProvince === 'DKI Jakarta' ? 'selected' : ''}>DKI Jakarta</option>
+                    <option ${selectedProvince === 'Jawa Barat' ? 'selected' : ''}>Jawa Barat</option>
+                    <option ${selectedProvince === 'Jawa Tengah' ? 'selected' : ''}>Jawa Tengah</option>
+                    <option ${selectedProvince === 'Jawa Timur' ? 'selected' : ''}>Jawa Timur</option>
+                    <option ${selectedProvince === 'DI Yogyakarta' ? 'selected' : ''}>DI Yogyakarta</option>
+                    <option ${selectedProvince === 'Banten' ? 'selected' : ''}>Banten</option>
+                    <option ${selectedProvince === 'Bali' ? 'selected' : ''}>Bali</option>
+                    <option ${selectedProvince === 'Sumatera Utara' ? 'selected' : ''}>Sumatera Utara</option>
+                    <option ${selectedProvince === 'Sumatera Selatan' ? 'selected' : ''}>Sumatera Selatan</option>
+                    <option ${selectedProvince === 'Other' ? 'selected' : ''}>Other</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -150,20 +224,30 @@
             <!-- Step 3 -->
             <div class="checkout-section">
               <h3><span class="step-num">3</span> Shipping Method</h3>
-              <div class="shipping-methods">
-                ${SHIPPINGS.map(s => `
-                  <label class="shipping-method ${selectedShipping.id === s.id ? 'active' : ''}">
-                    <div class="shipping-method-left">
-                      <input type="radio" name="shipping" value="${s.id}" ${selectedShipping.id === s.id ? 'checked' : ''} onchange="selectShipping('${s.id}')" />
-                      <div>
-                        <strong>${s.name}</strong>
-                        <span>ETA: ${s.eta}</span>
+              ${!selectedProvince ? `
+                <div style="background:rgba(253,200,0,0.08); border:2px solid var(--accent); padding:18px; border-radius:10px; text-align:center; color:var(--text-muted);">
+                  <strong style="color:var(--text)">⚠️ Pilih Provinsi Tujuan Dulu</strong><br>
+                  <small>Ongkir akan dihitung otomatis setelah provinsi dipilih di Step 2</small>
+                </div>
+              ` : `
+                <div style="margin-bottom:12px; font-size:13px; color:var(--text-muted);">
+                  📍 Tujuan: <strong style="color:var(--text)">${selectedProvince}</strong> — ${availableShippings.length} kurir tersedia
+                </div>
+                <div class="shipping-methods">
+                  ${availableShippings.map(s => `
+                    <label class="shipping-method ${selectedShipping && selectedShipping.id === s.id ? 'active' : ''}">
+                      <div class="shipping-method-left">
+                        <input type="radio" name="shipping" value="${s.id}" ${selectedShipping && selectedShipping.id === s.id ? 'checked' : ''} onchange="handleSelect('${s.id}')" />
+                        <div>
+                          <strong>${s.name}</strong>
+                          <span>ETA: ${s.eta}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="price">${formatPrice(s.price)}</div>
-                  </label>
-                `).join('')}
-              </div>
+                      <div class="price">${formatPrice(s.price)}</div>
+                    </label>
+                  `).join('')}
+                </div>
+              `}
             </div>
 
             <!-- Step 4 -->
@@ -210,8 +294,8 @@
               <span>${formatPrice(subtotal)}</span>
             </div>
             <div class="summary-row">
-              <span>${selectedShipping.name}</span>
-              <span>${formatPrice(shipping)}</span>
+              <span>Shipping${selectedShipping ? ' (' + selectedShipping.name + ')' : ''}</span>
+              <span>${selectedShipping ? formatPrice(shipping) : '<em style=\"color:var(--text-muted)\">Pilih provinsi</em>'}</span>
             </div>
             <div class="summary-row total">
               <span>Total</span>
@@ -228,11 +312,6 @@
       `;
     }
 
-    function selectShipping(id) {
-      selectedShipping = SHIPPINGS.find(s => s.id === id);
-      render();
-    }
-
     function selectPayment(id) {
       selectedPayment = id;
       render();
@@ -240,6 +319,10 @@
 
     function placeOrder(e) {
       e.preventDefault();
+      if (!selectedShipping) {
+        showToast('Pilih provinsi tujuan dan metode pengiriman dulu!', 'error');
+        return;
+      }
       const orderId = 'ERS-' + Date.now().toString().slice(-8);
       const total = Cart.total() + selectedShipping.price;
       const orderData = {
