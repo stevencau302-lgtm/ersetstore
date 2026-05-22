@@ -61,17 +61,23 @@ export default function Checkout() {
         if (addr) {
           setSavedAddr(addr);
         } else {
-          const { data } = await supabase
-            .from('orders')
-            .select('shipping_name, shipping_phone, shipping_address')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
-          if (data && data.shipping_name) {
-            setSavedAddr({ name: data.shipping_name, phone: data.shipping_phone || '', address: data.shipping_address || '' });
+          try {
+            const { data } = await supabase
+              .from('orders')
+              .select('shipping_name, shipping_phone, shipping_address')
+              .eq('user_id', user.id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (data && data.shipping_name) {
+              setSavedAddr({ name: data.shipping_name, phone: data.shipping_phone || '', address: data.shipping_address || '' });
+            }
+          } catch (err) {
+            console.log('[Checkout] fetchSavedAddress fallback error:', err);
           }
         }
+      }).catch(err => {
+        console.log('[Checkout] fetchSavedAddress error:', err);
       });
     }
   }, [user]);
@@ -79,6 +85,7 @@ export default function Checkout() {
   // Fetch ongkir when destination changes
   useEffect(() => {
     if (destination) {
+      console.log('[Checkout] Fetching rates for:', destination.id, 'weight:', totalWeightGram);
       setSelectedRate(null);
       fetchRates('', destination.id, totalWeightGram);
     } else {

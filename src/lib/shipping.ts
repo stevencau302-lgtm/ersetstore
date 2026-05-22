@@ -125,7 +125,9 @@ export function useShippingRates() {
     weight: number,
     courier?: string
   ) => {
+    console.log('[useShippingRates] fetchRates called:', { origin, destination, weight, courier });
     if (!destination || weight <= 0) {
+      console.log('[useShippingRates] skipped: no destination or weight <= 0');
       setRates([]);
       return;
     }
@@ -135,8 +137,10 @@ export function useShippingRates() {
 
     try {
       const data = await fetchShippingCost(origin, destination, weight, courier);
+      console.log('[useShippingRates] got rates:', data.length, 'items');
       setRates(data);
     } catch (err: any) {
+      console.error('[useShippingRates] error:', err.message);
       setError(err.message || 'Gagal mengambil ongkir');
       setRates([]);
     } finally {
