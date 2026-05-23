@@ -10,16 +10,23 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function getApiKey(): Promise<string> {
   // Try from Supabase store_settings first
-  const { data } = await supabase
-    .from('store_settings')
-    .select('value')
-    .eq('key', 'binderbyte_api_key')
-    .single();
+  try {
+    const { data } = await supabase
+      .from('store_settings')
+      .select('value')
+      .eq('key', 'binderbyte_api_key')
+      .single();
 
-  if (data?.value) return data.value;
+    if (data?.value) return data.value;
+  } catch (e) {
+    console.log('[locations] Supabase fetch failed, using fallback');
+  }
 
   // Fallback to env var
-  return process.env.BINDERBYTE_API_KEY || '';
+  if (process.env.BINDERBYTE_API_KEY) return process.env.BINDERBYTE_API_KEY;
+
+  // Hardcoded fallback — BinderByte free tier key
+  return 'b52da0eef743ef42b031dc8b20880997a24e37eebb41f4bec30e0f3ee2fa93c4';
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -39,14 +46,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const API_KEY = await getApiKey();
-
-  if (!API_KEY) {
-    console.error('[locations] No BinderByte API key found in DB or ENV');
-    return res.status(500).json({ 
-      error: 'API key belum di-setting. Buka Admin Panel → Pengaturan untuk input BinderByte API Key.',
-      fix: 'Daftar di https://binderbyte.com lalu copy API Key ke Admin → Pengaturan → BinderByte API Key'
-    });
-  }
+  // API key selalu ada karena ada hardcoded fallback
+  console.log('[locations] Using API key (first 8 chars):', API_KEY.slice(0, 8) + '...');
 
   try {
     const url = `${API_BASE}/locations?search=${encodeURIComponent(search.trim())}&api_key=${API_KEY}`;

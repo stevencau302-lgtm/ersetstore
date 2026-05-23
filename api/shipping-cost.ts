@@ -12,16 +12,20 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const ALL_COURIER_LIST = ['jne', 'sicepat', 'jnt', 'ninja', 'anteraja', 'pos', 'tiki', 'lion', 'sap', 'ide', 'wahana', 'spx'];
 
 async function getSettings(): Promise<{ apiKey: string; originId: string }> {
-  const { data } = await supabase
-    .from('store_settings')
-    .select('key, value')
-    .in('key', ['binderbyte_api_key', 'store_origin_id']);
-
-  const map: Record<string, string> = {};
-  (data || []).forEach((s: any) => { map[s.key] = s.value; });
+  let map: Record<string, string> = {};
+  
+  try {
+    const { data } = await supabase
+      .from('store_settings')
+      .select('key, value')
+      .in('key', ['binderbyte_api_key', 'store_origin_id']);
+    (data || []).forEach((s: any) => { map[s.key] = s.value; });
+  } catch (e) {
+    console.log('[shipping-cost] Supabase fetch failed, using fallback');
+  }
 
   return {
-    apiKey: map['binderbyte_api_key'] || process.env.BINDERBYTE_API_KEY || '',
+    apiKey: map['binderbyte_api_key'] || process.env.BINDERBYTE_API_KEY || 'b52da0eef743ef42b031dc8b20880997a24e37eebb41f4bec30e0f3ee2fa93c4',
     originId: map['store_origin_id'] || 'dist_31.72.05',
   };
 }
@@ -60,7 +64,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const settings = await getSettings();
 
   if (!settings.apiKey) {
-    return res.status(500).json({ error: 'API key belum di-setting. Buka Admin Panel → Pengaturan untuk input BinderByte API Key.' });
+    console.warn('[shipping-cost] No API key found — this should not happen with fallback');
+    return res.status(500).json({ error: 'API key configuration error' });
   }
 
   // Use origin from request, or fallback to store setting
