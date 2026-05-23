@@ -14,6 +14,11 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // Log state changes
+  useEffect(() => {
+    console.log('[LocationSearch] STATE:', { query, resultsCount: results.length, loading, error: error || 'none', open, hasValue: !!value });
+  }, [query, results, loading, error, open, value]);
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -75,11 +80,13 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
         </div>
       )}
 
-      {/* Error shown below input when not in dropdown */}
-      {!value && error && !open && query.length >= 3 && (
-        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-          <span>⚠️</span> {error}
-        </p>
+      {/* Error shown below input — ALWAYS visible when error exists */}
+      {!value && error && (
+        <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600">
+          <p className="font-bold">❌ ERROR ONGKIR:</p>
+          <p className="mt-0.5">{error}</p>
+          <p className="mt-1 text-red-400">Buka DevTools (F12) → Console untuk detail lengkap</p>
+        </div>
       )}
 
       {/* Dropdown */}

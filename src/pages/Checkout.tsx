@@ -58,13 +58,19 @@ export default function Checkout() {
 
   // Handler ketika user pilih/hapus lokasi — LANGSUNG fetch ongkir
   const handleDestinationChange = async (loc: Location | null) => {
-    console.log('[Checkout] handleDestinationChange CALLED! loc:', loc);
+    console.log('='.repeat(60));
+    console.log('[Checkout] 🚀 handleDestinationChange DIPANGGIL!');
+    console.log('[Checkout] loc:', loc);
+    console.log('='.repeat(60));
     setDestination(loc);
     setSelectedRate(null);
     setRates([]);
     setRatesError('');
 
-    if (!loc) return;
+    if (!loc) {
+      console.log('[Checkout] loc is null, returning early');
+      return;
+    }
 
     setRatesLoading(true);
     console.log('[Checkout] Fetching shipping cost for:', loc.id, 'weight:', totalWeightGram);
@@ -72,24 +78,41 @@ export default function Checkout() {
     try {
       const params = new URLSearchParams({ destination: loc.id, weight: totalWeightGram.toString() });
       const url = `/api/shipping-cost?${params}`;
-      console.log('[Checkout] Fetch URL:', url);
+      console.log('[Checkout] 📡 Fetch URL:', url);
       const res = await fetch(url);
-      const data = await res.json();
+      
+      const text = await res.text();
+      console.log('[Checkout] Raw response (first 500):', text.slice(0, 500));
+      
+      let data: any;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error('[Checkout] ❌ RESPONSE BUKAN JSON:', text.slice(0, 300));
+        setRatesError('Response bukan JSON — kemungkinan server error');
+        return;
+      }
+      
       console.log('[Checkout] Response status:', res.status, 'data:', data);
 
       if (!res.ok) {
         setRatesError(data.error || 'Gagal mengambil ongkir');
-        console.error('[Checkout] shipping-cost error:', data);
+        console.error('[Checkout] ❌ shipping-cost ERROR:', data);
       } else {
         const results = data.result || [];
-        console.log('[Checkout] Got', results.length, 'rates');
+        console.log('[Checkout] ✅ Got', results.length, 'shipping rates');
         setRates(results);
         if (results.length > 0) {
           setSelectedRate(results[0]);
+          console.log('[Checkout] Auto-selected:', results[0].courier_name, results[0].service, results[0].price);
+        } else {
+          console.warn('[Checkout] ⚠️ 0 rates returned — kurir tidak tersedia untuk tujuan ini');
         }
       }
     } catch (err: any) {
-      console.error('[Checkout] fetch error:', err);
+      console.error('[Checkout] ❌ FETCH GAGAL TOTAL:', err);
+      console.error('[Checkout] Error message:', err.message);
+      console.error('[Checkout] Error stack:', err.stack);
       setRatesError(err.message || 'Gagal mengambil ongkir');
     } finally {
       setRatesLoading(false);

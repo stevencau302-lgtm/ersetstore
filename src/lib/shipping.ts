@@ -26,16 +26,40 @@ export interface ShippingRate {
 
 /** Search locations by keyword (min 3 chars) */
 export async function searchLocations(query: string): Promise<Location[]> {
-  if (!query || query.trim().length < 3) return [];
-
-  const res = await fetch(`/api/locations?search=${encodeURIComponent(query.trim())}`);
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || `HTTP ${res.status}: Gagal mencari lokasi`);
+  if (!query || query.trim().length < 3) {
+    console.log('[searchLocations] SKIP: query terlalu pendek:', query);
+    return [];
   }
 
-  return data.result || [];
+  const url = `/api/locations?search=${encodeURIComponent(query.trim())}`;
+  console.log('[searchLocations] 🔍 Fetching:', url);
+
+  try {
+    const res = await fetch(url);
+    console.log('[searchLocations] Response status:', res.status, res.statusText);
+
+    const text = await res.text();
+    console.log('[searchLocations] Raw response (first 500 chars):', text.slice(0, 500));
+
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      console.error('[searchLocations] ❌ JSON PARSE ERROR! Response bukan JSON:', text.slice(0, 200));
+      throw new Error('Response bukan JSON. Kemungkinan Vercel error atau API key salah.');
+    }
+
+    if (!res.ok) {
+      console.error('[searchLocations] ❌ HTTP ERROR:', res.status, data);
+      throw new Error(data.error || `HTTP ${res.status}: Gagal mencari lokasi`);
+    }
+
+    console.log('[searchLocations] ✅ Success! Results:', (data.result || []).length, 'items');
+    return data.result || [];
+  } catch (err: any) {
+    console.error('[searchLocations] ❌ FETCH FAILED:', err.message || err);
+    throw err;
+  }
 }
 
 /** Fetch shipping costs */
@@ -86,12 +110,20 @@ export function useLocationSearch(debounceMs = 400) {
 
     setLoading(true);
     setError('');
+    console.log('[useLocationSearch] ⏳ Debouncing search for:', query);
 
     timeoutRef.current = setTimeout(async () => {
+      console.log('[useLocationSearch] 🚀 Executing search for:', query);
       try {
         const data = await searchLocations(query);
+        console.log('[useLocationSearch] ✅ Got results:', data.length);
         setResults(data);
+        if (data.length === 0) {
+          console.log('[useLocationSearch] ⚠️ 0 results — API mungkin belum aktif atau lokasi tidak ditemukan');
+        }
       } catch (err: any) {
+        console.error('[useLocationSearch] ❌ ERROR:', err.message);
+        console.error('[useLocationSearch] Full error:', err);
         setError(err.message || 'Gagal mencari lokasi');
         setResults([]);
       } finally {
