@@ -20,8 +20,8 @@ const SETTINGS_CONFIG = [
   },
   {
     key: 'store_origin_village_code',
-    label: 'Kode Desa Asal Toko (10 digit)',
-    description: 'Kode desa lokasi toko untuk hitung ongkir. Contoh: 3172051003 (Pademangan, Jakarta)',
+    label: 'Lokasi Asal Toko',
+    description: 'Cari & pilih desa/kelurahan lokasi toko. Kode dipakai otomatis untuk hitung ongkir.',
     icon: MapPin,
     secret: false,
     placeholder: '3172051003',
