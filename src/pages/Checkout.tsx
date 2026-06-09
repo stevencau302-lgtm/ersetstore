@@ -600,7 +600,7 @@ function Stepper({ steps }: { steps: { n: number; label: string; icon: React.Com
                     s.done ? 'bg-brand-500 text-white shadow-md shadow-brand-500/30' : 'bg-gray-100 text-gray-400'
                   }`}
                 >
-                  {s.done ? <CheckCircle2 className="size-5" /> : <Icon className="size-5" />}
+                  <Icon className="size-5" />
                 </span>
                 <div className="hidden sm:block min-w-0">
                   <p className="text-[10px] uppercase tracking-wider text-gray-400 leading-none">Langkah {s.n}</p>
