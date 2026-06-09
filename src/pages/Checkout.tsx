@@ -552,28 +552,31 @@ export default function Checkout() {
         </form>
 
         {/* Mobile sticky bottom bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-gray-200 p-3 px-4 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-          <div className="flex items-center justify-between mb-2">
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.1)]">
+          <div className="flex items-center justify-between mb-2.5">
             <div>
-              <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total</p>
-              <p className="text-lg font-extrabold text-brand-500">{formatPrice(total)}</p>
+              <p className="text-[10px] text-gray-500 uppercase tracking-wider">Total Bayar</p>
+              <p className="text-xl font-extrabold text-brand-500 leading-tight">{formatPrice(total)}</p>
             </div>
             <div className="text-right">
               {selectedRate && (
-                <p className="text-[10px] text-gray-500">{selectedRate.courier_name} {selectedRate.service}</p>
+                <p className="text-[11px] font-medium text-gray-700">{selectedRate.courier_name} {selectedRate.service}</p>
               )}
-              <p className="text-xs text-gray-500">{count} item • {(totalWeightGram / 1000).toFixed(1)} kg</p>
+              <p className="text-[11px] text-gray-500">{count} item • {(totalWeightGram / 1000).toFixed(1)} kg</p>
             </div>
           </div>
           <button
             type="submit"
             form="checkoutForm"
             disabled={submitting || !selectedRate}
-            className="btn btn-primary btn-md w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn-primary btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
             {submitting ? 'Memproses...' : 'Bayar Sekarang'}
           </button>
+          {!selectedRate && destination && !ratesLoading && rates.length > 0 && (
+            <p className="text-center text-[11px] text-amber-600 mt-1.5">Pilih kurir dulu di Step 3</p>
+          )}
           {orderError && (
             <p className="text-xs text-red-500 text-center mt-1.5">{orderError}</p>
           )}
