@@ -416,8 +416,8 @@ export default function Checkout() {
                 <textarea rows={3} placeholder="Catatan untuk pesanan (opsional)" className="input resize-y" />
               </div>
 
-              <div className="mt-4 flex items-start gap-3 bg-emerald-50 text-emerald-800 rounded-xl p-4 text-xs">
-                <ShieldCheck className="size-5 shrink-0" />
+              <div className="mt-4 flex items-start gap-3 bg-gray-50 text-gray-600 rounded-xl p-4 text-xs border border-gray-100">
+                <ShieldCheck className="size-5 shrink-0 text-brand-500" />
                 <span>Pembayaran kamu 100% aman dengan enkripsi SSL 256-bit. Kami tidak menyimpan data kartu kredit kamu.</span>
               </div>
             </Section>
@@ -572,7 +572,7 @@ function Stepper({ steps }: { steps: { n: number; label: string; icon: React.Com
 function TrustBadge({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
   return (
     <div className="flex flex-col items-center gap-1 text-center">
-      <Icon className="size-5 text-emerald-500" />
+      <Icon className="size-5 text-gray-400" />
       <span className="text-[10px] text-gray-500 leading-tight">{label}</span>
     </div>
   );
