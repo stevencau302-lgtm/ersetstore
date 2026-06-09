@@ -139,6 +139,11 @@ export default function Akun() {
     });
   };
 
+  const totalSpent = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const memberSince = user?.created_at
+    ? new Date(user.created_at).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' })
+    : '-';
+
   return (
     <>
       <PageHeader title="Akun Saya" breadcrumb={breadcrumb} />
