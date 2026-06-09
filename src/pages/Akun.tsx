@@ -308,7 +308,8 @@ export default function Akun() {
                   return (
                     <div
                       key={order.id}
-                      className="card p-4 sm:p-5 animate-slide-up hover:shadow-md"
+                      onClick={() => setSelectedOrder(order)}
+                      className="card p-4 sm:p-5 animate-slide-up hover:shadow-md hover:border-brand-200 cursor-pointer transition-all active:scale-[.99]"
                       style={{ animationDelay: `${Math.min(idx * 60, 300)}ms`, animationFillMode: 'backwards' }}
                     >
                       {/* Header */}
@@ -341,12 +342,14 @@ export default function Akun() {
                       </div>
 
                       {/* Footer */}
-                      <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2 text-xs text-gray-500">
-                        <span className="inline-flex items-center gap-1.5 min-w-0">
+                      <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 min-w-0">
                           <Clock className="size-3 shrink-0" />
                           <span className="truncate">{formatDate(order.created_at)}</span>
                         </span>
-                        <span className="font-mono text-gray-400 shrink-0">#{order.id.slice(0, 8)}</span>
+                        <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-brand-500 shrink-0">
+                          Lihat Detail <ChevronRight className="size-3.5" />
+                        </span>
                       </div>
                     </div>
                   );
