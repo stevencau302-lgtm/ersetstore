@@ -360,10 +360,10 @@ function StatTile({
   icon: React.ComponentType<{ className?: string }>; value: string; label: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-1 py-3.5 px-1 text-center min-w-0">
+    <div className="flex flex-col items-center justify-center gap-1 py-3.5 px-0.5 text-center min-w-0">
       <Icon className="size-4 text-brand-500 shrink-0" />
-      <span className="font-extrabold text-gray-900 leading-tight text-sm sm:text-base truncate max-w-full w-full">{value}</span>
-      <span className="text-[10px] uppercase tracking-wide text-gray-400 truncate max-w-full w-full">{label}</span>
+      <span className="font-extrabold text-gray-900 leading-tight text-[13px] sm:text-base truncate max-w-full w-full">{value}</span>
+      <span className="text-[9px] sm:text-[10px] uppercase tracking-tight text-gray-400 leading-none whitespace-nowrap">{label}</span>
     </div>
   );
 }
