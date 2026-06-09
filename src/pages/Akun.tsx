@@ -179,7 +179,7 @@ export default function Akun() {
             </div>
 
             {/* Alamat Tersimpan */}
-            <div className="card p-6">
+            <div className="card p-5 sm:p-6 animate-slide-up" style={{ animationDelay: '60ms', animationFillMode: 'backwards' }}>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
                   <MapPin className="size-4 text-brand-500" />
@@ -188,7 +188,8 @@ export default function Akun() {
                 {savedAddr && !editingAddress && (
                   <button
                     onClick={() => { setEditingAddress(true); setAddress(savedAddr); }}
-                    className="text-brand-500 hover:text-brand-600 transition"
+                    className="size-8 rounded-lg grid place-items-center text-brand-500 hover:bg-brand-50 transition"
+                    aria-label="Edit alamat"
                   >
                     <Pencil className="size-4" />
                   </button>
@@ -287,47 +288,53 @@ export default function Akun() {
                 </Link>
               </div>
             ) : (
-              <div className="space-y-4">
-                {orders.map((order) => {
+              <div className="space-y-3 sm:space-y-4">
+                {orders.map((order, idx) => {
                   const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending;
                   const StatusIcon = statusInfo.icon;
 
                   return (
-                    <div key={order.id} className="card p-5">
+                    <div
+                      key={order.id}
+                      className="card p-4 sm:p-5 animate-slide-up hover:shadow-md"
+                      style={{ animationDelay: `${Math.min(idx * 60, 300)}ms`, animationFillMode: 'backwards' }}
+                    >
                       {/* Header */}
                       <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.color}`}>
-                            <StatusIcon className="size-3" />
-                            {statusInfo.label}
-                          </span>
-                          <span className="text-xs text-gray-400">
-                            {formatDate(order.created_at)}
-                          </span>
-                        </div>
-                        <span className="text-sm font-bold text-brand-500">
+                        <span className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.color}`}>
+                          <StatusIcon className="size-3" />
+                          {statusInfo.label}
+                        </span>
+                        <span className="text-base font-extrabold text-brand-500">
                           {formatPrice(order.total)}
                         </span>
                       </div>
 
-                      {/* Items */}
-                      <div className="space-y-2 mb-4">
-                        {order.items.map((item, i) => (
-                          <div key={i} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-700 truncate max-w-[70%]">
-                              {item.product_name}
-                            </span>
-                            <span className="text-gray-500 shrink-0 ml-2">
-                              {item.qty}× {formatPrice(item.price)}
-                            </span>
-                          </div>
-                        ))}
+                      {/* Items dengan thumbnail */}
+                      <div className="space-y-2.5 mb-4">
+                        {order.items.map((item, i) => {
+                          const p = findProduct(item.product_id);
+                          return (
+                            <div key={i} className="flex items-center gap-3">
+                              <div className="size-10 rounded-xl bg-gray-50 grid place-items-center text-lg shrink-0">
+                                {p?.emoji || '📦'}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-800 truncate">{item.product_name}</p>
+                                <p className="text-[11px] text-gray-500">{item.qty} × {formatPrice(item.price)}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       {/* Footer */}
-                      <div className="border-t border-gray-100 pt-3 flex items-center justify-between text-xs text-gray-500">
-                        <span>Penerima: {order.shipping_name}</span>
-                        <span className="font-mono text-gray-400">{order.id.slice(0, 8)}</span>
+                      <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2 text-xs text-gray-500">
+                        <span className="inline-flex items-center gap-1.5 min-w-0">
+                          <Clock className="size-3 shrink-0" />
+                          <span className="truncate">{formatDate(order.created_at)}</span>
+                        </span>
+                        <span className="font-mono text-gray-400 shrink-0">#{order.id.slice(0, 8)}</span>
                       </div>
                     </div>
                   );
