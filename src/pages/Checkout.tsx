@@ -245,7 +245,7 @@ export default function Checkout() {
         <form id="checkoutForm" onSubmit={placeOrder} className="grid lg:grid-cols-[1fr_380px] gap-4 lg:gap-6 items-start">
           <div className="flex flex-col gap-3 lg:gap-4">
             {/* Step 1: Contact */}
-            <Section step={1} title="Informasi Kontak" icon={User} done={contactDone} delay={0}>
+            <Section step={1} title="Informasi Kontak" icon={User} delay={0}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Nama Lengkap *" className="sm:col-span-2">
                   <input
