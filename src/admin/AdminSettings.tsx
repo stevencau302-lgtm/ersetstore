@@ -9,6 +9,25 @@ interface Setting {
   value: string;
 }
 
+// Daftar kurir api.co.id (courier_code harus sama persis dengan respons API)
+const COURIERS = [
+  { code: 'JNE', label: 'JNE Express' },
+  { code: 'JNECargo', label: 'JNE Cargo' },
+  { code: 'SiCepat', label: 'SiCepat Express' },
+  { code: 'SiCepatCargo', label: 'SiCepat Cargo' },
+  { code: 'JT', label: 'J&T Express' },
+  { code: 'iDexpress', label: 'iDexpress' },
+  { code: 'iDlite', label: 'iDlite' },
+  { code: 'iDexpressCargo', label: 'iDexpress Cargo' },
+  { code: 'SAP', label: 'SAP Express' },
+  { code: 'SAPLite', label: 'SAP Lite' },
+  { code: 'SapCargo', label: 'SAP Cargo' },
+  { code: 'anteraja', label: 'AnterAja' },
+  { code: 'lion', label: 'Lion Parcel' },
+  { code: 'Ninja', label: 'Ninja Express' },
+  { code: 'paxel', label: 'Paxel' },
+];
+
 const SETTINGS_CONFIG = [
   {
     key: 'api_co_id_key',
