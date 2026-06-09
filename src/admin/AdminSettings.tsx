@@ -138,6 +138,7 @@ export default function AdminSettings() {
           const Icon = config.icon;
           const isSecret = config.secret;
           const isVisible = showSecrets[config.key];
+          const isOrigin = config.key === 'store_origin_village_code';
 
           return (
             <div key={config.key} className="bg-white rounded-2xl border border-gray-100 p-5">
@@ -150,24 +151,41 @@ export default function AdminSettings() {
                   <p className="text-xs text-gray-500 mt-0.5">{config.description}</p>
                 </div>
               </div>
-              <div className="relative">
-                <input
-                  type={isSecret && !isVisible ? 'password' : 'text'}
-                  value={settings[config.key] || ''}
-                  onChange={(e) => setSettings(prev => ({ ...prev, [config.key]: e.target.value }))}
-                  placeholder={config.placeholder}
-                  className="input !pr-12"
-                />
-                {isSecret && (
-                  <button
-                    type="button"
-                    onClick={() => toggleSecret(config.key)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 size-8 rounded-lg hover:bg-gray-100 grid place-items-center transition-colors"
-                  >
-                    {isVisible ? <EyeOff className="size-4 text-gray-400" /> : <Eye className="size-4 text-gray-400" />}
-                  </button>
-                )}
-              </div>
+
+              {isOrigin ? (
+                <div>
+                  <LocationSearch
+                    label=""
+                    placeholder="Ketik nama desa/kelurahan toko (min 3 huruf)..."
+                    value={originLoc}
+                    onChange={handleOriginChange}
+                  />
+                  {originLoc && (
+                    <p className="text-[11px] text-gray-400 mt-1.5">
+                      Kode desa: <span className="font-mono font-semibold text-gray-600">{originLoc.id}</span>
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="relative">
+                  <input
+                    type={isSecret && !isVisible ? 'password' : 'text'}
+                    value={settings[config.key] || ''}
+                    onChange={(e) => setSettings(prev => ({ ...prev, [config.key]: e.target.value }))}
+                    placeholder={config.placeholder}
+                    className="input !pr-12"
+                  />
+                  {isSecret && (
+                    <button
+                      type="button"
+                      onClick={() => toggleSecret(config.key)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 size-8 rounded-lg hover:bg-gray-100 grid place-items-center transition-colors"
+                    >
+                      {isVisible ? <EyeOff className="size-4 text-gray-400" /> : <Eye className="size-4 text-gray-400" />}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
