@@ -179,7 +179,7 @@ export default function Akun() {
               {/* Stat tiles */}
               <div className="grid grid-cols-3 divide-x divide-gray-100">
                 <StatTile icon={ShoppingBag} value={String(orders.length)} label="Pesanan" />
-                <StatTile icon={Wallet} value={formatPrice(totalSpent).replace('Rp', 'Rp ')} label="Belanja" compact />
+                <StatTile icon={Wallet} value={compactRupiah(totalSpent)} label="Belanja" />
                 <StatTile icon={Calendar} value={memberSince} label="Member" />
               </div>
             </div>
