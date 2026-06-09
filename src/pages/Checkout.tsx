@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock, ShoppingCart, ShieldCheck, User, MapPin, Truck, CreditCard,
-  Landmark, Zap, Banknote, Loader2, AlertCircle, RefreshCw, Check, CheckCircle2,
+  Landmark, Zap, Banknote, Loader2, AlertCircle, RefreshCw,
   Package, BadgeCheck, Clock, ChevronDown,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
