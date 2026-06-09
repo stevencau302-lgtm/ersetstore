@@ -157,7 +157,7 @@ export default function Akun() {
       <section className="container-x pb-24 lg:pb-16">
         <div className="grid lg:grid-cols-[320px_1fr] gap-4 lg:gap-6">
           {/* Sidebar - Profil */}
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0">'t
             {/* Profile hero */}
             <div className="card overflow-hidden animate-slide-up">
               <div className="relative bg-gradient-to-br from-gray-900 to-ink-800 p-5 sm:p-6">
