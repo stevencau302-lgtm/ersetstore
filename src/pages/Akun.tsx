@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Package, ShoppingBag, LogOut, Clock, CheckCircle2, Truck, Loader2,
-  MapPin, Save, Pencil, X, Wallet, Calendar,
+  MapPin, Save, Pencil, X, Wallet, Calendar, ChevronRight, Phone, CreditCard, Receipt,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,7 +12,12 @@ import { findProduct } from '../data/products';
 
 interface Order {
   id: string;
+  order_number?: string;
   items: { product_id: number; product_name: string; qty: number; price: number }[];
+  subtotal?: number;
+  shipping_cost?: number;
+  shipping_method?: string;
+  payment_method?: string;
   total: number;
   status: string;
   shipping_name: string;
