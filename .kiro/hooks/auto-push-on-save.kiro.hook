@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Auto Push on Save",
+  "description": "Otomatis commit & push ke GitHub setiap ada perubahan file disimpan",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.html",
+      "*.css",
+      "*.js",
+      "*.md",
+      "*.json"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "powershell -ExecutionPolicy Bypass -File scripts/autopush.ps1",
+    "timeout": 120
+  }
+}
