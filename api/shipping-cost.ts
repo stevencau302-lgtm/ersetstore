@@ -32,6 +32,28 @@ async function getSettings(): Promise<{ apiKey: string; originVillageCode: strin
   };
 }
 
+// Cari array kurir di mana pun lokasinya dalam respons
+// (bentuk respons api.co.id bisa beda dari dokumentasi, jadi defensif).
+function extractCourierArray(json: any): any[] | null {
+  if (Array.isArray(json)) return json;
+  if (!json || typeof json !== 'object') return null;
+
+  // Lokasi umum
+  const candidates = [json.result, json.data, json.results, json.couriers, json.rates];
+  for (const c of candidates) if (Array.isArray(c)) return c;
+
+  // Satu level lebih dalam (mis. result.results, data.result, dll)
+  for (const v of Object.values(json)) {
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') {
+      for (const vv of Object.values(v as Record<string, unknown>)) {
+        if (Array.isArray(vv)) return vv as any[];
+      }
+    }
+  }
+  return null;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -93,17 +115,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(resp.status).json({ error: json?.message || `Gagal cek ongkir (HTTP ${resp.status})` });
     }
 
-    const list: any[] = Array.isArray(json) ? json : (json.result ?? json.data ?? []);
+    // Cari array kurir di mana pun lokasinya dalam respons (bentuk respons
+    // api.co.id bisa beda dari dokumentasi, jadi defensif).
+    const list = extractCourierArray(json);
+
+    if (!Array.isArray(list)) {
+      // Tidak ketemu array — kirim info bentuk respons untuk debugging.
+      const shape = json && typeof json === 'object' ? Object.keys(json).join(', ') : typeof json;
+      return res.status(502).json({
+        error: 'Bentuk respons ongkir tidak dikenali. Keys: [' + shape + ']. Snippet: ' + JSON.stringify(json).slice(0, 300),
+      });
+    }
 
     const normalized = list
       .filter((c) => Number(c.price) > 0)
       .map((c) => ({
-        courier_code: c.courier_code || '',
-        courier_name: c.courier_name || c.courier_code || '',
+        courier_code: c.courier_code || c.code || '',
+        courier_name: c.courier_name || c.name || c.courier_code || '',
         service: c.service || '',
         type: '',
         price: Number(c.price) || 0,
-        estimated: c.estimation ?? c.estimated ?? null,
+        estimated: c.estimation ?? c.estimated ?? c.etd ?? null,
       }))
       .sort((a, b) => a.price - b.price);
 
