@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  User, Package, ShoppingBag, LogOut, Clock, CheckCircle2, Truck, Loader2,
-  MapPin, Save, Pencil, X, Wallet, Calendar, ChevronRight, ShieldCheck,
+  Package, ShoppingBag, LogOut, Clock, CheckCircle2, Truck, Loader2,
+  MapPin, Save, Pencil, X, Wallet, Calendar,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
