@@ -421,7 +421,7 @@ function OrderDetailModal({
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
       <div className="absolute inset-0 bg-black/50 animate-fade-in" onClick={onClose} />
-      <div className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] sm:max-h-[88vh] flex flex-col animate-slide-up overflow-hidden">
+      <div className="relative w-full sm:max-w-xl bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] sm:max-h-[88vh] flex flex-col animate-slide-up overflow-hidden">
         {/* Handle (mobile) */}
         <div className="sm:hidden pt-2.5 pb-1 grid place-items-center">
           <span className="h-1.5 w-10 rounded-full bg-gray-300" />
