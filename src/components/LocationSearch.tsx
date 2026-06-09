@@ -44,7 +44,7 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
   };
 
   return (
-    <div ref={wrapperRef} className="relative w-full overflow-hidden">
+    <div ref={wrapperRef} className="relative w-full">
       <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1.5">
         {label}
       </label>
