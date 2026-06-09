@@ -6,7 +6,9 @@ import Toaster from './Toaster';
 
 export default function Layout() {
   const { pathname } = useLocation();
-  const isCheckout = pathname === '/checkout';
+  // Footer di mobile hanya tampil di Beranda. Halaman lain (checkout, keranjang,
+  // detail produk, shop, dll) disembunyikan di mobile agar fokus konversi.
+  const showFooterOnMobile = pathname === '/';
 
   // Scroll to top on route change
   useEffect(() => {
@@ -19,13 +21,12 @@ export default function Layout() {
       <main className="flex-1 overflow-x-hidden">
         <Outlet />
       </main>
-      {/* Footer disembunyikan di halaman checkout khusus mobile */}
-      {isCheckout ? (
+      {showFooterOnMobile ? (
+        <Footer />
+      ) : (
         <div className="hidden lg:block">
           <Footer />
         </div>
-      ) : (
-        <Footer />
       )}
       <Toaster />
     </div>
