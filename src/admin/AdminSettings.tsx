@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Save, Loader2, Settings, Key, MapPin, Store, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import LocationSearch from '../components/LocationSearch';
+import { type Location } from '../lib/shipping';
 
 interface Setting {
   key: string;
@@ -41,6 +43,7 @@ export default function AdminSettings() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
+  const [originLoc, setOriginLoc] = useState<Location | null>(null);
 
   useEffect(() => {
     loadSettings();
