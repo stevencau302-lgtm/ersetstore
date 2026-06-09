@@ -630,15 +630,15 @@ function TrustBadge({ icon: Icon, label }: { icon: React.ComponentType<{ classNa
 }
 
 function Section({
-  step, title, icon: Icon, children, done = false, delay = 0,
+  step, title, icon: Icon, children, delay = 0,
 }: {
-  step: number; title: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode; done?: boolean; delay?: number;
+  step: number; title: string; icon: React.ComponentType<{ className?: string }>; children: React.ReactNode; delay?: number;
 }) {
   return (
     <div className="card p-4 sm:p-6 animate-slide-up hover:shadow-md" style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}>
       <h3 className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base font-bold text-gray-900 mb-4 sm:mb-5">
-        <span className={`size-7 sm:size-8 grid place-items-center rounded-full text-[10px] sm:text-xs font-extrabold shadow-md transition-colors ${done ? 'bg-gray-900 text-white shadow-gray-900/20' : 'bg-brand-500 text-white shadow-brand-500/30'}`}>
-          {done ? <Check className="size-4" strokeWidth={3} /> : step}
+        <span className="size-7 sm:size-8 grid place-items-center rounded-full text-[10px] sm:text-xs font-extrabold shadow-md bg-brand-500 text-white shadow-brand-500/30">
+          {step}
         </span>
         <Icon className="size-4 text-brand-500" />
         <span className="uppercase tracking-wider text-xs sm:text-sm">{title}</span>
