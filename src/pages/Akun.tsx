@@ -368,6 +368,10 @@ export default function Akun() {
           Keluar dari Akun
         </button>
       </section>
+
+      {selectedOrder && (
+        <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} formatDate={formatDate} />
+      )}
     </>
   );
 }
