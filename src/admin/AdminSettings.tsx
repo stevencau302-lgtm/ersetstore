@@ -55,7 +55,25 @@ export default function AdminSettings() {
     const map: Record<string, string> = {};
     (data || []).forEach((s: Setting) => { map[s.key] = s.value; });
     setSettings(map);
+    // Set lokasi asal toko untuk ditampilkan di pencarian
+    if (map['store_origin_village_code']) {
+      setOriginLoc({
+        id: map['store_origin_village_code'],
+        type: 'village',
+        label: map['store_origin_label'] || map['store_origin_village_code'],
+      });
+    }
     setLoading(false);
+  }
+
+  // Saat admin memilih desa toko dari pencarian
+  function handleOriginChange(loc: Location | null) {
+    setOriginLoc(loc);
+    setSettings(prev => ({
+      ...prev,
+      store_origin_village_code: loc?.id || '',
+      store_origin_label: loc?.label || '',
+    }));
   }
 
   async function saveSettings() {
@@ -76,6 +94,12 @@ export default function AdminSettings() {
           return;
         }
       }
+
+      // Simpan juga label lokasi asal (biar tampil saat dibuka lagi)
+      await supabase
+        .from('store_settings')
+        .upsert({ key: 'store_origin_label', value: settings['store_origin_label'] || '', updated_at: new Date().toISOString() }, { onConflict: 'key' });
+
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) {
