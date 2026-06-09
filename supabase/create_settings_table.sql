@@ -28,5 +28,7 @@ CREATE POLICY "Admin can manage settings" ON store_settings
 INSERT INTO store_settings (key, value) VALUES
   ('api_co_id_key', ''),
   ('store_origin_village_code', '3172051003'),
+  ('store_origin_label', ''),
+  ('enabled_couriers', ''),
   ('store_name', 'ERSET GEAR LAB')
 ON CONFLICT (key) DO NOTHING;
