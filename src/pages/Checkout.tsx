@@ -292,7 +292,7 @@ export default function Checkout() {
             </Section>
 
             {/* Step 3: Shipping — real-time dari api.co.id */}
-            <Section step={3} title="Metode Pengiriman" icon={Truck} done={!!selectedRate} delay={120}>
+            <Section step={3} title="Metode Pengiriman" icon={Truck} delay={120}>
               {!destination ? (
                 <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
                   <AlertCircle className="size-5 shrink-0" />
