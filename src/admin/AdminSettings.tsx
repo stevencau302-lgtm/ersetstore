@@ -128,10 +128,13 @@ export default function AdminSettings() {
         }
       }
 
-      // Simpan juga label lokasi asal (biar tampil saat dibuka lagi)
+      // Simpan juga label lokasi asal & daftar kurir aktif
       await supabase
         .from('store_settings')
         .upsert({ key: 'store_origin_label', value: settings['store_origin_label'] || '', updated_at: new Date().toISOString() }, { onConflict: 'key' });
+      await supabase
+        .from('store_settings')
+        .upsert({ key: 'enabled_couriers', value: settings['enabled_couriers'] || '', updated_at: new Date().toISOString() }, { onConflict: 'key' });
 
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -222,6 +225,49 @@ export default function AdminSettings() {
             </div>
           );
         })}
+      </div>
+
+      {/* Pilih Kurir Aktif */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <div className="flex items-start gap-3 mb-4">
+          <div className="size-10 rounded-xl bg-gray-100 grid place-items-center shrink-0">
+            <Truck className="size-5 text-gray-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-gray-900 text-sm">Kurir yang Ditampilkan</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Centang kurir yang mau muncul di checkout. Kalau tidak ada yang dicentang, <strong>semua kurir</strong> ditampilkan.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {COURIERS.map((c) => {
+            const active = enabledCouriers.includes(c.code);
+            return (
+              <label
+                key={c.code}
+                className={`flex items-center gap-2 p-2.5 border-2 rounded-xl cursor-pointer transition-all text-sm ${
+                  active ? 'border-brand-500 bg-brand-50/50' : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={active}
+                  onChange={() => toggleCourier(c.code)}
+                  className="size-4 accent-brand-500 shrink-0"
+                />
+                <span className="truncate text-gray-800">{c.label}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        <p className="text-[11px] text-gray-400 mt-3">
+          {enabledCouriers.length === 0
+            ? 'Saat ini: semua kurir ditampilkan.'
+            : `Saat ini: ${enabledCouriers.length} kurir dipilih.`}
+        </p>
       </div>
 
       {/* Save Button */}
