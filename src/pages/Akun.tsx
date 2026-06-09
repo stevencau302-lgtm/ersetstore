@@ -143,35 +143,33 @@ export default function Akun() {
     <>
       <PageHeader title="Akun Saya" breadcrumb={breadcrumb} />
 
-      <section className="container-x pb-16">
-        <div className="grid lg:grid-cols-[300px_1fr] gap-6">
+      <section className="container-x pb-24 lg:pb-16">
+        <div className="grid lg:grid-cols-[320px_1fr] gap-4 lg:gap-6">
           {/* Sidebar - Profil */}
           <div className="space-y-4">
-            <div className="card p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="size-14 bg-brand-50 rounded-full grid place-items-center">
-                  <User className="size-6 text-brand-500" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-gray-900 truncate">
-                    {user?.email?.split('@')[0] || 'User'}
-                  </h3>
-                  <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+            {/* Profile hero */}
+            <div className="card overflow-hidden animate-slide-up">
+              <div className="relative bg-gradient-to-br from-gray-900 to-ink-800 p-5 sm:p-6">
+                <div className="absolute -top-8 -right-8 size-32 rounded-full bg-brand-500/20 blur-2xl" />
+                <div className="relative flex items-center gap-4">
+                  <div className="size-16 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 grid place-items-center shadow-lg shadow-brand-500/30 shrink-0">
+                    <span className="text-2xl font-extrabold text-white">
+                      {(user?.email?.[0] || 'U').toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-white text-lg truncate capitalize">
+                      {user?.email?.split('@')[0] || 'User'}
+                    </h3>
+                    <p className="text-sm text-white/60 truncate">{user?.email}</p>
+                  </div>
                 </div>
               </div>
-              <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
-                <div className="flex justify-between text-gray-600">
-                  <span>Member sejak</span>
-                  <span className="font-medium text-gray-900">
-                    {user?.created_at
-                      ? new Date(user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
-                      : '-'}
-                  </span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Total Pesanan</span>
-                  <span className="font-medium text-gray-900">{orders.length}</span>
-                </div>
+              {/* Stat tiles */}
+              <div className="grid grid-cols-3 divide-x divide-gray-100">
+                <StatTile icon={ShoppingBag} value={String(orders.length)} label="Pesanan" />
+                <StatTile icon={Wallet} value={formatPrice(totalSpent).replace('Rp', 'Rp ')} label="Belanja" compact />
+                <StatTile icon={Calendar} value={memberSince} label="Member" />
               </div>
             </div>
 
