@@ -236,7 +236,7 @@ export default function Checkout() {
     <>
       <PageHeader title="Checkout Pesanan" breadcrumb={breadcrumb} />
 
-      <section className="container-x pb-32 lg:pb-16">
+      <section className="container-x pb-40 lg:pb-16">
         {/* Stepper progres */}
         <div className="mb-6 animate-fade-in">
           <Stepper steps={steps} />
