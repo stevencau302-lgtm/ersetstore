@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   User, Package, ShoppingBag, LogOut, Clock, CheckCircle2, Truck, Loader2,
-  MapPin, Save, Pencil, X,
+  MapPin, Save, Pencil, X, Wallet, Calendar, ChevronRight, ShieldCheck,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { formatPrice } from '../lib/format';
+import { findProduct } from '../data/products';
 
 interface Order {
   id: string;
