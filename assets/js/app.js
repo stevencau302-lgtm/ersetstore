@@ -54,6 +54,30 @@ const Cart = {
   }
 };
 
+// ===== Settings (Admin) =====
+// Menyimpan konfigurasi seperti API key ongkir di localStorage.
+const Settings = {
+  key: 'erset_settings',
+  defaults: {
+    apiCoIdKey: '',
+    originVillageCode: '3172051003', // contoh: Pademangan, Jakarta
+  },
+  getAll() {
+    try {
+      return { ...this.defaults, ...(JSON.parse(localStorage.getItem(this.key)) || {}) };
+    } catch {
+      return { ...this.defaults };
+    }
+  },
+  get(field) { return this.getAll()[field]; },
+  save(obj) {
+    const merged = { ...this.getAll(), ...obj };
+    localStorage.setItem(this.key, JSON.stringify(merged));
+    return merged;
+  },
+  clear() { localStorage.removeItem(this.key); }
+};
+
 // ===== Wishlist =====
 const Wishlist = {
   key: 'erset_wishlist',

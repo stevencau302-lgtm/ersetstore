@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -38,193 +38,189 @@
   <script src="assets/js/layout.js"></script>
   <script>
     // ============================================
-    // BINDERBYTE API INTEGRATION - ONGKIR DINAMIS
+    // API.CO.ID INTEGRATION - CEK ONGKIR DINAMIS
+    // Docs: https://docs.api.co.id/products/indonesia-expedition-cost
     // ============================================
-    const BINDERBYTE_API_KEY = '2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d'; // Ganti dengan API key kamu dari binderbyte.com
-    const BINDERBYTE_BASE = 'https://api.binderbyte.com/v1';
+    // API key & kode desa asal diatur di halaman Admin Settings (admin.html)
+    // dan disimpan di localStorage via helper Settings (lihat assets/js/app.js).
+    const REGIONAL_BASE = 'https://use.api.co.id/regional/indonesia';
+    const EXPEDITION_BASE = 'https://use.api.co.id/expedition';
 
-    // Origin city (toko kamu) — Jakarta Selatan (ID: 152)
-    const ORIGIN_CITY_ID = '152';
+    const getApiKey = () => Settings.get('apiCoIdKey');
+    const getOriginVillageCode = () => Settings.get('originVillageCode');
 
     let selectedShipping = null;
     let selectedPayment = 'bca';
-    let selectedProvince = '';
-    let selectedCity = '';
+
+    // Cascade wilayah: Provinsi > Kabupaten > Kecamatan > Desa
     let provinces = [];
-    let cities = [];
+    let regencies = [];
+    let districts = [];
+    let villages = [];
+    let selectedProvinceCode = '';
+    let selectedRegencyCode = '';
+    let selectedDistrictCode = '';
+    let selectedVillageCode = '';
+    let selectedProvinceName = '';
+    let selectedRegencyName = '';
+    let selectedVillageName = '';
+    let villageCourierSupported = true;
+
     let availableShippings = [];
     let isLoadingProvinces = false;
-    let isLoadingCities = false;
+    let isLoadingRegencies = false;
+    let isLoadingDistricts = false;
+    let isLoadingVillages = false;
     let isLoadingOngkir = false;
 
+    // ===== HELPERS =====
+    const getCode = (item) => String(item.code ?? item.id ?? item.village_code ?? '');
+    const getName = (item) => item.name ?? item.village_name ?? item.regency_name ?? item.province_name ?? '';
+    const getList = (json) => {
+      if (Array.isArray(json)) return json;
+      return json?.result ?? json?.data ?? [];
+    };
+
+    async function apiGet(url) {
+      const key = getApiKey();
+      if (!key) throw new Error('API key belum diatur. Buka halaman Admin Settings.');
+      const res = await fetch(url, { headers: { 'x-api-co-id': key } });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.message || `HTTP ${res.status}`);
+      return json;
+    }
+
     // ===== API CALLS =====
-
     async function fetchProvinces() {
-      console.log('[ongkir] fetchProvinces called');
-      isLoadingProvinces = true;
-      render();
+      isLoadingProvinces = true; render();
       try {
-        const res = await fetch(`${BINDERBYTE_BASE}/list_province?api_key=${BINDERBYTE_API_KEY}`);
-        const data = await res.json();
-        console.log('[ongkir] Provinces response:', data);
-        if (data.status === 200 && data.data) {
-          provinces = data.data;
-        } else {
-          console.error('[ongkir] Failed to fetch provinces:', data);
-          showToast('Gagal memuat data provinsi', 'error');
-        }
+        provinces = getList(await apiGet(`${REGIONAL_BASE}/provinces`));
       } catch (err) {
-        console.error('[ongkir] Error fetching provinces:', err);
-        showToast('Error koneksi ke API ongkir', 'error');
+        console.error('[ongkir] provinces:', err);
+        showToast('Gagal memuat provinsi: ' + err.message, 'error');
       }
-      isLoadingProvinces = false;
-      render();
+      isLoadingProvinces = false; render();
     }
 
-    async function fetchCities(provinceId) {
-      console.log('[ongkir] fetchCities called with provinceId:', provinceId);
-      isLoadingCities = true;
-      cities = [];
-      selectedCity = '';
-      availableShippings = [];
-      selectedShipping = null;
-      render();
+    async function fetchRegencies(provinceCode) {
+      isLoadingRegencies = true;
+      regencies = []; districts = []; villages = [];
+      selectedRegencyCode = ''; selectedDistrictCode = ''; selectedVillageCode = '';
+      availableShippings = []; selectedShipping = null; render();
       try {
-        const res = await fetch(`${BINDERBYTE_BASE}/list_city?api_key=${BINDERBYTE_API_KEY}&province_id=${provinceId}`);
-        const data = await res.json();
-        console.log('[ongkir] Cities response:', data);
-        if (data.status === 200 && data.data) {
-          cities = data.data;
-        } else {
-          console.error('[ongkir] Failed to fetch cities:', data);
-          showToast('Gagal memuat data kota', 'error');
-        }
+        regencies = getList(await apiGet(`${REGIONAL_BASE}/provinces/${provinceCode}/regencies`));
       } catch (err) {
-        console.error('[ongkir] Error fetching cities:', err);
-        showToast('Error koneksi ke API ongkir', 'error');
+        console.error('[ongkir] regencies:', err);
+        showToast('Gagal memuat kabupaten/kota: ' + err.message, 'error');
       }
-      isLoadingCities = false;
-      render();
+      isLoadingRegencies = false; render();
     }
 
-    async function fetchOngkir(destinationCityId, courier) {
-      console.log('[ongkir] fetchOngkir called — destination:', destinationCityId, 'courier:', courier);
-      isLoadingOngkir = true;
-      render();
+    async function fetchDistricts(regencyCode) {
+      isLoadingDistricts = true;
+      districts = []; villages = [];
+      selectedDistrictCode = ''; selectedVillageCode = '';
+      availableShippings = []; selectedShipping = null; render();
       try {
-        const res = await fetch(`${BINDERBYTE_BASE}/cost?api_key=${BINDERBYTE_API_KEY}&origin=${ORIGIN_CITY_ID}&destination=${destinationCityId}&weight=1000&courier=${courier}`);
-        const data = await res.json();
-        console.log('[ongkir] Ongkir response:', data);
-        if (data.status === 200 && data.data) {
-          return data.data;
-        } else {
-          console.error('[ongkir] Failed to fetch ongkir:', data);
-          return null;
-        }
+        districts = getList(await apiGet(`${REGIONAL_BASE}/regencies/${regencyCode}/districts`));
       } catch (err) {
-        console.error('[ongkir] Error fetching ongkir:', err);
-        return null;
+        console.error('[ongkir] districts:', err);
+        showToast('Gagal memuat kecamatan: ' + err.message, 'error');
       }
+      isLoadingDistricts = false; render();
+    }
+
+    async function fetchVillages(districtCode) {
+      isLoadingVillages = true;
+      villages = []; selectedVillageCode = '';
+      availableShippings = []; selectedShipping = null; render();
+      try {
+        villages = getList(await apiGet(`${REGIONAL_BASE}/districts/${districtCode}/villages`));
+      } catch (err) {
+        console.error('[ongkir] villages:', err);
+        showToast('Gagal memuat desa/kelurahan: ' + err.message, 'error');
+      }
+      isLoadingVillages = false; render();
+    }
+
+    // Estimasi berat: 1kg per item, minimal 1kg.
+    function getOrderWeightKg() { return Math.max(1, Cart.count()); }
+
+    async function fetchOngkir(destinationVillageCode) {
+      const origin = getOriginVillageCode();
+      const weight = getOrderWeightKg();
+      const url = `${EXPEDITION_BASE}/shipping-cost`
+        + `?origin_village_code=${origin}`
+        + `&destination_village_code=${destinationVillageCode}`
+        + `&weight=${weight}`;
+      return getList(await apiGet(url));
     }
 
     // ===== HANDLERS =====
+    async function handleProvinceChange(code) {
+      const prov = provinces.find(p => getCode(p) === code);
+      selectedProvinceCode = code;
+      selectedProvinceName = prov ? getName(prov) : '';
+      if (code) await fetchRegencies(code);
+      else { regencies = []; districts = []; villages = []; render(); }
+    }
 
-    // Called when province destination changes
-    async function handleDestinationChange(provinceId) {
-      console.log('[ongkir] handleDestinationChange called with provinceId:', provinceId);
+    async function handleRegencyChange(code) {
+      const reg = regencies.find(r => getCode(r) === code);
+      selectedRegencyCode = code;
+      selectedRegencyName = reg ? getName(reg) : '';
+      if (code) await fetchDistricts(code);
+      else { districts = []; villages = []; render(); }
+    }
 
-      const prov = provinces.find(p => p.id === provinceId || p.province_id === provinceId);
-      selectedProvince = prov ? (prov.name || prov.province) : provinceId;
-      console.log('[ongkir] Selected province name:', selectedProvince);
+    async function handleDistrictChange(code) {
+      selectedDistrictCode = code;
+      if (code) await fetchVillages(code);
+      else { villages = []; render(); }
+    }
 
-      // Reset downstream
-      selectedCity = '';
-      availableShippings = [];
-      selectedShipping = null;
+    async function handleVillageChange(code) {
+      const village = villages.find(v => getCode(v) === code);
+      selectedVillageCode = code;
+      selectedVillageName = village ? getName(village) : '';
+      villageCourierSupported = village ? (village.is_courier_support !== false) : true;
+      availableShippings = []; selectedShipping = null;
 
-      if (provinceId) {
-        await fetchCities(provinceId);
-      } else {
-        cities = [];
+      if (!code) { render(); return; }
+      if (!villageCourierSupported) {
         render();
+        showToast('Desa ini belum didukung untuk cek ongkir', 'error');
+        return;
       }
-    }
 
-    // Called when city changes — fetch ongkir for all couriers
-    async function handleCityChange(cityId) {
-      console.log('[ongkir] handleCityChange called with cityId:', cityId);
-
-      const city = cities.find(c => c.id === cityId || c.city_id === cityId);
-      selectedCity = city ? (city.name || city.city_name) : cityId;
-      console.log('[ongkir] Selected city:', selectedCity);
-
-      availableShippings = [];
-      selectedShipping = null;
-      isLoadingOngkir = true;
-      render();
-
-      // Fetch all couriers in parallel
-      const couriers = ['jne', 'tiki', 'pos'];
-      const results = await Promise.all(couriers.map(c => fetchOngkir(cityId, c)));
-
-      console.log('[ongkir] All courier results:', results);
-
-      // Parse results into flat shipping options
-      availableShippings = [];
-      results.forEach((result, idx) => {
-        if (result && result.costs) {
-          result.costs.forEach(service => {
-            availableShippings.push({
-              id: `${couriers[idx]}_${service.service}`,
-              courier: couriers[idx].toUpperCase(),
-              name: `${couriers[idx].toUpperCase()} ${service.service}`,
-              description: service.description || '',
-              eta: service.cost?.[0]?.etd || '-',
-              price: service.cost?.[0]?.value || 0,
-            });
-          });
-        } else if (result && Array.isArray(result)) {
-          // Alternative response format
-          result.forEach(item => {
-            if (item.costs) {
-              item.costs.forEach(service => {
-                availableShippings.push({
-                  id: `${item.code || couriers[idx]}_${service.service}`,
-                  courier: (item.code || couriers[idx]).toUpperCase(),
-                  name: `${(item.code || couriers[idx]).toUpperCase()} ${service.service}`,
-                  description: service.description || '',
-                  eta: service.cost?.[0]?.etd || '-',
-                  price: service.cost?.[0]?.value || 0,
-                });
-              });
-            }
-          });
+      isLoadingOngkir = true; render();
+      try {
+        const result = await fetchOngkir(code);
+        availableShippings = result
+          .filter(c => Number(c.price) > 0)
+          .map(c => ({
+            id: c.courier_code,
+            courier: c.courier_code,
+            name: c.courier_name || c.courier_code,
+            eta: c.estimation || '-',
+            price: Number(c.price) || 0,
+            weight: c.weight,
+          }));
+        if (availableShippings.length > 0) {
+          selectedShipping = availableShippings.reduce(
+            (min, s) => s.price < min.price ? s : min, availableShippings[0]
+          );
         }
-      });
-
-      console.log('[ongkir] Parsed shipping options:', availableShippings);
-
-      // Auto-select cheapest
-      if (availableShippings.length > 0) {
-        selectedShipping = availableShippings.reduce((min, s) => s.price < min.price ? s : min, availableShippings[0]);
-        console.log('[ongkir] Auto-selected cheapest:', selectedShipping);
+      } catch (err) {
+        console.error('[ongkir] shipping-cost:', err);
+        showToast('Gagal cek ongkir: ' + err.message, 'error');
       }
-
-      isLoadingOngkir = false;
-      render();
+      isLoadingOngkir = false; render();
     }
 
-    // Called when user selects a shipping method
     function handleSelect(shippingId) {
-      console.log('[ongkir] handleSelect called with:', shippingId);
-
       const found = availableShippings.find(s => s.id === shippingId);
-      if (found) {
-        selectedShipping = found;
-        console.log('[ongkir] Selected shipping updated to:', selectedShipping);
-      } else {
-        console.warn('[ongkir] Shipping not found for id:', shippingId);
-      }
+      if (found) selectedShipping = found;
       render();
     }
 
@@ -253,6 +249,10 @@
         return;
       }
       render();
+      if (!getApiKey()) {
+        showToast('API ongkir belum diatur — buka Admin Settings', 'error');
+        return;
+      }
       await fetchProvinces();
     });
 
@@ -261,10 +261,18 @@
       const subtotal = Cart.total();
       const shipping = selectedShipping ? selectedShipping.price : 0;
       const total = subtotal + shipping;
+      const noKey = !getApiKey();
 
       document.getElementById('checkoutContent').innerHTML = `
         <div class="checkout-layout">
           <form id="checkoutForm" onsubmit="placeOrder(event)">
+            ${noKey ? `
+              <div style="background:rgba(220,38,38,0.08); border:2px solid var(--danger, #DC2626); padding:16px; border-radius:10px; margin-bottom:20px; color:var(--text-muted);">
+                <strong style="color:var(--text)">⚠️ API Ongkir belum dikonfigurasi</strong><br>
+                <small>Atur API key di <a href="admin.html" style="color:var(--accent)">Admin Settings</a> dulu agar cek ongkir berfungsi.</small>
+              </div>
+            ` : ''}
+
             <!-- Step 1 -->
             <div class="checkout-section">
               <h3><span class="step-num">1</span> Contact Information</h3>
@@ -284,7 +292,7 @@
               </div>
             </div>
 
-            <!-- Step 2: Shipping Address + Ongkir -->
+            <!-- Step 2: Shipping Address + Ongkir (cascade desa) -->
             <div class="checkout-section">
               <h3><span class="step-num">2</span> Shipping Address</h3>
               <div class="form-grid">
@@ -293,31 +301,45 @@
                   <textarea required placeholder="Street name, house number, RT/RW..."></textarea>
                 </div>
                 <div class="form-group">
-                  <label>Province * <small style="color:var(--accent)">(auto-load ongkir)</small></label>
-                  <select id="provinceSelect" required onchange="handleDestinationChange(this.value)">
+                  <label>Provinsi * <small style="color:var(--accent)">(cek ongkir per desa)</small></label>
+                  <select id="provinceSelect" required onchange="handleProvinceChange(this.value)" ${noKey ? 'disabled' : ''}>
                     <option value="">${isLoadingProvinces ? '⏳ Memuat provinsi...' : 'Pilih Provinsi'}</option>
                     ${provinces.map(p => {
-                      const pid = p.id || p.province_id;
-                      const pname = p.name || p.province;
-                      return `<option value="${pid}" ${selectedProvince === pname ? 'selected' : ''}>${pname}</option>`;
+                      const code = getCode(p);
+                      return `<option value="${code}" ${selectedProvinceCode === code ? 'selected' : ''}>${getName(p)}</option>`;
                     }).join('')}
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>City / Kabupaten *</label>
-                  <select id="citySelect" required onchange="handleCityChange(this.value)" ${cities.length === 0 ? 'disabled' : ''}>
-                    <option value="">${isLoadingCities ? '⏳ Memuat kota...' : (selectedProvince ? 'Pilih Kota' : 'Pilih provinsi dulu')}</option>
-                    ${cities.map(c => {
-                      const cid = c.id || c.city_id;
-                      const cname = c.name || c.city_name;
-                      const ctype = c.type || '';
-                      return `<option value="${cid}" ${selectedCity === cname ? 'selected' : ''}>${ctype ? ctype + ' ' : ''}${cname}</option>`;
+                  <label>Kabupaten / Kota *</label>
+                  <select id="regencySelect" required onchange="handleRegencyChange(this.value)" ${regencies.length === 0 ? 'disabled' : ''}>
+                    <option value="">${isLoadingRegencies ? '⏳ Memuat...' : (selectedProvinceCode ? 'Pilih Kabupaten/Kota' : 'Pilih provinsi dulu')}</option>
+                    ${regencies.map(r => {
+                      const code = getCode(r);
+                      return `<option value="${code}" ${selectedRegencyCode === code ? 'selected' : ''}>${getName(r)}</option>`;
                     }).join('')}
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>District *</label>
-                  <input type="text" required placeholder="Kebayoran Baru" />
+                  <label>Kecamatan *</label>
+                  <select id="districtSelect" required onchange="handleDistrictChange(this.value)" ${districts.length === 0 ? 'disabled' : ''}>
+                    <option value="">${isLoadingDistricts ? '⏳ Memuat...' : (selectedRegencyCode ? 'Pilih Kecamatan' : 'Pilih kab/kota dulu')}</option>
+                    ${districts.map(d => {
+                      const code = getCode(d);
+                      return `<option value="${code}" ${selectedDistrictCode === code ? 'selected' : ''}>${getName(d)}</option>`;
+                    }).join('')}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Desa / Kelurahan * <small style="color:var(--text-muted)">(menentukan ongkir)</small></label>
+                  <select id="villageSelect" required onchange="handleVillageChange(this.value)" ${villages.length === 0 ? 'disabled' : ''}>
+                    <option value="">${isLoadingVillages ? '⏳ Memuat...' : (selectedDistrictCode ? 'Pilih Desa/Kelurahan' : 'Pilih kecamatan dulu')}</option>
+                    ${villages.map(v => {
+                      const code = getCode(v);
+                      const supported = v.is_courier_support !== false;
+                      return `<option value="${code}" ${selectedVillageCode === code ? 'selected' : ''}>${getName(v)}${supported ? '' : ' (belum didukung)'}</option>`;
+                    }).join('')}
+                  </select>
                 </div>
                 <div class="form-group">
                   <label>Postal Code *</label>
@@ -330,28 +352,33 @@
               </div>
             </div>
 
-            <!-- Step 3: Shipping Method (dari API) -->
+            <!-- Step 3: Shipping Method (dari api.co.id) -->
             <div class="checkout-section">
               <h3><span class="step-num">3</span> Shipping Method</h3>
               ${isLoadingOngkir ? `
                 <div style="text-align:center; padding:24px; color:var(--text-muted);">
                   <div style="font-size:24px; margin-bottom:8px;">⏳</div>
-                  <strong>Menghitung ongkir dari Binderbyte...</strong><br>
-                  <small>Mengambil tarif JNE, TIKI, POS Indonesia</small>
+                  <strong>Menghitung ongkir via api.co.id...</strong><br>
+                  <small>Mengambil tarif JNE, SiCepat, J&T, dll</small>
                 </div>
-              ` : !selectedCity ? `
+              ` : !selectedVillageCode ? `
                 <div style="background:rgba(253,200,0,0.08); border:2px solid var(--accent); padding:18px; border-radius:10px; text-align:center; color:var(--text-muted);">
-                  <strong style="color:var(--text)">⚠️ Pilih Provinsi & Kota Tujuan</strong><br>
-                  <small>Ongkir dihitung real-time via API Binderbyte (JNE, TIKI, POS)</small>
+                  <strong style="color:var(--text)">⚠️ Lengkapi Alamat Tujuan</strong><br>
+                  <small>Pilih sampai Desa/Kelurahan — ongkir dihitung real-time per kode desa</small>
+                </div>
+              ` : !villageCourierSupported ? `
+                <div style="background:rgba(220,38,38,0.08); border:2px solid var(--danger, #DC2626); padding:18px; border-radius:10px; text-align:center; color:var(--text-muted);">
+                  <strong style="color:var(--text)">❌ Desa belum didukung kurir</strong><br>
+                  <small>Pilih desa lain, atau ajukan aktivasi wilayah di dashboard api.co.id</small>
                 </div>
               ` : availableShippings.length === 0 ? `
                 <div style="background:rgba(220,38,38,0.08); border:2px solid var(--danger, #DC2626); padding:18px; border-radius:10px; text-align:center; color:var(--text-muted);">
                   <strong style="color:var(--text)">❌ Tidak ada kurir tersedia</strong><br>
-                  <small>Coba pilih kota lain atau hubungi CS kami</small>
+                  <small>Coba pilih desa lain atau hubungi CS kami</small>
                 </div>
               ` : `
                 <div style="margin-bottom:12px; font-size:13px; color:var(--text-muted);">
-                  📍 ${selectedProvince} → ${selectedCity} — <strong style="color:var(--text)">${availableShippings.length} layanan tersedia</strong> (berat: 1kg)
+                  📍 ${selectedRegencyName ? selectedRegencyName + ', ' : ''}${selectedProvinceName} → ${selectedVillageName} — <strong style="color:var(--text)">${availableShippings.length} kurir tersedia</strong> (berat: ${getOrderWeightKg()}kg)
                 </div>
                 <div class="shipping-methods">
                   ${availableShippings.map(s => `
@@ -360,7 +387,7 @@
                         <input type="radio" name="shipping" value="${s.id}" ${selectedShipping && selectedShipping.id === s.id ? 'checked' : ''} onchange="handleSelect('${s.id}')" />
                         <div>
                           <strong>${s.name}</strong>
-                          <span>${s.description ? s.description + ' · ' : ''}ETA: ${s.eta} hari</span>
+                          <span>ETA: ${s.eta}</span>
                         </div>
                       </div>
                       <div class="price">${formatPrice(s.price)}</div>
@@ -415,7 +442,7 @@
             </div>
             <div class="summary-row">
               <span>Ongkir${selectedShipping ? ' (' + selectedShipping.name + ')' : ''}</span>
-              <span>${selectedShipping ? formatPrice(shipping) : '<em style="color:var(--text-muted)">Pilih kota tujuan</em>'}</span>
+              <span>${selectedShipping ? formatPrice(shipping) : '<em style="color:var(--text-muted)">Pilih desa tujuan</em>'}</span>
             </div>
             <div class="summary-row total">
               <span>Total</span>
@@ -425,7 +452,7 @@
               🔒 Pay Now
             </button>
             <div style="text-align:center; margin-top:10px; font-size:10px; color:var(--text-muted);">
-              Powered by <strong>Binderbyte</strong> Ongkir API
+              Powered by <strong>api.co.id</strong> Ongkir API
             </div>
             <div style="text-align:center; margin-top:8px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px">
               By clicking Pay, you agree to our <a href="#" style="color:var(--accent)">Terms</a>
@@ -443,7 +470,7 @@
     function placeOrder(e) {
       e.preventDefault();
       if (!selectedShipping) {
-        showToast('Pilih kota tujuan dan metode pengiriman dulu!', 'error');
+        showToast('Pilih desa tujuan dan metode pengiriman dulu!', 'error');
         return;
       }
       const orderId = 'ERS-' + Date.now().toString().slice(-8);
@@ -452,7 +479,12 @@
         id: orderId,
         total: total,
         shipping: selectedShipping,
-        destination: { province: selectedProvince, city: selectedCity },
+        destination: {
+          province: selectedProvinceName,
+          regency: selectedRegencyName,
+          village: selectedVillageName,
+          village_code: selectedVillageCode
+        },
         payment: PAYMENTS.find(p => p.id === selectedPayment),
         items: Cart.get().length,
         date: new Date().toISOString()

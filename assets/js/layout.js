@@ -13,6 +13,7 @@ function renderHeader(activePage = 'home') {
         <div class="topbar-right">
           <a href="#">Track Order</a>
           <a href="#">Help</a>
+          <a href="admin.html">Admin</a>
           <a href="#">Sign In</a>
         </div>
       </div>
