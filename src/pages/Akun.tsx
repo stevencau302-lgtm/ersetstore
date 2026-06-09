@@ -265,7 +265,7 @@ export default function Akun() {
 
             <button
               onClick={signOut}
-              className="btn btn-outline btn-md w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+              className="hidden lg:flex btn btn-outline btn-md w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
             >
               <LogOut className="size-4" />
               Keluar dari Akun
