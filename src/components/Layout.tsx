@@ -6,6 +6,7 @@ import Toaster from './Toaster';
 
 export default function Layout() {
   const { pathname } = useLocation();
+  const isCheckout = pathname === '/checkout';
 
   // Scroll to top on route change
   useEffect(() => {
@@ -18,7 +19,14 @@ export default function Layout() {
       <main className="flex-1 overflow-x-hidden">
         <Outlet />
       </main>
-      <Footer />
+      {/* Footer disembunyikan di halaman checkout khusus mobile */}
+      {isCheckout ? (
+        <div className="hidden lg:block">
+          <Footer />
+        </div>
+      ) : (
+        <Footer />
+      )}
       <Toaster />
     </div>
   );

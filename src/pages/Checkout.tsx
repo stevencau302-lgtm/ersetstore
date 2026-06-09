@@ -362,7 +362,7 @@ export default function Checkout() {
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <strong className="text-xs sm:text-sm text-gray-900 break-words">{rate.courier_name}{rate.service ? ` — ${rate.service}` : ''}</strong>
                               {cheapest && (
-                                <span className="badge bg-emerald-100 text-emerald-700 !py-0.5">Termurah</span>
+                                <span className="badge bg-brand-100 text-brand-700 !py-0.5">Termurah</span>
                               )}
                             </div>
                             {rate.estimated && (
@@ -586,7 +586,7 @@ function Section({
   return (
     <div className="card p-4 sm:p-6 animate-slide-up hover:shadow-md" style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}>
       <h3 className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base font-bold text-gray-900 mb-4 sm:mb-5">
-        <span className={`size-7 sm:size-8 grid place-items-center rounded-full text-[10px] sm:text-xs font-extrabold shadow-md transition-colors ${done ? 'bg-emerald-500 text-white shadow-emerald-500/30' : 'bg-brand-500 text-white shadow-brand-500/30'}`}>
+        <span className={`size-7 sm:size-8 grid place-items-center rounded-full text-[10px] sm:text-xs font-extrabold shadow-md transition-colors ${done ? 'bg-gray-900 text-white shadow-gray-900/20' : 'bg-brand-500 text-white shadow-brand-500/30'}`}>
           {done ? <Check className="size-4" strokeWidth={3} /> : step}
         </span>
         <Icon className="size-4 text-brand-500" />
