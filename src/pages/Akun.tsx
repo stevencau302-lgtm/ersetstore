@@ -273,7 +273,7 @@ export default function Akun() {
           </div>
 
           {/* Main - Riwayat Pesanan */}
-          <div>
+          <div className="min-w-0">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <ShoppingBag className="size-5 text-brand-500" />
               Riwayat Pesanan
