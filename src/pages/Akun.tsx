@@ -143,6 +143,12 @@ export default function Akun() {
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' })
     : '-';
+  // Format ringkas biar muat di tile sempit (mobile)
+  const compactRupiah = (n: number) => {
+    if (n >= 1_000_000) return 'Rp ' + (n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1).replace('.', ',') + 'jt';
+    if (n >= 1_000) return 'Rp ' + Math.round(n / 1000) + 'rb';
+    return 'Rp ' + n;
+  };
 
   return (
     <>
