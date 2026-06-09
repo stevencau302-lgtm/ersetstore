@@ -381,7 +381,7 @@ export default function Checkout() {
             </Section>
 
             {/* Step 4: Payment */}
-            <Section step={4} title="Metode Pembayaran" icon={CreditCard} done={!!paymentId} delay={180}>
+            <Section step={4} title="Metode Pembayaran" icon={CreditCard} delay={180}>
               <div className="grid gap-2 sm:gap-3">
                 {PAYMENT_GROUPS.map((group) => {
                   const IconComp = group.iconName === 'landmark' ? Landmark : group.iconName === 'zap' ? Zap : Banknote;
