@@ -349,6 +349,15 @@ export default function Akun() {
             )}
           </div>
         </div>
+
+        {/* Tombol Keluar — mobile, di paling bawah */}
+        <button
+          onClick={signOut}
+          className="flex lg:hidden btn btn-outline btn-md w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 mt-6"
+        >
+          <LogOut className="size-4" />
+          Keluar dari Akun
+        </button>
       </section>
     </>
   );
