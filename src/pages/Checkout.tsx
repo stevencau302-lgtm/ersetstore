@@ -269,7 +269,7 @@ export default function Checkout() {
             </Section>
 
             {/* Step 2: Address + Location Search */}
-            <Section step={2} title="Alamat Pengiriman" icon={MapPin} done={!!destination} delay={60}>
+            <Section step={2} title="Alamat Pengiriman" icon={MapPin} delay={60}>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Alamat Lengkap *" className="sm:col-span-2">
                   <textarea name="address" required rows={3} placeholder="Nama jalan, nomor rumah, RT/RW..." className="input resize-y" defaultValue={savedAddr?.address || ''} />
