@@ -312,16 +312,24 @@ export default function Akun() {
                     <div
                       key={order.id}
                       onClick={() => setSelectedOrder(order)}
-                      className="card p-4 sm:p-5 animate-slide-up hover:shadow-md hover:border-brand-200 cursor-pointer transition-all active:scale-[.99]"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedOrder(order); } }}
+                      className="card p-4 sm:p-5 animate-slide-up hover:shadow-md hover:border-brand-200 cursor-pointer transition-all active:scale-[.99] group"
                       style={{ animationDelay: `${Math.min(idx * 60, 300)}ms`, animationFillMode: 'backwards' }}
                     >
                       {/* Header */}
-                      <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-                        <span className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.color}`}>
-                          <StatusIcon className="size-3" />
-                          {statusInfo.label}
-                        </span>
-                        <span className="text-base font-extrabold text-brand-500">
+                      <div className="flex items-center justify-between gap-2 mb-4">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.color}`}>
+                            <StatusIcon className="size-3" />
+                            {statusInfo.label}
+                          </span>
+                          <span className="hidden sm:inline text-[11px] font-mono text-gray-400 truncate">
+                            #{order.order_number || order.id.slice(0, 8)}
+                          </span>
+                        </div>
+                        <span className="text-base sm:text-lg font-extrabold text-brand-500 shrink-0">
                           {formatPrice(order.total)}
                         </span>
                       </div>
@@ -350,7 +358,7 @@ export default function Akun() {
                           <Clock className="size-3 shrink-0" />
                           <span className="truncate">{formatDate(order.created_at)}</span>
                         </span>
-                        <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-brand-500 shrink-0">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 px-2.5 py-1.5 rounded-lg bg-brand-50 group-hover:bg-brand-100 transition-colors shrink-0">
                           Lihat Detail <ChevronRight className="size-3.5" />
                         </span>
                       </div>
