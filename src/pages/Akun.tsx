@@ -283,6 +283,9 @@ export default function Akun() {
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <ShoppingBag className="size-5 text-brand-500" />
               Riwayat Pesanan
+              {orders.length > 0 && (
+                <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">{orders.length}</span>
+              )}
             </h2>
 
             {loading ? (
