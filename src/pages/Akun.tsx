@@ -389,3 +389,140 @@ function StatTile({
     </div>
   );
 }
+
+function OrderDetailModal({
+  order, onClose, formatDate,
+}: {
+  order: Order; onClose: () => void; formatDate: (s: string) => string;
+}) {
+  const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending;
+  const StatusIcon = statusInfo.icon;
+
+  const computedSubtotal = order.subtotal ?? order.items.reduce((s, it) => s + it.price * it.qty, 0);
+  const shippingCost = order.shipping_cost ?? Math.max(0, order.total - computedSubtotal);
+
+  // Kunci scroll body saat modal terbuka
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center">
+      <div className="absolute inset-0 bg-black/50 animate-fade-in" onClick={onClose} />
+      <div className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] sm:max-h-[88vh] flex flex-col animate-slide-up overflow-hidden">
+        {/* Handle (mobile) */}
+        <div className="sm:hidden pt-2.5 pb-1 grid place-items-center">
+          <span className="h-1.5 w-10 rounded-full bg-gray-300" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+          <div className="min-w-0">
+            <h3 className="font-bold text-gray-900">Detail Pesanan</h3>
+            <p className="text-xs text-gray-400 font-mono truncate">#{order.order_number || order.id.slice(0, 8)}</p>
+          </div>
+          <button onClick={onClose} className="size-9 rounded-full grid place-items-center hover:bg-gray-100 shrink-0" aria-label="Tutup">
+            <X className="size-5 text-gray-600" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="overflow-y-auto px-5 py-4 space-y-5 scrollbar-thin">
+          {/* Status */}
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.color}`}>
+              <StatusIcon className="size-3" />
+              {statusInfo.label}
+            </span>
+            <span className="text-xs text-gray-400">{formatDate(order.created_at)}</span>
+          </div>
+
+          {/* Alamat */}
+          <DetailBlock icon={MapPin} title="Alamat Pengiriman">
+            <p className="font-semibold text-gray-900">{order.shipping_name}</p>
+            <p className="flex items-center gap-1.5 text-gray-500 mt-0.5">
+              <Phone className="size-3.5 shrink-0" /> {order.shipping_phone || '-'}
+            </p>
+            <p className="text-gray-600 mt-1 leading-relaxed">{order.shipping_address || '-'}</p>
+          </DetailBlock>
+
+          {/* Produk */}
+          <DetailBlock icon={Package} title={`Produk (${order.items.length})`}>
+            <div className="space-y-3">
+              {order.items.map((item, i) => {
+                const p = findProduct(item.product_id);
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="size-11 rounded-xl bg-gray-50 grid place-items-center text-xl shrink-0">
+                      {p?.emoji || '📦'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-800 line-clamp-2">{item.product_name}</p>
+                      <p className="text-[11px] text-gray-500">{item.qty} × {formatPrice(item.price)}</p>
+                    </div>
+                    <span className="text-sm font-semibold text-gray-900 whitespace-nowrap shrink-0">
+                      {formatPrice(item.price * item.qty)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </DetailBlock>
+
+          {/* Pengiriman & Pembayaran */}
+          <div className="grid grid-cols-1 gap-3">
+            {order.shipping_method && (
+              <DetailBlock icon={Truck} title="Metode Pengiriman">
+                <p className="text-gray-700">{order.shipping_method}</p>
+              </DetailBlock>
+            )}
+            {order.payment_method && (
+              <DetailBlock icon={CreditCard} title="Metode Pembayaran">
+                <p className="text-gray-700">{order.payment_method}</p>
+              </DetailBlock>
+            )}
+          </div>
+
+          {/* Rincian biaya */}
+          <DetailBlock icon={Receipt} title="Rincian Pembayaran">
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span className="font-medium text-gray-900">{formatPrice(computedSubtotal)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Ongkos Kirim</span>
+                <span className="font-medium text-gray-900">{formatPrice(shippingCost)}</span>
+              </div>
+              <div className="flex justify-between items-baseline border-t border-dashed border-gray-200 pt-2 mt-1">
+                <span className="font-bold text-gray-900">Total</span>
+                <span className="text-lg font-extrabold text-brand-500">{formatPrice(order.total)}</span>
+              </div>
+            </div>
+          </DetailBlock>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-gray-100 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:pb-3">
+          <button onClick={onClose} className="btn btn-primary btn-md w-full">Tutup</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailBlock({
+  icon: Icon, title, children,
+}: {
+  icon: React.ComponentType<{ className?: string }>; title: string; children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-gray-50/70 rounded-2xl p-4">
+      <h4 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2">
+        <Icon className="size-3.5 text-brand-500" /> {title}
+      </h4>
+      <div className="text-sm">{children}</div>
+    </div>
+  );
+}
