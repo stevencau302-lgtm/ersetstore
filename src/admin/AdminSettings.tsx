@@ -95,6 +95,20 @@ export default function AdminSettings() {
     }));
   }
 
+  // Daftar courier_code yang aktif (dari setting, dipisah koma)
+  const enabledCouriers = (settings['enabled_couriers'] || '')
+    .split(',').map(s => s.trim()).filter(Boolean);
+
+  function toggleCourier(code: string) {
+    setSettings(prev => {
+      const current = (prev['enabled_couriers'] || '').split(',').map(s => s.trim()).filter(Boolean);
+      const next = current.includes(code)
+        ? current.filter(c => c !== code)
+        : [...current, code];
+      return { ...prev, enabled_couriers: next.join(',') };
+    });
+  }
+
   async function saveSettings() {
     setSaving(true);
     setError('');
