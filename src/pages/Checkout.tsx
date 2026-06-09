@@ -402,7 +402,7 @@ export default function Checkout() {
                         <span className="text-xs sm:text-sm text-gray-500">{group.desc}</span>
                       </div>
                       <span className={`size-5 rounded-full border-2 grid place-items-center shrink-0 transition-all ${active ? 'border-brand-500 bg-brand-500' : 'border-gray-300'}`}>
-                        {active && <Check className="size-3 text-white" strokeWidth={3} />}
+                        {active && <span className="size-2 rounded-full bg-white" />}
                       </span>
                     </label>
                   );
