@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Save, Loader2, Settings, Key, MapPin, Store, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Save, Loader2, Settings, Key, MapPin, Store, Eye, EyeOff, CheckCircle2, Truck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import LocationSearch from '../components/LocationSearch';
 import { type Location } from '../lib/shipping';

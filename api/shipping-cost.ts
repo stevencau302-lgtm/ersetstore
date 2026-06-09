@@ -141,12 +141,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }))
       .sort((a, b) => a.price - b.price);
 
+    // Filter ke kurir yang diaktifkan admin (jika ada). Kosong = semua.
+    const finalResult = settings.enabledCouriers.length > 0
+      ? (() => {
+          const allow = new Set(settings.enabledCouriers.map((c) => c.toLowerCase()));
+          return normalized.filter((r) => allow.has((r.courier_code || '').toLowerCase()));
+        })()
+      : normalized;
+
     return res.status(200).json({
       status: 'success',
       origin: null,
       destination: null,
       weight: weightKg,
-      result: normalized,
+      result: finalResult,
     });
   } catch (err: any) {
     console.error('Shipping cost error:', err);
