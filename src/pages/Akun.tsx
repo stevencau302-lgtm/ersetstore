@@ -347,3 +347,17 @@ export default function Akun() {
     </>
   );
 }
+
+function StatTile({
+  icon: Icon, value, label, compact = false,
+}: {
+  icon: React.ComponentType<{ className?: string }>; value: string; label: string; compact?: boolean;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-1 py-3.5 px-1 text-center">
+      <Icon className="size-4 text-brand-500" />
+      <span className={`font-extrabold text-gray-900 leading-tight ${compact ? 'text-xs' : 'text-base'}`}>{value}</span>
+      <span className="text-[10px] uppercase tracking-wider text-gray-400 leading-none">{label}</span>
+    </div>
+  );
+}
