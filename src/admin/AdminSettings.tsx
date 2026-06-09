@@ -9,20 +9,20 @@ interface Setting {
 
 const SETTINGS_CONFIG = [
   {
-    key: 'binderbyte_api_key',
-    label: 'BinderByte API Key',
-    description: 'API key untuk cek ongkir real-time. Daftar gratis di binderbyte.com',
+    key: 'api_co_id_key',
+    label: 'API Key api.co.id',
+    description: 'API key untuk cek ongkir real-time (header x-api-co-id). Dapatkan di dashboard.api.co.id',
     icon: Key,
     secret: true,
-    placeholder: 'Masukkan API key BinderByte...',
+    placeholder: 'Masukkan API key api.co.id...',
   },
   {
-    key: 'store_origin_id',
-    label: 'Lokasi Asal Toko (Origin ID)',
-    description: 'ID lokasi BinderByte untuk alamat toko. Contoh: dist_31.72.05 (Pademangan, Jakarta)',
+    key: 'store_origin_village_code',
+    label: 'Kode Desa Asal Toko (10 digit)',
+    description: 'Kode desa lokasi toko untuk hitung ongkir. Contoh: 3172051003 (Pademangan, Jakarta)',
     icon: MapPin,
     secret: false,
-    placeholder: 'dist_31.72.05',
+    placeholder: '3172051003',
   },
   {
     key: 'store_name',
@@ -175,9 +175,10 @@ export default function AdminSettings() {
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
         <strong className="block mb-1">💡 Cara setup:</strong>
         <ol className="list-decimal list-inside space-y-1 text-xs">
-          <li>Daftar akun di <a href="https://binderbyte.com" target="_blank" rel="noopener" className="underline font-semibold">binderbyte.com</a></li>
-          <li>Copy API key dari dashboard BinderByte</li>
-          <li>Paste di field "BinderByte API Key" di atas</li>
+          <li>Daftar akun di <a href="https://dashboard.api.co.id" target="_blank" rel="noopener" className="underline font-semibold">dashboard.api.co.id</a></li>
+          <li>Aktifkan produk Indonesia Expedition Cost &amp; Regional, lalu copy API key-nya</li>
+          <li>Paste di field "API Key api.co.id" di atas</li>
+          <li>Isi kode desa toko (10 digit) di field Kode Desa Asal</li>
           <li>Klik Simpan — ongkir di checkout langsung aktif!</li>
         </ol>
       </div>

@@ -103,7 +103,7 @@ export default function LocationSearch({ label, placeholder, value, onChange }: 
             <div className="px-4 py-3 text-sm text-red-500">
               <p className="font-medium">⚠️ {error}</p>
               {error.includes('API key') && (
-                <p className="text-xs mt-1 text-red-400">Buka Admin Panel → Pengaturan → masukkan API Key dari binderbyte.com</p>
+                <p className="text-xs mt-1 text-red-400">Buka Admin Panel → Pengaturan → masukkan API Key dari dashboard.api.co.id</p>
               )}
             </div>
           )}

@@ -1,32 +1,34 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
-const API_BASE = 'https://api.binderbyte.com/v1';
+// ============================================
+// CEK ONGKIR via api.co.id (Indonesia Expedition Cost)
+// Docs: https://docs.api.co.id/products/indonesia-expedition-cost
+// Auth: header x-api-co-id
+// ============================================
+const EXPEDITION_BASE = 'https://use.api.co.id/expedition';
 
 // Supabase client for reading settings
 const supabaseUrl = 'https://qjklcbicacbfqeitfzau.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2xjYmljYWNiZnFlaXRmemF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDE4MjYsImV4cCI6MjA5NDgxNzgyNn0.uIpmrfLh6hdntkADcBINNZ3xQV9gjzs0BACXPpw8aJk';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Semua kurir yang didukung BinderByte (dipanggil satu per satu)
-const ALL_COURIER_LIST = ['jne', 'sicepat', 'jnt', 'ninja', 'anteraja', 'pos', 'tiki', 'lion', 'sap', 'ide', 'wahana', 'spx'];
-
-async function getSettings(): Promise<{ apiKey: string; originId: string }> {
-  let map: Record<string, string> = {};
-  
+async function getSettings(): Promise<{ apiKey: string; originVillageCode: string }> {
+  const map: Record<string, string> = {};
   try {
     const { data } = await supabase
       .from('store_settings')
       .select('key, value')
-      .in('key', ['binderbyte_api_key', 'store_origin_id']);
+      .in('key', ['api_co_id_key', 'store_origin_village_code']);
     (data || []).forEach((s: any) => { map[s.key] = s.value; });
   } catch (e) {
     console.log('[shipping-cost] Supabase fetch failed, using fallback');
   }
 
   return {
-    apiKey: map['binderbyte_api_key'] || process.env.BINDERBYTE_API_KEY || 'b52da0eef743ef42b031dc8b20880997a24e37eebb41f4bec30e0f3ee2fa93c4',
-    originId: map['store_origin_id'] || 'dist_31.72.05',
+    apiKey: map['api_co_id_key'] || process.env.API_CO_ID_KEY || '',
+    // Default origin: Pademangan, Jakarta (10 digit)
+    originVillageCode: map['store_origin_village_code'] || process.env.STORE_ORIGIN_VILLAGE_CODE || '3172051003',
   };
 }
 
@@ -36,86 +38,74 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Support both GET and POST
   let origin: string | undefined;
   let destination: string | undefined;
   let weight: string | undefined;
-  let courier: string | undefined;
 
   if (req.method === 'GET') {
     origin = req.query.origin as string;
     destination = req.query.destination as string;
     weight = req.query.weight as string;
-    courier = req.query.courier as string;
   } else if (req.method === 'POST') {
     origin = req.body?.origin;
     destination = req.body?.destination;
     weight = req.body?.weight;
-    courier = req.body?.courier;
   } else {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   // Validasi
-  if (!destination) return res.status(400).json({ error: 'Parameter "destination" wajib diisi' });
+  if (!destination) return res.status(400).json({ error: 'Parameter "destination" (kode desa) wajib diisi' });
+  if (!/^\d{10}$/.test(destination)) return res.status(400).json({ error: 'destination harus kode desa 10 digit' });
   if (!weight || Number(weight) <= 0) return res.status(400).json({ error: 'Parameter "weight" harus > 0 (gram)' });
 
-  // Get settings from Supabase
   const settings = await getSettings();
-
   if (!settings.apiKey) {
-    console.warn('[shipping-cost] No API key found — this should not happen with fallback');
-    return res.status(500).json({ error: 'API key configuration error' });
+    return res.status(500).json({ error: 'API key api.co.id belum diatur. Buka Admin → Pengaturan.' });
   }
 
-  // Use origin from request, or fallback to store setting
-  if (!origin) origin = settings.originId;
+  // Origin dari request, atau fallback ke setting toko
+  if (!origin) origin = settings.originVillageCode;
+  if (!/^\d{10}$/.test(origin)) {
+    return res.status(500).json({ error: 'Kode desa asal toko tidak valid (harus 10 digit). Cek Admin → Pengaturan.' });
+  }
 
-  // Frontend kirim dalam gram, BinderByte mau kilogram. Minimum 1 kg
+  // Frontend kirim gram, api.co.id mau kilogram. Minimum 1 kg.
   const weightKg = Math.max(1, Math.ceil(Number(weight) / 1000));
 
-  // Default: semua kurir populer
-  const courierList = courier ? courier.split(',').map(c => c.trim()).filter(Boolean) : ALL_COURIER_LIST;
-
   try {
-    // Fetch setiap kurir satu per satu secara parallel
-    const fetchCourier = async (c: string) => {
-      try {
-        const url = `${API_BASE}/cost?api_key=${settings.apiKey}&origin=${encodeURIComponent(origin!)}&destination=${encodeURIComponent(destination!)}&weight=${weightKg}&courier=${c}`;
-        const resp = await fetch(url);
-        const text = await resp.text();
-        if (!text || text.trim().length === 0) return [];
-        const json = JSON.parse(text);
-        if (json.code !== '200' && json.code !== 200) return [];
-        return json.data?.results || [];
-      } catch {
-        return [];
-      }
-    };
+    const url = `${EXPEDITION_BASE}/shipping-cost`
+      + `?origin_village_code=${encodeURIComponent(origin)}`
+      + `&destination_village_code=${encodeURIComponent(destination)}`
+      + `&weight=${weightKg}`;
 
-    const allResults = await Promise.all(courierList.map(fetchCourier));
-    const results = allResults.flat();
-    const normalized: any[] = [];
+    const resp = await fetch(url, { headers: { 'x-api-co-id': settings.apiKey } });
+    const text = await resp.text();
 
-    for (const courierResult of results) {
-      const costs = courierResult.costs || [];
-      for (const cost of costs) {
-        const price = Number(cost.price) || 0;
-        if (price > 0) {
-          normalized.push({
-            courier_code: courierResult.code || cost.code || '',
-            courier_name: courierResult.name || cost.name || '',
-            service: cost.service || '',
-            type: cost.type || '',
-            price,
-            estimated: cost.estimated || null,
-          });
-        }
-      }
+    let json: any;
+    try {
+      json = text ? JSON.parse(text) : {};
+    } catch {
+      return res.status(502).json({ error: 'Response api.co.id bukan JSON: ' + text.slice(0, 200) });
     }
 
-    // Sort by price ascending
-    normalized.sort((a, b) => a.price - b.price);
+    if (!resp.ok) {
+      return res.status(resp.status).json({ error: json?.message || `Gagal cek ongkir (HTTP ${resp.status})` });
+    }
+
+    const list: any[] = Array.isArray(json) ? json : (json.result ?? json.data ?? []);
+
+    const normalized = list
+      .filter((c) => Number(c.price) > 0)
+      .map((c) => ({
+        courier_code: c.courier_code || '',
+        courier_name: c.courier_name || c.courier_code || '',
+        service: c.service || '',
+        type: '',
+        price: Number(c.price) || 0,
+        estimated: c.estimation ?? c.estimated ?? null,
+      }))
+      .sort((a, b) => a.price - b.price);
 
     return res.status(200).json({
       status: 'success',

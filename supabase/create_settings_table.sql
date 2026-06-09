@@ -26,7 +26,7 @@ CREATE POLICY "Admin can manage settings" ON store_settings
 
 -- Seed default settings
 INSERT INTO store_settings (key, value) VALUES
-  ('binderbyte_api_key', ''),
-  ('store_origin_id', 'dist_31.72.05'),
+  ('api_co_id_key', ''),
+  ('store_origin_village_code', '3172051003'),
   ('store_name', 'ERSET GEAR LAB')
 ON CONFLICT (key) DO NOTHING;
