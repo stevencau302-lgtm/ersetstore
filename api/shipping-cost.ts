@@ -13,13 +13,13 @@ const supabaseUrl = 'https://qjklcbicacbfqeitfzau.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2xjYmljYWNiZnFlaXRmemF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDE4MjYsImV4cCI6MjA5NDgxNzgyNn0.uIpmrfLh6hdntkADcBINNZ3xQV9gjzs0BACXPpw8aJk';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-async function getSettings(): Promise<{ apiKey: string; originVillageCode: string }> {
+async function getSettings(): Promise<{ apiKey: string; originVillageCode: string; enabledCouriers: string[] }> {
   const map: Record<string, string> = {};
   try {
     const { data } = await supabase
       .from('store_settings')
       .select('key, value')
-      .in('key', ['api_co_id_key', 'store_origin_village_code']);
+      .in('key', ['api_co_id_key', 'store_origin_village_code', 'enabled_couriers']);
     (data || []).forEach((s: any) => { map[s.key] = s.value; });
   } catch (e) {
     console.log('[shipping-cost] Supabase fetch failed, using fallback');
@@ -29,6 +29,8 @@ async function getSettings(): Promise<{ apiKey: string; originVillageCode: strin
     apiKey: map['api_co_id_key'] || process.env.API_CO_ID_KEY || '',
     // Default origin: Pademangan, Jakarta (10 digit)
     originVillageCode: map['store_origin_village_code'] || process.env.STORE_ORIGIN_VILLAGE_CODE || '3172051003',
+    // Daftar courier_code yang diaktifkan admin. Kosong = tampilkan semua.
+    enabledCouriers: (map['enabled_couriers'] || '').split(',').map((s) => s.trim()).filter(Boolean),
   };
 }
 
