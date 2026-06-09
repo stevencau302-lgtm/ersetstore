@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock, ShoppingCart, ShieldCheck, User, MapPin, Truck, CreditCard,
   Landmark, Zap, Banknote, Loader2, AlertCircle, RefreshCw, Check, CheckCircle2,
-  Package, BadgeCheck, Clock,
+  Package, BadgeCheck, Clock, ChevronDown,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import LocationSearch from '../components/LocationSearch';
@@ -421,6 +421,54 @@ export default function Checkout() {
                 <span>Pembayaran kamu 100% aman dengan enkripsi SSL 256-bit. Kami tidak menyimpan data kartu kredit kamu.</span>
               </div>
             </Section>
+
+            {/* Ringkasan Pesanan (mobile) — bisa di-expand */}
+            <details className="lg:hidden card overflow-hidden group animate-slide-up" style={{ animationDelay: '220ms', animationFillMode: 'backwards' }}>
+              <summary className="flex items-center justify-between px-4 py-4 cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden">
+                <span className="flex items-center gap-2 text-sm font-bold text-gray-900">
+                  <Package className="size-4 text-brand-500" /> Ringkasan Pesanan
+                </span>
+                <span className="flex items-center gap-2 text-xs text-gray-500">
+                  {count} item
+                  <ChevronDown className="size-4 transition-transform duration-300 group-open:rotate-180" />
+                </span>
+              </summary>
+              <div className="px-4 pb-4 border-t border-gray-100">
+                <div className="space-y-3 py-3 max-h-64 overflow-y-auto scrollbar-thin">
+                  {items.map((item) => {
+                    const p = findProduct(item.id);
+                    if (!p) return null;
+                    return (
+                      <div key={p.id} className="flex items-center gap-3">
+                        <div className="relative size-11 grid place-items-center bg-gray-50 rounded-xl text-xl shrink-0">
+                          {p.emoji}
+                          <span className="absolute -top-1.5 -right-1.5 size-5 bg-brand-500 text-white text-[10px] font-bold rounded-full grid place-items-center shadow">{item.qty}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-semibold text-gray-900 line-clamp-1">{p.name}</div>
+                          <div className="text-[11px] text-gray-500">{formatPrice(p.price)} × {item.qty}</div>
+                        </div>
+                        <div className="text-xs font-bold text-gray-900 whitespace-nowrap">{formatPrice(p.price * item.qty)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="space-y-1.5 text-sm border-t border-dashed border-gray-200 pt-3">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span className="font-semibold text-gray-900">{formatPrice(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span className="truncate pr-2">{selectedRate ? `${selectedRate.courier_name} ${selectedRate.service}` : 'Ongkir'}</span>
+                    <span className="font-semibold text-gray-900 whitespace-nowrap">{selectedRate ? formatPrice(shippingCost) : '—'}</span>
+                  </div>
+                  <div className="flex justify-between items-baseline pt-1">
+                    <span className="font-bold text-gray-900">Total</span>
+                    <span className="text-lg font-extrabold text-brand-500">{formatPrice(total)}</span>
+                  </div>
+                </div>
+              </div>
+            </details>
           </div>
 
           {/* Summary - Desktop: sticky sidebar */}
