@@ -2,7 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import {
   Check, Mail, Home, ShoppingBag, Copy, CheckCheck, Zap, Landmark, Wallet,
-  AlertTriangle, MessageCircle,
+  AlertTriangle, MessageCircle, Clock, CreditCard, ChevronRight,
 } from 'lucide-react';
 import { orderActions } from '../lib/cart';
 import type { OrderData } from '../types';
@@ -27,70 +27,97 @@ export default function Success() {
   const [params] = useSearchParams();
   const orderId = params.get('order') || '-';
   const order = orderActions.get<OrderData>();
-
   const paymentMethod = order?.payment.id || 'bank';
 
   return (
     <section className="container-x py-8 sm:py-12">
       <div className="max-w-2xl mx-auto space-y-5">
-        {/* Success Icon */}
-        <div className="text-center mb-2">
-          <div className="size-20 mx-auto grid place-items-center bg-emerald-500 text-white rounded-full shadow-lg shadow-emerald-500/30 animate-slide-up mb-4">
-            <Check className="size-10" strokeWidth={3} />
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Pesanan Berhasil!</h2>
-          <p className="text-gray-500 text-sm mt-1">Silakan selesaikan pembayaran kamu</p>
-        </div>
-
-        {/* Order Summary Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-          <div className="text-xs font-bold uppercase tracking-[2px] text-gray-500 mb-2">
-            Nomor Pesanan
-          </div>
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl sm:text-3xl font-extrabold text-brand-500 font-mono">
-              #{orderId}
-            </span>
-            <CopyButton text={orderId} />
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm text-gray-500">Total Tagihan:</span>
-            <span className="text-xl font-extrabold text-gray-900">
-              {formatPrice(order?.total || 0)}
+        {/* Hero sukses */}
+        <div className="text-center animate-slide-up">
+          <div className="relative size-24 mx-auto mb-5">
+            <span className="absolute inset-0 rounded-full bg-brand-500/15" />
+            <span className="absolute inset-2 rounded-full bg-brand-500/25" />
+            <span className="absolute inset-4 grid place-items-center rounded-full bg-gradient-to-br from-brand-500 to-brand-600 text-white shadow-xl shadow-brand-500/40">
+              <Check className="size-9" strokeWidth={3} />
             </span>
           </div>
-          {order?.date && (
-            <div className="text-xs text-gray-400 mt-2">{formatDate(order.date)}</div>
-          )}
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Pesanan Berhasil Dibuat!</h2>
+          <p className="text-gray-500 text-sm mt-1.5 px-4">
+            Terima kasih sudah belanja di ERSET. Selesaikan pembayaran untuk memproses pesananmu.
+          </p>
         </div>
 
-        {/* Payment Instructions - Dynamic */}
-        {paymentMethod === 'bank' && <BankTransferInstructions orderId={orderId} />}
-        {paymentMethod === 'ewallet' && <EWalletInstructions orderId={orderId} />}
-        {paymentMethod === 'cod' && <CODInstructions />}
+        {/* Kartu order — header gelap premium */}
+        <div className="card overflow-hidden animate-slide-up" style={{ animationDelay: '80ms', animationFillMode: 'backwards' }}>
+          <div className="relative bg-gradient-to-br from-gray-900 to-ink-800 p-5 sm:p-6">
+            <div className="absolute -top-10 -right-10 size-40 rounded-full bg-brand-500/20 blur-3xl" />
+            <div className="relative">
+              <p className="text-[11px] font-bold uppercase tracking-[2px] text-white/50">Nomor Pesanan</p>
+              <div className="flex items-center gap-3 mt-1">
+                <span className="text-xl sm:text-2xl font-extrabold text-white font-mono truncate">#{orderId}</span>
+                <CopyButton text={orderId} />
+              </div>
+              <span className="inline-flex items-center gap-1.5 mt-3 text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300">
+                <Clock className="size-3" /> Menunggu Pembayaran
+              </span>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">Total Tagihan</span>
+              <span className="text-2xl font-extrabold text-brand-500">{formatPrice(order?.total || 0)}</span>
+            </div>
+            {order?.payment?.name && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500 inline-flex items-center gap-1.5"><CreditCard className="size-4" /> Pembayaran</span>
+                <span className="font-semibold text-gray-900">{order.payment.name}</span>
+              </div>
+            )}
+            {order?.shipping?.name && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Pengiriman</span>
+                <span className="font-semibold text-gray-900 text-right truncate max-w-[60%]">{order.shipping.name}</span>
+              </div>
+            )}
+            {order?.date && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Tanggal</span>
+                <span className="text-gray-600">{formatDate(order.date)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Instruksi pembayaran */}
+        <div className="animate-slide-up" style={{ animationDelay: '140ms', animationFillMode: 'backwards' }}>
+          {paymentMethod === 'bank' && <BankTransferInstructions orderId={orderId} />}
+          {paymentMethod === 'ewallet' && <EWalletInstructions orderId={orderId} />}
+          {paymentMethod === 'cod' && <CODInstructions />}
+        </div>
 
         {/* Email info */}
-        <div className="flex items-start gap-3 bg-brand-50 border border-brand-100 text-brand-700 rounded-xl p-4 text-sm">
+        <div className="flex items-start gap-3 bg-brand-50 border border-brand-100 text-brand-700 rounded-2xl p-4 text-sm animate-slide-up" style={{ animationDelay: '180ms', animationFillMode: 'backwards' }}>
           <Mail className="size-5 shrink-0 mt-0.5" />
           <div>
             <strong className="block">Email konfirmasi telah dikirim</strong>
-            <span className="text-xs text-brand-600/80">
-              Cek email kamu untuk detail pesanan lengkap.
-            </span>
+            <span className="text-xs text-brand-600/80">Cek email kamu untuk detail pesanan lengkap.</span>
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex flex-wrap gap-3 justify-center pt-2">
-          <Link to="/" className="btn btn-outline btn-md">
-            <Home className="size-4" />
-            Beranda
+        {/* Tombol */}
+        <div className="grid grid-cols-2 gap-3 pt-1">
+          <Link to="/" className="btn btn-outline btn-lg">
+            <Home className="size-4" /> Beranda
           </Link>
-          <Link to="/produk" className="btn btn-primary btn-md">
-            <ShoppingBag className="size-4" />
-            Lanjut Belanja
+          <Link to="/produk" className="btn btn-primary btn-lg">
+            <ShoppingBag className="size-4" /> Belanja Lagi
           </Link>
         </div>
+
+        <Link to="/akun" className="flex items-center justify-center gap-1 text-sm font-semibold text-gray-500 hover:text-brand-500 transition-colors pt-1">
+          Lihat pesanan saya <ChevronRight className="size-4" />
+        </Link>
       </div>
     </section>
   );
@@ -111,12 +138,10 @@ function BankTransferInstructions({ orderId }: { orderId: string }) {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <span className={`text-sm font-bold ${acc.color}`}>{acc.bank}</span>
-                <div className="text-lg font-extrabold text-gray-900 font-mono mt-0.5">
-                  {acc.number}
-                </div>
+                <div className="text-lg font-extrabold text-gray-900 font-mono mt-0.5">{acc.number}</div>
                 <div className="text-xs text-gray-500">a/n {acc.name}</div>
               </div>
-              <CopyButton text={acc.number.replace(/\s/g, '')} />
+              <CopyButton text={acc.number.replace(/\s/g, '')} dark />
             </div>
           </div>
         ))}
@@ -148,12 +173,10 @@ function EWalletInstructions({ orderId }: { orderId: string }) {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <span className={`text-sm font-bold ${acc.color}`}>{acc.name}</span>
-                <div className="text-lg font-extrabold text-gray-900 font-mono mt-0.5">
-                  {acc.number}
-                </div>
+                <div className="text-lg font-extrabold text-gray-900 font-mono mt-0.5">{acc.number}</div>
                 <div className="text-xs text-gray-500">a/n {acc.holder}</div>
               </div>
-              <CopyButton text={acc.number.replace(/-/g, '')} />
+              <CopyButton text={acc.number.replace(/-/g, '')} dark />
             </div>
           </div>
         ))}
@@ -184,7 +207,7 @@ function CODInstructions() {
   );
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, dark = false }: { text: string; dark?: boolean }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -198,13 +221,15 @@ function CopyButton({ text }: { text: string }) {
     }
   };
 
+  const base = dark
+    ? 'bg-gray-50 border-gray-200 text-gray-500 hover:border-brand-500 hover:text-brand-500'
+    : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20';
+
   return (
     <button
       onClick={handleCopy}
       className={`shrink-0 size-9 grid place-items-center rounded-lg border transition-all ${
-        copied
-          ? 'bg-emerald-50 border-emerald-300 text-emerald-600'
-          : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-brand-500 hover:text-brand-500'
+        copied ? (dark ? 'bg-brand-50 border-brand-300 text-brand-600' : 'bg-white/25 border-white/40 text-white') : base
       }`}
       aria-label="Salin"
     >
