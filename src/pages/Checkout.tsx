@@ -356,7 +356,7 @@ export default function Checkout() {
                             className="sr-only"
                           />
                           <span className={`size-5 rounded-full border-2 grid place-items-center shrink-0 transition-all ${active ? 'border-brand-500 bg-brand-500' : 'border-gray-300 group-hover:border-brand-400'}`}>
-                            {active && <Check className="size-3 text-white" strokeWidth={3} />}
+                            {active && <span className="size-2 rounded-full bg-white" />}
                           </span>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
