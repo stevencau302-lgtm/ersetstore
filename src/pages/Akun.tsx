@@ -210,8 +210,8 @@ export default function Akun() {
         <div className="grid lg:grid-cols-[300px_1fr] gap-4 lg:gap-6 items-start">
           {/* Sidebar - Profil */}
           <div className="space-y-4 min-w-0 lg:sticky lg:top-28">
-            {/* Profile hero */}
-            <div className="card overflow-hidden animate-slide-up">
+            {/* Profile hero — mobile only (desktop sudah ada welcome banner) */}
+            <div className="lg:hidden card overflow-hidden animate-slide-up">
               <div className="relative bg-gradient-to-br from-gray-900 to-ink-800 p-5 sm:p-6">
                 <div className="absolute -top-8 -right-8 size-32 rounded-full bg-brand-500/20 blur-2xl" />
                 <div className="relative flex items-center gap-4">
