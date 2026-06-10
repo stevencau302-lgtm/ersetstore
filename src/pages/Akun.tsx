@@ -526,8 +526,20 @@ function OrderDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-gray-100 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:pb-3">
-          <button onClick={onClose} className="btn btn-primary btn-md w-full">Tutup</button>
+        <div className="px-5 py-3 border-t border-gray-100 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:pb-3 flex gap-2">
+          {order.status === 'pending' ? (
+            <>
+              <Link
+                to={`/sukses?order=${order.order_number || order.id}`}
+                className="btn btn-primary btn-md flex-1"
+              >
+                <CreditCard className="size-4" /> Bayar Sekarang
+              </Link>
+              <button onClick={onClose} className="btn btn-outline btn-md">Tutup</button>
+            </>
+          ) : (
+            <button onClick={onClose} className="btn btn-primary btn-md w-full">Tutup</button>
+          )}
         </div>
       </div>
     </div>
