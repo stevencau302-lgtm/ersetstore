@@ -1,10 +1,11 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
-  Search, Heart, User, ShoppingCart, Menu, X, Truck, LogOut, LogIn,
+  Heart, User, ShoppingCart, Menu, X, Truck, LogOut, LogIn,
 } from 'lucide-react';
 import { useCart } from '../lib/cart';
 import { useAuth } from '../contexts/AuthContext';
+import ProductSearch from './ProductSearch';
 
 const NAV_LINKS = [
   { to: '/', label: 'Beranda', exact: true },
