@@ -4,6 +4,7 @@ import {
   Heart, User, ShoppingCart, Menu, X, Truck, LogOut, LogIn,
 } from 'lucide-react';
 import { useCart } from '../lib/cart';
+import { cartDrawer } from '../lib/cartDrawer';
 import { useAuth } from '../contexts/AuthContext';
 import ProductSearch from './ProductSearch';
 
