@@ -396,9 +396,13 @@ export default function Akun() {
                   Mulai Belanja
                 </Link>
               </div>
+            ) : filteredOrders.length === 0 ? (
+              <div className="card p-10 text-center text-sm text-gray-500">
+                Tidak ada pesanan dengan status ini.
+              </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
-                {orders.map((order, idx) => {
+                {filteredOrders.map((order, idx) => {
                   const statusInfo = STATUS_MAP[order.status] || STATUS_MAP.pending;
                   const StatusIcon = statusInfo.icon;
 
