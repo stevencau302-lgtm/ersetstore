@@ -140,7 +140,7 @@ export default function Lacak() {
                           <div className={`size-9 rounded-full grid place-items-center shrink-0 transition-colors ${
                             done ? 'bg-brand-500 text-white' : 'bg-gray-100 text-gray-400'
                           } ${active ? 'ring-4 ring-brand-500/20' : ''}`}>
-                            <Icon className="size-4.5" />
+                            <Icon className="size-5" />
                           </div>
                           {!isLast && <div className={`w-0.5 flex-1 min-h-[28px] ${i < currentStageIdx ? 'bg-brand-500' : 'bg-gray-200'}`} />}
                         </div>
