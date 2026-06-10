@@ -27,8 +27,31 @@ const EWALLET_ACCOUNTS = [
 export default function Success() {
   const [params] = useSearchParams();
   const orderId = params.get('order') || '-';
-  const order = orderActions.get<OrderData>();
-  const paymentMethod = order?.payment.id || 'bank';
+  const localOrder = orderActions.get<OrderData>();
+  const matchesLocal = !!localOrder && localOrder.id === orderId;
+
+  // Kalau dibuka dari riwayat (bukan order yang baru dibuat), ambil dari Supabase
+  const [fetched, setFetched] = useState<{ total: number; paymentId: string } | null>(null);
+
+  useEffect(() => {
+    if (orderId && orderId !== '-' && !matchesLocal) {
+      supabase
+        .from('orders')
+        .select('total, payment_method')
+        .eq('order_number', orderId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) {
+            const pm = (data.payment_method || '').toLowerCase();
+            const paymentId = pm.includes('wallet') ? 'ewallet' : pm.includes('cod') ? 'cod' : 'bank';
+            setFetched({ total: data.total, paymentId });
+          }
+        });
+    }
+  }, [orderId, matchesLocal]);
+
+  const paymentMethod = matchesLocal ? (localOrder!.payment.id || 'bank') : (fetched?.paymentId || 'bank');
+  const displayTotal = matchesLocal ? localOrder!.total : (fetched?.total || 0);
 
   return (
     <section className="container-x py-8 sm:py-12">
