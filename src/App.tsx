@@ -6,6 +6,8 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Success from './pages/Success';
+import Wishlist from './pages/Wishlist';
+import Lacak from './pages/Lacak';
 import Info from './pages/Info';
 import About from './pages/About';
 import Legal from './pages/Legal';
