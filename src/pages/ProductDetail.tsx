@@ -152,27 +152,58 @@ export default function ProductDetail() {
 
             {/* Flash Sale Box */}
             {product.badge === 'sale' && (
-              <div className="border-2 border-brand-500 rounded-2xl p-4 mb-5 bg-brand-50/40">
-                <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
-                  <div className="flex items-center gap-2">
-                    <Zap className="size-4 text-brand-500 fill-brand-500" />
-                    <span className="text-sm font-bold text-brand-500 uppercase tracking-wide">Flash Sale</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <span>Berakhir dalam</span>
+              <div className="rounded-2xl overflow-hidden border border-brand-200 mb-5 shadow-sm">
+                {/* Header gradient + countdown */}
+                <div className="flex items-center justify-between gap-2 bg-gradient-to-r from-brand-500 to-brand-600 px-4 py-2.5 text-white">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide">
+                    <Zap className="size-4 fill-white" /> Flash Sale
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white/15 rounded-full pl-2 pr-1 py-1">
+                    <Clock className="size-3.5" />
                     <CountdownTimer targetTime={getEndOfDay()} size="sm" />
-                  </div>
+                  </span>
                 </div>
-                <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-extrabold text-brand-500">{formatPrice(product.price)}</span>
-                  {product.original && (
-                    <>
-                      <span className="text-sm text-gray-400 line-through">{formatPrice(product.original)}</span>
-                      <span className="bg-red-500 text-white px-2 py-0.5 rounded text-xs font-bold">
-                        Hemat {formatPrice(product.original - product.price)}
+
+                {/* Body */}
+                <div className="bg-brand-50/50 px-4 py-3.5">
+                  <div className="flex items-end justify-between gap-3 flex-wrap">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl sm:text-3xl font-extrabold text-brand-600 whitespace-nowrap leading-none">
+                          {formatPrice(product.price)}
+                        </span>
+                        <span className="bg-red-500 text-white text-[11px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
+                          -{discount}%
+                        </span>
+                      </div>
+                      {product.original && (
+                        <span className="block text-sm text-gray-400 line-through whitespace-nowrap mt-1">
+                          {formatPrice(product.original)}
+                        </span>
+                      )}
+                    </div>
+                    {product.original && (
+                      <span className="inline-flex items-center gap-1 bg-white text-brand-600 border border-brand-200 text-xs font-bold px-2.5 py-1.5 rounded-lg whitespace-nowrap shrink-0">
+                        <Flame className="size-3.5" /> Hemat {formatPrice(product.original - product.price)}
                       </span>
-                    </>
-                  )}
+                    )}
+                  </div>
+
+                  {/* Urgency bar */}
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between text-[11px] text-gray-500 mb-1">
+                      <span className="inline-flex items-center gap-1 font-medium text-brand-600">
+                        <Flame className="size-3 fill-brand-500" /> {product.sold.toLocaleString('id-ID')} terjual
+                      </span>
+                      <span>Sisa stok {product.stock}</span>
+                    </div>
+                    <div className="h-1.5 bg-white rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-brand-500 to-amber-400 rounded-full"
+                        style={{ width: `${Math.min(95, Math.max(15, Math.round((product.sold / (product.sold + product.stock)) * 100)))}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
