@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Package, ShoppingBag, LogOut, Clock, CheckCircle2, Truck, Loader2,
   MapPin, Save, Pencil, X, Wallet, Calendar, ChevronRight, Phone, CreditCard, Receipt,
+  Heart, HelpCircle, Hand,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
