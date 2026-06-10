@@ -43,7 +43,7 @@ export default function Header() {
           </div>
           <div className="hidden sm:flex items-center gap-4 shrink-0">
             <a href="#" className="hover:text-brand-500 transition-colors">Bantuan</a>
-            <a href="#" className="hover:text-brand-500 transition-colors">Lacak Pesanan</a>
+            <Link to="/lacak" className="hover:text-brand-500 transition-colors">Lacak Pesanan</Link>
             <a href="#" className="hover:text-brand-500 transition-colors">Hubungi Kami</a>
           </div>
         </div>
