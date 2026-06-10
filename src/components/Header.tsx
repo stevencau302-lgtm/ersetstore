@@ -18,14 +18,7 @@ export default function Header() {
   const { count } = useCart();
   const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [query, setQuery] = useState('');
   const navigate = useNavigate();
-
-  const onSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = query.trim();
-    if (q) navigate(`/produk?cari=${encodeURIComponent(q)}`);
-  };
 
   const handleSignOut = async () => {
     await signOut();
