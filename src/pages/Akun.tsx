@@ -150,6 +150,14 @@ export default function Akun() {
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' })
     : '-';
+  const memberSinceLong = user?.created_at
+    ? new Date(user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+    : '-';
+  const displayName = savedAddr?.name || user?.email?.split('@')[0] || 'User';
+  const processingCount = orders.filter((o) => o.status === 'processing' || o.status === 'shipped').length;
+  const shippedCount = orders.filter((o) => o.status === 'shipped').length;
+  const doneCount = orders.filter((o) => o.status === 'done').length;
+  const filteredOrders = statusFilter === 'all' ? orders : orders.filter((o) => o.status === statusFilter);
   // Format ringkas biar muat di tile sempit (mobile)
   const compactRupiah = (n: number) => {
     if (n >= 1_000_000) return 'Rp ' + (n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1).replace('.', ',') + 'jt';
