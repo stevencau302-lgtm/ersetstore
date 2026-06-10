@@ -84,6 +84,7 @@ export default function Akun() {
   const [savedAddr, setSavedAddr] = useState<SavedAddress | null>(null);
   const [savingAddr, setSavingAddr] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const breadcrumb = [
     { label: 'Beranda', to: '/' },
