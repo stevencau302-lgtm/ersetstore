@@ -78,7 +78,7 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
-            <Link to="/produk" aria-label="Wishlist" className="hidden sm:grid size-10 place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+            <Link to="/wishlist" aria-label="Wishlist" className="hidden sm:grid size-10 place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
               <Heart className="size-5" />
             </Link>
             {user ? (
