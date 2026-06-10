@@ -168,7 +168,15 @@ export default function Akun() {
 
   return (
     <>
-      <PageHeader title={`👋 Halo, ${displayName}`} breadcrumb={breadcrumb} />
+      <PageHeader
+        title={
+          <span>
+            👋 Halo, <span className="capitalize">{displayName}</span>
+            <span className="block text-sm font-medium text-white/50 mt-1">Member sejak {memberSinceLong}</span>
+          </span>
+        }
+        breadcrumb={breadcrumb}
+      />
 
       <section className="container-x pb-24 lg:pb-16">
 
