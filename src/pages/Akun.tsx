@@ -350,14 +350,37 @@ export default function Akun() {
           </div>
 
           {/* Main - Riwayat Pesanan */}
-          <div className="min-w-0">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <ShoppingBag className="size-5 text-brand-500" />
-              Riwayat Pesanan
+          <div id="riwayat" className="min-w-0">
+            {/* Stat cards — desktop */}
+            <div className="hidden lg:grid grid-cols-4 gap-4 mb-5">
+              <StatCard icon={ShoppingBag} tone="brand" value={String(orders.length)} label="Total Pesanan" />
+              <StatCard icon={Truck} tone="amber" value={String(processingCount)} label="Dalam Proses" />
+              <StatCard icon={CheckCircle2} tone="emerald" value={String(doneCount)} label="Selesai" />
+              <StatCard icon={Wallet} tone="violet" value={compactRupiah(totalSpent)} label="Total Belanja" />
+            </div>
+
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <ShoppingBag className="size-5 text-brand-500" />
+                Riwayat Pesanan
+                {orders.length > 0 && (
+                  <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">{orders.length}</span>
+                )}
+              </h2>
               {orders.length > 0 && (
-                <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">{orders.length}</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white outline-none focus:border-brand-500 cursor-pointer"
+                >
+                  <option value="all">Semua Status</option>
+                  <option value="pending">Menunggu Pembayaran</option>
+                  <option value="processing">Diproses</option>
+                  <option value="shipped">Dikirim</option>
+                  <option value="done">Selesai</option>
+                </select>
               )}
-            </h2>
+            </div>
 
             {loading ? (
               <div className="card p-12 text-center">
