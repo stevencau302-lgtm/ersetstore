@@ -90,24 +90,24 @@ export default function Success() {
           <div className="p-5 sm:p-6 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">Total Tagihan</span>
-              <span className="text-2xl font-extrabold text-brand-500">{formatPrice(order?.total || 0)}</span>
+              <span className="text-2xl font-extrabold text-brand-500">{formatPrice(displayTotal)}</span>
             </div>
-            {order?.payment?.name && (
+            {matchesLocal && localOrder?.payment?.name && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500 inline-flex items-center gap-1.5"><CreditCard className="size-4" /> Pembayaran</span>
-                <span className="font-semibold text-gray-900">{order.payment.name}</span>
+                <span className="font-semibold text-gray-900">{localOrder.payment.name}</span>
               </div>
             )}
-            {order?.shipping?.name && (
+            {matchesLocal && localOrder?.shipping?.name && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Pengiriman</span>
-                <span className="font-semibold text-gray-900 text-right truncate max-w-[60%]">{order.shipping.name}</span>
+                <span className="font-semibold text-gray-900 text-right truncate max-w-[60%]">{localOrder.shipping.name}</span>
               </div>
             )}
-            {order?.date && (
+            {matchesLocal && localOrder?.date && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Tanggal</span>
-                <span className="text-gray-600">{formatDate(order.date)}</span>
+                <span className="text-gray-600">{formatDate(localOrder.date)}</span>
               </div>
             )}
           </div>
