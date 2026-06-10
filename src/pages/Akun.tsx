@@ -347,14 +347,6 @@ export default function Akun() {
                 </div>
               )}
             </div>
-
-            <button
-              onClick={signOut}
-              className="hidden lg:flex btn btn-outline btn-md w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
-            >
-              <LogOut className="size-4" />
-              Keluar dari Akun
-            </button>
           </div>
 
           {/* Main - Riwayat Pesanan */}
