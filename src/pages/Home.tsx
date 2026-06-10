@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   Truck, Headphones, ShieldCheck, BadgeCheck, ArrowRight, Sparkles,
-  Package, Zap, CheckCircle2,
+  Package, Zap, Award, Star,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useProducts } from '../lib/useProducts';
