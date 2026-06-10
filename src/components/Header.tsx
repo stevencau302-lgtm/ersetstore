@@ -155,6 +155,20 @@ export default function Header() {
                 </Link>
               ))}
               <div className="border-t border-gray-100 mt-2 pt-2">
+                <Link
+                  to="/wishlist"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2"
+                >
+                  <Heart className="size-4" /> Wishlist
+                </Link>
+                <Link
+                  to="/lacak"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2"
+                >
+                  <Truck className="size-4" /> Lacak Pesanan
+                </Link>
                 {user ? (
                   <>
                     <Link
