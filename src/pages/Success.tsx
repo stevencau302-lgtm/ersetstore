@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Check, Mail, Home, ShoppingBag, Copy, CheckCheck, Zap, Landmark, Wallet,
   AlertTriangle, MessageCircle, Clock, CreditCard, ChevronRight,
@@ -8,6 +8,7 @@ import { orderActions } from '../lib/cart';
 import type { OrderData } from '../types';
 import { formatPrice, formatDate } from '../lib/format';
 import { toast } from '../lib/toast';
+import { supabase } from '../lib/supabase';
 
 const BANK_ACCOUNTS = [
   { bank: 'BCA', color: 'text-blue-600', number: '8720 5431 88', name: 'PT Erset Indonesia' },
