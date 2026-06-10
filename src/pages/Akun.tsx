@@ -236,8 +236,41 @@ export default function Akun() {
               </div>
             </div>
 
+            {/* Nav vertikal — desktop */}
+            <nav className="hidden lg:flex flex-col card p-2 animate-slide-up" style={{ animationDelay: '40ms', animationFillMode: 'backwards' }}>
+              <a href="#riwayat" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-brand-50 text-brand-600">
+                <ShoppingBag className="size-4.5" /> Riwayat Pesanan
+                <ChevronRight className="size-4 ml-auto" />
+              </a>
+              <Link to="/wishlist" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <Heart className="size-4.5" /> Wishlist
+                <ChevronRight className="size-4 ml-auto opacity-40" />
+              </Link>
+              <a href="#alamat" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <MapPin className="size-4.5" /> Alamat Tersimpan
+                <ChevronRight className="size-4 ml-auto opacity-40" />
+              </a>
+              <Link to="/lacak" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <Truck className="size-4.5" /> Lacak Pesanan
+                <ChevronRight className="size-4 ml-auto opacity-40" />
+              </Link>
+              <button onClick={signOut} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                <LogOut className="size-4.5" /> Keluar
+              </button>
+            </nav>
+
+            {/* Kartu bantuan — desktop */}
+            <div className="hidden lg:block card p-5 text-center animate-slide-up" style={{ animationDelay: '80ms', animationFillMode: 'backwards' }}>
+              <div className="size-11 mx-auto rounded-2xl bg-brand-50 grid place-items-center mb-2">
+                <HelpCircle className="size-6 text-brand-500" />
+              </div>
+              <p className="text-sm font-bold text-gray-900">Butuh bantuan?</p>
+              <p className="text-xs text-gray-500 mb-3">Tim kami siap membantu</p>
+              <Link to="/bantuan" className="btn btn-outline btn-sm w-full">Hubungi Kami</Link>
+            </div>
+
             {/* Alamat Tersimpan */}
-            <div className="card p-5 sm:p-6 animate-slide-up" style={{ animationDelay: '60ms', animationFillMode: 'backwards' }}>
+            <div id="alamat" className="card p-5 sm:p-6 animate-slide-up" style={{ animationDelay: '60ms', animationFillMode: 'backwards' }}>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
                   <MapPin className="size-4 text-brand-500" />
