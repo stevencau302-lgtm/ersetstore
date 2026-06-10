@@ -82,21 +82,31 @@ export default function ProductDetail() {
         ]}
       />
 
-      <section className="container-x pb-16">
-        <div className="card p-6 sm:p-8 grid lg:grid-cols-2 gap-8 lg:gap-12">
+      <section className="container-x pb-28 lg:pb-16">
+        <div className="card p-4 sm:p-6 lg:p-8 grid lg:grid-cols-2 gap-6 lg:gap-12 animate-fade-in">
           {/* Gallery */}
-          <div>
-            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl grid place-items-center text-[200px] mb-4 relative overflow-hidden">
-              <span className="relative z-10 select-none">{thumbs[activeImg]}</span>
-              <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, rgba(255,87,34,0.08), transparent 70%)' }} />
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl grid place-items-center mb-3 sm:mb-4 relative overflow-hidden">
+              <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 40%, rgba(255,87,34,0.10), transparent 65%)' }} />
+              {product.badge && (
+                <span className="absolute top-3 left-3 z-20 inline-flex items-center gap-1 bg-brand-500 text-white text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full shadow-lg shadow-brand-500/30">
+                  {product.badge === 'sale' ? <><Zap className="size-3 fill-current" /> Flash Sale</> : product.badge}
+                </span>
+              )}
+              <span
+                key={activeImg}
+                className="relative z-10 select-none text-[110px] sm:text-[160px] lg:text-[200px] leading-none animate-fade-in"
+              >
+                {thumbs[activeImg]}
+              </span>
             </div>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-2 sm:gap-3">
               {thumbs.map((t, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveImg(i)}
-                  className={`aspect-square bg-gray-50 rounded-xl grid place-items-center text-3xl border-2 transition-all ${
-                    activeImg === i ? 'border-brand-500 ring-2 ring-brand-500/20' : 'border-transparent hover:border-gray-300'
+                  className={`aspect-square bg-gray-50 rounded-xl sm:rounded-2xl grid place-items-center text-2xl sm:text-3xl border-2 transition-all duration-200 active:scale-95 ${
+                    activeImg === i ? 'border-brand-500 ring-2 ring-brand-500/20 bg-brand-50/40' : 'border-transparent hover:border-gray-300'
                   }`}
                 >
                   {t}
@@ -106,30 +116,30 @@ export default function ProductDetail() {
           </div>
 
           {/* Info */}
-          <div>
+          <div className="animate-slide-up">
             <div className="text-xs font-bold uppercase tracking-[2px] text-brand-500 mb-2">
               {product.category}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
               {product.name}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-5">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-gray-500 mb-5">
               <div className="flex items-center gap-1">
                 <Star className="size-4 fill-amber-400 text-amber-400" />
                 <strong className="text-gray-900">{product.rating}</strong>
               </div>
-              <span>•</span>
+              <span className="text-gray-300">•</span>
               <span>{product.sold.toLocaleString('id-ID')} terjual</span>
-              <span>•</span>
-              <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
-                <CheckCircle2 className="size-3.5" />
+              <span className="text-gray-300">•</span>
+              <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium">
+                <span className="size-1.5 rounded-full bg-emerald-500" />
                 Stok {product.stock} tersedia
               </span>
             </div>
 
             <div className="flex items-baseline flex-wrap gap-3 py-5 border-y border-gray-100 mb-5">
-              <span className="text-4xl font-extrabold text-brand-500">{formatPrice(product.price)}</span>
+              <span className="text-3xl sm:text-4xl font-extrabold text-brand-500">{formatPrice(product.price)}</span>
               {product.original && (
                 <>
                   <span className="text-base text-gray-400 line-through">{formatPrice(product.original)}</span>
@@ -140,9 +150,9 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* Flash Sale Box - muncul kalau produk lagi flash sale */}
+            {/* Flash Sale Box */}
             {product.badge === 'sale' && (
-              <div className="border-2 border-brand-500 rounded-xl p-4 mb-5 bg-brand-50/30">
+              <div className="border-2 border-brand-500 rounded-2xl p-4 mb-5 bg-brand-50/40">
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
                   <div className="flex items-center gap-2">
                     <Zap className="size-4 text-brand-500 fill-brand-500" />
@@ -169,27 +179,28 @@ export default function ProductDetail() {
 
             <p className="text-gray-600 leading-relaxed mb-6">{product.desc}</p>
 
-            <div className="bg-gray-50 rounded-xl p-5 mb-6 grid sm:grid-cols-2 gap-3 text-sm">
+            <div className="bg-gray-50 rounded-2xl p-4 sm:p-5 mb-6 grid grid-cols-2 gap-3 sm:gap-4 text-sm">
               <Spec icon={Package} label="SKU" value={`ERS-${product.id.toString().padStart(4, '0')}`} />
               <Spec icon={Truck} label="Pengiriman" value="1-3 hari kerja" />
-              <Spec icon={ShieldCheck} label="Garansi" value="30 hari tukar barang" />
-              <Spec icon={CheckCircle2} label="Original" value="100% Asli" />
+              <Spec icon={ShieldCheck} label="Garansi" value="30 hari tukar" />
+              <Spec icon={RotateCcw} label="Pengembalian" value="7 hari retur" />
             </div>
 
+            {/* Quantity */}
             <div className="flex items-center gap-4 mb-6 flex-wrap">
               <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Jumlah</span>
               <div className="flex items-center bg-white border border-gray-200 rounded-full overflow-hidden">
                 <button
                   onClick={() => changeQty(-1)}
-                  className="size-10 grid place-items-center hover:bg-gray-100 disabled:opacity-50"
+                  className="size-10 grid place-items-center hover:bg-gray-100 disabled:opacity-40 active:scale-90 transition-transform"
                   disabled={qty <= 1}
                 >
                   <Minus className="size-4" />
                 </button>
-                <span className="w-12 text-center font-bold">{qty}</span>
+                <span className="w-12 text-center font-bold tabular-nums">{qty}</span>
                 <button
                   onClick={() => changeQty(1)}
-                  className="size-10 grid place-items-center hover:bg-gray-100 disabled:opacity-50"
+                  className="size-10 grid place-items-center hover:bg-gray-100 disabled:opacity-40 active:scale-90 transition-transform"
                   disabled={qty >= product.stock}
                 >
                   <Plus className="size-4" />
@@ -198,12 +209,13 @@ export default function ProductDetail() {
               <span className="text-xs text-gray-500">Maks. {product.stock}</span>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button onClick={addToCart} className="btn btn-primary btn-lg flex-1 sm:flex-none">
+            {/* CTA — desktop */}
+            <div className="hidden lg:flex flex-wrap gap-3">
+              <button onClick={addToCart} className="btn btn-primary btn-lg flex-1">
                 <ShoppingCart className="size-4" />
                 Tambah ke Keranjang
               </button>
-              <button onClick={buyNow} className="btn btn-secondary btn-lg flex-1 sm:flex-none">
+              <button onClick={buyNow} className="btn btn-secondary btn-lg flex-1">
                 <Zap className="size-4" />
                 Beli Sekarang
               </button>
@@ -223,19 +235,42 @@ export default function ProductDetail() {
         </div>
 
         {/* Related */}
-        <div className="mt-16">
+        <div className="mt-12 lg:mt-16">
           <SectionHead
             tag="Rekomendasi"
             title="Produk Serupa"
             subtitle="Mungkin kamu juga suka produk ini"
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {relatedList.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </div>
       </section>
+
+      {/* Sticky CTA — mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] lg:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={toggleWish}
+            aria-label="Wishlist"
+            className={`size-12 shrink-0 grid place-items-center rounded-xl border-2 transition-colors ${
+              inWishlist ? 'border-red-500 bg-red-50 text-red-500' : 'border-gray-200 text-gray-500'
+            }`}
+          >
+            <Heart className={`size-5 ${inWishlist ? 'fill-current' : ''}`} />
+          </button>
+          <button onClick={addToCart} className="btn btn-outline btn-md flex-1 !border-2">
+            <ShoppingCart className="size-4" />
+            Keranjang
+          </button>
+          <button onClick={buyNow} className="btn btn-primary btn-md flex-1">
+            <Zap className="size-4" />
+            Beli Sekarang
+          </button>
+        </div>
+      </div>
     </>
   );
 }
