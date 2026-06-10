@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Star, Heart, ShoppingCart, Zap, Plus, Minus, Truck, ShieldCheck,
-  RotateCcw, Frown, Package,
+  RotateCcw, Frown, Package, Clock, Flame,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import ProductCard from '../components/ProductCard';
