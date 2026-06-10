@@ -41,6 +41,8 @@ export default function App() {
           </ProtectedRoute>
         } />
         <Route path="/sukses" element={<Success />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/lacak" element={<Lacak />} />
         <Route path="/masuk" element={<Login />} />
         <Route path="/daftar" element={<Register />} />
         <Route path="/akun" element={
