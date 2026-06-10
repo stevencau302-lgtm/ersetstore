@@ -78,14 +78,14 @@ export default function Header() {
                 <LogIn className="size-5" />
               </Link>
             )}
-            <Link to="/keranjang" aria-label="Keranjang" className="relative size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
+            <button onClick={() => cartDrawer.open()} aria-label="Keranjang" className="relative size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:text-brand-500 hover:bg-gray-50 transition-colors">
               <ShoppingCart className="size-5" />
               {count > 0 && (
                 <span className="absolute top-0.5 right-0.5 min-w-[16px] h-[16px] px-0.5 bg-brand-500 text-white text-[9px] font-bold rounded-full grid place-items-center">
                   {count > 99 ? '99+' : count}
                 </span>
               )}
-            </Link>
+            </button>
             <button
               aria-label="Menu"
               className="lg:hidden size-9 sm:size-10 grid place-items-center rounded-xl text-gray-700 hover:bg-gray-50"
