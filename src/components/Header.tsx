@@ -126,16 +126,9 @@ export default function Header() {
         {/* Nav menu - mobile */}
         {menuOpen && (
           <div className="lg:hidden border-t border-gray-100 bg-white animate-fade-in">
-            <form onSubmit={onSearch} className="px-4 py-3 relative md:hidden">
-              <Search className="absolute left-7 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari produk..."
-                className="input pl-10 bg-gray-50"
-              />
-            </form>
+            <div className="px-4 py-3 md:hidden">
+              <ProductSearch autoFocus onNavigate={() => setMenuOpen(false)} placeholder="Cari produk..." />
+            </div>
             <div className="container-x py-2 flex flex-col gap-1 max-h-[60vh] overflow-y-auto">
               {NAV_LINKS.map((link, i) => (
                 <Link
