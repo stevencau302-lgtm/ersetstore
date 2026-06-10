@@ -255,7 +255,7 @@ export default function Akun() {
                 <ChevronRight className="size-4 ml-auto opacity-40" />
               </Link>
               <button onClick={signOut} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
-                <LogOut className="size-4.5" /> Keluar
+                <LogOut className="size-5" /> Keluar
               </button>
             </nav>
 
