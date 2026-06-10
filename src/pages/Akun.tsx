@@ -658,3 +658,27 @@ function DetailBlock({
     </div>
   );
 }
+
+function StatCard({
+  icon: Icon, value, label, tone,
+}: {
+  icon: React.ComponentType<{ className?: string }>; value: string; label: string; tone: 'brand' | 'amber' | 'emerald' | 'violet';
+}) {
+  const tones: Record<string, string> = {
+    brand: 'bg-brand-50 text-brand-500',
+    amber: 'bg-amber-50 text-amber-500',
+    emerald: 'bg-emerald-50 text-emerald-600',
+    violet: 'bg-violet-50 text-violet-500',
+  };
+  return (
+    <div className="card p-4 flex items-center gap-3">
+      <div className={`size-11 rounded-xl grid place-items-center shrink-0 ${tones[tone]}`}>
+        <Icon className="size-5" />
+      </div>
+      <div className="min-w-0">
+        <div className="text-xl font-extrabold text-gray-900 leading-tight truncate">{value}</div>
+        <div className="text-xs text-gray-500 truncate">{label}</div>
+      </div>
+    </div>
+  );
+}
