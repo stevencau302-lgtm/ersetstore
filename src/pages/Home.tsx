@@ -65,13 +65,28 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Hero visual */}
+          {/* Hero visual — desktop */}
           <div className="relative hidden lg:block">
-            <div className="relative aspect-square max-w-md mx-auto bg-gradient-to-br from-brand-500 to-brand-700 rounded-full grid place-items-center text-9xl shadow-2xl shadow-brand-500/40">
-              <Package className="size-48 text-white/90" strokeWidth={1.2} />
+            <div className="relative aspect-square max-w-md mx-auto">
+              {/* Kartu gradient miring di belakang */}
+              <div className="absolute inset-3 rounded-[3rem] bg-gradient-to-br from-brand-400/40 to-brand-700/40 rotate-6 blur-[2px]" />
+              <div className="absolute inset-2 rounded-[3rem] bg-gradient-to-br from-brand-500 to-brand-700 -rotate-3 shadow-2xl shadow-brand-500/40" />
+              {/* Kartu depan */}
+              <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-brand-500 to-brand-600 grid place-items-center overflow-hidden shadow-2xl shadow-brand-500/30">
+                {/* pola titik */}
+                <div
+                  className="absolute inset-0 opacity-20"
+                  style={{ backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)', backgroundSize: '26px 26px' }}
+                />
+                {/* glow */}
+                <div className="absolute -top-10 -right-10 size-48 bg-white/20 rounded-full blur-2xl" />
+                <div className="absolute bottom-0 left-0 size-40 bg-amber-300/20 rounded-full blur-2xl" />
+                <Package className="relative size-44 text-white drop-shadow-2xl animate-float" strokeWidth={1.1} />
+              </div>
             </div>
-            {/* Floating cards */}
-            <div className="absolute top-8 -left-4 bg-white text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-pulse-soft">
+
+            {/* Floating chips — glass */}
+            <div className="absolute top-6 -left-5 bg-white/95 backdrop-blur-xl border border-white/50 text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-float" style={{ animationDelay: '0s' }}>
               <div className="size-10 bg-brand-50 text-brand-500 rounded-xl grid place-items-center">
                 <Truck className="size-5" />
               </div>
@@ -80,7 +95,18 @@ export default function Home() {
                 <div className="text-xs text-gray-500">Min. Rp 200rb</div>
               </div>
             </div>
-            <div className="absolute bottom-12 -right-4 bg-white text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3" style={{ animationDelay: '1s' }}>
+
+            <div className="absolute top-1/2 -right-6 bg-white/95 backdrop-blur-xl border border-white/50 text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-float" style={{ animationDelay: '1.2s' }}>
+              <div className="size-10 bg-emerald-50 text-emerald-500 rounded-xl grid place-items-center">
+                <Award className="size-5" />
+              </div>
+              <div>
+                <div className="text-sm font-bold">100% Original</div>
+                <div className="text-xs text-gray-500">Asli & Berkualitas</div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-10 -right-2 bg-white/95 backdrop-blur-xl border border-white/50 text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-float" style={{ animationDelay: '2.4s' }}>
               <div className="size-10 bg-amber-50 text-amber-500 rounded-xl grid place-items-center">
                 <Zap className="size-5" />
               </div>
@@ -89,13 +115,14 @@ export default function Home() {
                 <div className="text-xs text-gray-500">Diskon 70%</div>
               </div>
             </div>
-            <div className="absolute top-1/2 -right-8 bg-white text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3" style={{ animationDelay: '2s' }}>
-              <div className="size-10 bg-emerald-50 text-emerald-500 rounded-xl grid place-items-center">
-                <CheckCircle2 className="size-5" />
+
+            <div className="absolute bottom-4 -left-3 bg-white/95 backdrop-blur-xl border border-white/50 text-gray-900 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 animate-float" style={{ animationDelay: '3s' }}>
+              <div className="size-10 bg-amber-50 text-amber-500 rounded-xl grid place-items-center">
+                <Star className="size-5 fill-amber-400 text-amber-400" />
               </div>
               <div>
-                <div className="text-sm font-bold">100% Original</div>
-                <div className="text-xs text-gray-500">Asli & Berkualitas</div>
+                <div className="text-sm font-bold">4.9 Rating</div>
+                <div className="text-xs text-gray-500">50K+ Pelanggan</div>
               </div>
             </div>
           </div>
