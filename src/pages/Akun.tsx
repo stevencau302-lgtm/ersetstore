@@ -243,11 +243,11 @@ export default function Akun() {
                 <ChevronRight className="size-4 ml-auto" />
               </a>
               <Link to="/wishlist" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
-                <Heart className="size-4.5" /> Wishlist
+                <Heart className="size-5" /> Wishlist
                 <ChevronRight className="size-4 ml-auto opacity-40" />
               </Link>
               <a href="#alamat" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
-                <MapPin className="size-4.5" /> Alamat Tersimpan
+                <MapPin className="size-5" /> Alamat Tersimpan
                 <ChevronRight className="size-4 ml-auto opacity-40" />
               </a>
               <Link to="/lacak" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
