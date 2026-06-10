@@ -30,6 +30,7 @@ export default function Layout() {
         </div>
       )}
       <Toaster />
+      <CartDrawer />
     </div>
   );
 }
