@@ -171,9 +171,45 @@ export default function Akun() {
       <PageHeader title="Akun Saya" breadcrumb={breadcrumb} />
 
       <section className="container-x pb-24 lg:pb-16">
-        <div className="grid lg:grid-cols-[320px_1fr] gap-4 lg:gap-6">
+        {/* Welcome banner — desktop */}
+        <div className="hidden lg:block mb-6 animate-slide-up">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-ink-800 to-[#2d1f1f] text-white p-7">
+            <div className="absolute -top-16 -right-10 size-72 rounded-full bg-brand-500/25 blur-3xl" />
+            <div className="absolute -bottom-24 right-40 size-56 rounded-full bg-amber-500/10 blur-3xl" />
+            <div className="relative flex items-center justify-between gap-6">
+              <div className="min-w-0">
+                <h1 className="text-3xl font-extrabold flex items-center gap-2">
+                  <Hand className="size-7 text-amber-400" /> Halo, <span className="capitalize">{displayName}</span>
+                </h1>
+                <p className="text-white/60 mt-1">Selamat datang kembali di Erset Store</p>
+                <div className="flex items-center gap-2 mt-4">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-brand-500/90 px-3 py-1.5 rounded-full">
+                    <CheckCircle2 className="size-3.5" /> Member Aktif
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white/10 px-3 py-1.5 rounded-full">
+                    <Calendar className="size-3.5" /> Bergabung sejak {memberSinceLong}
+                  </span>
+                </div>
+              </div>
+              <div className="shrink-0 flex items-center gap-5">
+                <div className="text-right bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-4 border border-white/10">
+                  <p className="text-[11px] uppercase tracking-wider text-white/50">Total Belanja</p>
+                  <p className="text-2xl font-extrabold text-brand-400">{formatPrice(totalSpent)}</p>
+                  <p className="text-[11px] text-white/50 mt-1">
+                    {orders.length} Pesanan • {shippedCount} Dikirim • {doneCount} Selesai
+                  </p>
+                </div>
+                <div className="size-24 grid place-items-center bg-gradient-to-br from-brand-500 to-brand-600 rounded-3xl shadow-xl shadow-brand-500/30">
+                  <ShoppingBag className="size-12 text-white" strokeWidth={1.4} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-[300px_1fr] gap-4 lg:gap-6 items-start">
           {/* Sidebar - Profil */}
-          <div className="space-y-4 min-w-0">
+          <div className="space-y-4 min-w-0 lg:sticky lg:top-28">
             {/* Profile hero */}
             <div className="card overflow-hidden animate-slide-up">
               <div className="relative bg-gradient-to-br from-gray-900 to-ink-800 p-5 sm:p-6">
