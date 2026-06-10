@@ -353,14 +353,25 @@ export default function Akun() {
                       </div>
 
                       {/* Footer */}
-                      <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2">
+                      <div className="border-t border-gray-100 pt-3 flex items-center justify-between gap-2 flex-wrap">
                         <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 min-w-0">
                           <Clock className="size-3 shrink-0" />
                           <span className="truncate">{formatDate(order.created_at)}</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 px-2.5 py-1.5 rounded-lg bg-brand-50 group-hover:bg-brand-100 transition-colors shrink-0">
-                          Lihat Detail <ChevronRight className="size-3.5" />
-                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {order.status === 'pending' && (
+                            <Link
+                              to={`/sukses?order=${order.order_number || order.id}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-xs font-bold text-white px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 transition-colors"
+                            >
+                              <CreditCard className="size-3.5" /> Bayar Sekarang
+                            </Link>
+                          )}
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 px-2.5 py-1.5 rounded-lg bg-brand-50 group-hover:bg-brand-100 transition-colors">
+                            Detail <ChevronRight className="size-3.5" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );
