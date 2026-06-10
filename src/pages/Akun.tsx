@@ -239,7 +239,7 @@ export default function Akun() {
             {/* Nav vertikal — desktop */}
             <nav className="hidden lg:flex flex-col card p-2 animate-slide-up" style={{ animationDelay: '40ms', animationFillMode: 'backwards' }}>
               <a href="#riwayat" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-brand-50 text-brand-600">
-                <ShoppingBag className="size-4.5" /> Riwayat Pesanan
+                <ShoppingBag className="size-5" /> Riwayat Pesanan
                 <ChevronRight className="size-4 ml-auto" />
               </a>
               <Link to="/wishlist" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
