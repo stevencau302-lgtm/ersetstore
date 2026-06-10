@@ -2,7 +2,7 @@ import { type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  Star, Heart, ShoppingCart, Zap, Plus, Minus, CheckCircle2, Truck, ShieldCheck,
+  Star, Heart, ShoppingCart, Zap, Plus, Minus, Truck, ShieldCheck,
   RotateCcw, Frown, Package,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
