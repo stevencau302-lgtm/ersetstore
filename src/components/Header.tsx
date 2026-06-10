@@ -65,16 +65,9 @@ export default function Header() {
           </Link>
 
           {/* Search */}
-          <form onSubmit={onSearch} className="hidden md:block flex-1 max-w-xl relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Cari produk import berkualitas..."
-              className="input pl-11 bg-gray-50 focus:bg-white"
-            />
-          </form>
+          <div className="hidden md:block flex-1 max-w-xl">
+            <ProductSearch />
+          </div>
 
           {/* Actions */}
           <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
