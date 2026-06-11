@@ -356,7 +356,7 @@ export default function Akun() {
               <StatCard icon={ShoppingBag} tone="brand" value={String(orders.length)} label="Total Pesanan" />
               <StatCard icon={Truck} tone="amber" value={String(processingCount)} label="Dalam Proses" />
               <StatCard icon={CheckCircle2} tone="emerald" value={String(doneCount)} label="Selesai" />
-              <StatCard icon={Wallet} tone="violet" value={compactRupiah(totalSpent)} label="Total Belanja" />
+              <StatCard icon={Wallet} tone="violet" value={formatPrice(totalSpent)} label="Total Belanja" />
             </div>
 
             <div className="flex items-center justify-between gap-2 mb-4">
