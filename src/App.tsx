@@ -8,6 +8,7 @@ import Checkout from './pages/Checkout';
 import Success from './pages/Success';
 import Wishlist from './pages/Wishlist';
 import Lacak from './pages/Lacak';
+import LandingPage from './pages/LandingPage';
 import Info from './pages/Info';
 import About from './pages/About';
 import Legal from './pages/Legal';
@@ -55,6 +56,9 @@ export default function App() {
         <Route path="/halaman/:slug" element={<Legal />} />
         <Route path="*" element={<NotFound />} />
       </Route>
+
+      {/* Landing Page — standalone, tanpa header/footer toko */}
+      <Route path="/landingpage" element={<LandingPage />} />
 
       {/* Admin routes */}
       <Route path="/admin" element={
