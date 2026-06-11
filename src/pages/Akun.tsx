@@ -237,25 +237,27 @@ export default function Akun() {
             </div>
 
             {/* Nav vertikal — desktop */}
-            <nav className="hidden lg:flex flex-col card p-2 animate-slide-up" style={{ animationDelay: '40ms', animationFillMode: 'backwards' }}>
-              <a href="#riwayat" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-brand-50 text-brand-600">
+            <nav className="hidden lg:flex flex-col card overflow-hidden animate-slide-up" style={{ animationDelay: '40ms', animationFillMode: 'backwards' }}>
+              <div className="px-4 pt-4 pb-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Menu</p>
+              </div>
+              <a href="#riwayat" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl text-sm font-semibold bg-brand-50 text-brand-600">
                 <ShoppingBag className="size-5" /> Riwayat Pesanan
                 <ChevronRight className="size-4 ml-auto" />
               </a>
-              <Link to="/wishlist" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+              <Link to="/wishlist" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-600 transition-colors">
                 <Heart className="size-5" /> Wishlist
-                <ChevronRight className="size-4 ml-auto opacity-40" />
+                <ChevronRight className="size-4 ml-auto opacity-0 group-hover:opacity-100" />
               </Link>
-              <a href="#alamat" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+              <a href="#alamat" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-600 transition-colors">
                 <MapPin className="size-5" /> Alamat Tersimpan
-                <ChevronRight className="size-4 ml-auto opacity-40" />
               </a>
-              <Link to="/lacak" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+              <Link to="/lacak" className="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-600 transition-colors">
                 <Truck className="size-5" /> Lacak Pesanan
-                <ChevronRight className="size-4 ml-auto opacity-40" />
               </Link>
-              <button onClick={signOut} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
-                <LogOut className="size-5" /> Keluar
+              <div className="border-t border-gray-100 mt-2 mx-4" />
+              <button onClick={signOut} className="flex items-center gap-3 mx-2 px-3 py-2.5 mb-2 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+                <LogOut className="size-5" /> Keluar dari Akun
               </button>
             </nav>
 
