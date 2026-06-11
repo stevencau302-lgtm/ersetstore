@@ -168,15 +168,42 @@ export default function Akun() {
 
   return (
     <>
-      <PageHeader
-        title={
-          <span>
-            👋 Halo, <span className="capitalize">{displayName}</span>
-            <span className="block text-sm font-medium text-white/50 mt-1">Member sejak {memberSinceLong}</span>
-          </span>
-        }
-        breadcrumb={breadcrumb}
-      />
+      <section className="bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-white py-10 sm:py-14 mb-8 relative overflow-hidden">
+        <div className="absolute -top-1/2 -right-20 size-[500px] bg-brand-500/20 rounded-full blur-3xl" />
+        <div className="container-x relative">
+          <nav className="flex items-center gap-1 text-sm text-gray-400 mb-5">
+            {breadcrumb.map((item, i) => (
+              <span key={i} className="flex items-center gap-1">
+                {i > 0 && <ChevronRight className="size-3.5 text-gray-600" />}
+                {item.to ? (
+                  <Link to={item.to} className="hover:text-brand-500 transition-colors">{item.label}</Link>
+                ) : (
+                  <span className="text-gray-300">{item.label}</span>
+                )}
+              </span>
+            ))}
+          </nav>
+          <div className="flex items-center gap-5">
+            <div className="size-16 sm:size-20 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 grid place-items-center shadow-xl shadow-brand-500/30 shrink-0">
+              <span className="text-2xl sm:text-3xl font-extrabold text-white">
+                {typeof displayName === 'string' ? displayName[0]?.toUpperCase() : 'U'}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">👋 Halo, <span className="capitalize">{displayName}</span></h1>
+              <p className="text-sm text-white/50 mt-1">Member sejak {memberSinceLong}</p>
+              <div className="flex items-center gap-2 mt-3">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-brand-500 px-3 py-1 rounded-full">
+                  <CheckCircle2 className="size-3" /> Member Aktif
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium bg-white/10 px-3 py-1 rounded-full text-white/70">
+                  <ShoppingBag className="size-3" /> {orders.length} Pesanan
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="container-x pb-24 lg:pb-16">
 
