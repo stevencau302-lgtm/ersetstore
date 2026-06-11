@@ -673,13 +673,13 @@ function StatCard({
     violet: 'bg-violet-50 text-violet-500',
   };
   return (
-    <div className="card p-4 flex items-center gap-3">
-      <div className={`size-11 rounded-xl grid place-items-center shrink-0 ${tones[tone]}`}>
+    <div className="card p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+      <div className={`size-12 rounded-xl grid place-items-center shrink-0 ${tones[tone]}`}>
         <Icon className="size-5" />
       </div>
       <div className="min-w-0">
-        <div className="text-xl font-extrabold text-gray-900 leading-tight truncate">{value}</div>
-        <div className="text-xs text-gray-500 truncate">{label}</div>
+        <div className="text-lg font-extrabold text-gray-900 leading-tight">{value}</div>
+        <div className="text-xs text-gray-500">{label}</div>
       </div>
     </div>
   );
